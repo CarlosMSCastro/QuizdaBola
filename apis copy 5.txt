@@ -11,7 +11,7 @@ fixture.status.short         → "FT", "NS", "1H", "2H", "HT", "PEN"
 fixture.status.elapsed       → Minuto do jogo
 fixture.venue.name           → Nome do estádio
 fixture.venue.city           → Cidade
-league.id                    → ID da liga
+
 league.name                  → Nome da liga
 league.logo                  → URL do logo
 league.round                 → Jornada (ex: "Regular Season - 26")

@@ -7,7 +7,7 @@ api_key : 8b6f899e60c3c6025ddb3e7ef84c3467
 
 fixture.id                   → ID único do jogo
 fixture.date                 → Data e hora
-fixture.status.short         → "FT", "NS", "1H", "2H", "HT", "PEN"
+
 fixture.status.elapsed       → Minuto do jogo
 fixture.venue.name           → Nome do estádio
 fixture.venue.city           → Cidade
