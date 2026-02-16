@@ -2,7 +2,8 @@
 set_time_limit(600);
 require_once 'config/db.php';
 
-$api_key = '8b6f899e60c3c6025ddb3e7ef84c3467';
+$env = parse_ini_file('.env');
+$api_key = $env['API_KEY'];
 $season = 2024;
 
 $headers = ['x-apisports-key: ' . $api_key];

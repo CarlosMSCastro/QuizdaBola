@@ -1,3 +1,6 @@
 \api.fooball.com.txt
 /api.fooball.com.txt
 api.fooball.com.txt
+
+.env
+backend/.env
