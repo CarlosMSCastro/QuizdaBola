@@ -4,7 +4,8 @@ Quiz de fotos de jogadores da Primeira Liga. Aparece uma foto, escolhes o nome c
 
 ## Stack
 - **Frontend:** React + Vite + Tailwind + shadcn/ui
-- **Backend:** PHP + MySQL
+- **Backend:** Node.js + Express
+- **Base de dados:** MySQL
 - **Dados:** API-Football (season 2024)
 
 ## Base de dados
@@ -19,17 +20,18 @@ Quiz de fotos de jogadores da Primeira Liga. Aparece uma foto, escolhes o nome c
 ```
 frontend/          → React
 backend/
-  api/             → endpoints PHP
-  config/db.php    → ligação MySQL
-  scrape.php       → script de recolha de dados (já correu)
+  routes/          → endpoints Express (question, auth, leaderboard)
+  config/db.js     → ligação MySQL
+  server.js        → servidor Express
+  .env             → variáveis de ambiente (não vai para o GitHub)
 ```
 
 ---
 
 ## Próximos passos
-- [ ] `api/question.php` — devolve foto + 4 opções
-- [ ] `api/leaderboard.php` — guarda e lê pontuações
-- [ ] `api/auth.php` — registo e login
+- [ ] `routes/question.js` — devolve foto + 4 opções
+- [ ] `routes/leaderboard.js` — guarda e lê pontuações
+- [ ] `routes/auth.js` — registo e login
 - [ ] Interface React do quiz
 - [ ] Página de leaderboard
 - [ ] Dark mode + responsivo
