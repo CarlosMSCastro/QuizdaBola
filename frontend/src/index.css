@@ -33,6 +33,8 @@
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
     
     /* Charts */
     --color-chart-1: var(--chart-1);
@@ -59,37 +61,41 @@
     --radius: 0.75rem;
     
     /* Base Colors */
-    --background: oklch(0.99 0 0);              /* Branco suave */
-    --foreground: oklch(0.15 0.01 250);         /* Preto azulado */
+    --background: oklch(0.99 0 0);
+    --foreground: oklch(0.15 0.01 250);
     
-    /* Branding - Azul Profundo + Laranja Energia */
-    --primary: oklch(0.45 0.18 235);            /* Azul profundo */
-    --primary-foreground: oklch(0.99 0 0);      /* Branco */
-    --secondary: oklch(0.58 0.20 40);           /* Laranja vibrante */
-    --secondary-foreground: oklch(0.99 0 0);    /* Branco */
-    --accent: oklch(0.70 0.15 85);              /* Dourado suave */
-    --accent-foreground: oklch(0.15 0 0);       /* Preto */
+    /* Branding */
+    --primary: oklch(0.45 0.18 235);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(0.58 0.20 40);
+    --secondary-foreground: oklch(0.99 0 0);
+    --accent: oklch(0.70 0.15 85);
+    --accent-foreground: oklch(0.15 0 0);
+    
+    /* Success */
+    --success: oklch(0.55 0.18 145);
+    --success-foreground: oklch(0.99 0 0);
     
     /* UI Elements */
-    --card: oklch(1 0 0);                       /* Branco puro */
+    --card: oklch(1 0 0);
     --card-foreground: oklch(0.15 0.01 250);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.15 0.01 250);
-    --muted: oklch(0.96 0.005 250);             /* Cinza clarinho */
-    --muted-foreground: oklch(0.50 0.01 250);   /* Cinza médio */
-    --border: oklch(0.90 0.005 250);            /* Cinza borda */
+    --muted: oklch(0.96 0.005 250);
+    --muted-foreground: oklch(0.50 0.01 250);
+    --border: oklch(0.90 0.005 250);
     --input: oklch(0.90 0.005 250);
-    --ring: oklch(0.45 0.18 235);               /* Anel = primary */
+    --ring: oklch(0.45 0.18 235);
     
     /* Destructive */
-    --destructive: oklch(0.55 0.25 25);         /* Vermelho erro */
+    --destructive: oklch(0.55 0.25 25);
     
     /* Charts */
-    --chart-1: oklch(0.55 0.22 235);            /* Azul */
-    --chart-2: oklch(0.60 0.20 160);            /* Verde */
-    --chart-3: oklch(0.58 0.20 40);             /* Laranja */
-    --chart-4: oklch(0.65 0.18 280);            /* Roxo */
-    --chart-5: oklch(0.70 0.15 85);             /* Amarelo */
+    --chart-1: oklch(0.55 0.22 235);
+    --chart-2: oklch(0.60 0.20 160);
+    --chart-3: oklch(0.58 0.20 40);
+    --chart-4: oklch(0.65 0.18 280);
+    --chart-5: oklch(0.70 0.15 85);
     
     /* Sidebar */
     --sidebar: oklch(0.99 0 0);
@@ -103,34 +109,38 @@
 }
 
 /* ============================================ */
-/* DARK MODE - Versões Claras                   */
+/* DARK MODE                                    */
 /* ============================================ */
 .dark {
     /* Base Colors */
-    --background: oklch(0.12 0.01 250);         /* Preto azulado */
-    --foreground: oklch(0.98 0 0);              /* Branco */
+    --background: oklch(0.12 0.01 250);
+    --foreground: oklch(0.98 0 0);
     
-    /* Branding - Versões mais claras */
-    --primary: oklch(0.65 0.18 235);            /* Azul claro */
-    --primary-foreground: oklch(0.12 0.01 250); /* Preto */
-    --secondary: oklch(0.70 0.20 40);           /* Laranja clara */
-    --secondary-foreground: oklch(0.12 0 0);    /* Preto */
-    --accent: oklch(0.80 0.15 85);              /* Dourado claro */
-    --accent-foreground: oklch(0.12 0 0);       /* Preto */
+    /* Branding */
+    --primary: oklch(0.65 0.18 235);
+    --primary-foreground: oklch(0.12 0.01 250);
+    --secondary: oklch(0.70 0.20 40);
+    --secondary-foreground: oklch(0.12 0 0);
+    --accent: oklch(0.80 0.15 85);
+    --accent-foreground: oklch(0.12 0 0);
+    
+    /* Success */
+    --success: oklch(0.65 0.18 145);
+    --success-foreground: oklch(0.12 0 0);
     
     /* UI Elements */
-    --card: oklch(0.18 0.01 250);               /* Cinza escuro */
+    --card: oklch(0.18 0.01 250);
     --card-foreground: oklch(0.98 0 0);
     --popover: oklch(0.18 0.01 250);
     --popover-foreground: oklch(0.98 0 0);
-    --muted: oklch(0.25 0.01 250);              /* Cinza médio-escuro */
-    --muted-foreground: oklch(0.65 0.01 250);   /* Cinza claro */
-    --border: oklch(0.30 0.01 250);             /* Borda clara */
+    --muted: oklch(0.25 0.01 250);
+    --muted-foreground: oklch(0.65 0.01 250);
+    --border: oklch(0.30 0.01 250);
     --input: oklch(0.30 0.01 250);
-    --ring: oklch(0.65 0.18 235);               /* Anel claro */
+    --ring: oklch(0.65 0.18 235);
     
     /* Destructive */
-    --destructive: oklch(0.65 0.25 25);         /* Vermelho claro */
+    --destructive: oklch(0.65 0.25 25);
     
     /* Charts */
     --chart-1: oklch(0.65 0.22 235);

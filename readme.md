@@ -12,7 +12,7 @@ Quiz interativo de jogadores da Primeira Liga 2024. Reconhece jogadores por foto
 frontend/
   src/
     pages/           → Landing, Quiz, Leaderboard
-    components/      → LoginModal, LanguageSwitcher, shadcn/ui
+    components/      → Navbar, LoginModal, shadcn/ui
     services/api.js  → Axios API calls
     i18n/            → config.js + locales (pt.json, en.json)
 backend/
@@ -23,27 +23,22 @@ backend/
 
 ## Estado Atual
 
-### ✅ Completo
+### ✅ Fase 1 — Completa
 - **Modo Clássico funcional:**
   - Timer 8s, 3 vidas, sem repetições
   - Sistema de ajudas (2x): nacionalidade/clube (+5s bonus)
   - Dificuldades: Fácil/Médio/Difícil
 - **Autenticação:** Login/registo com JWT, tokens em localStorage
+- **Auto-save scores:** Guarda automaticamente se for novo record pessoal
 - **Navegação:** Landing → Quiz → Leaderboard (React Router)
 - **Backend:** Todos endpoints testados (question, auth, leaderboard)
 - **Base de dados:** 855 jogadores + users + scores
 - **Placeholder Filter:** 67 fotos genéricas identificadas via MD5 e filtradas do jogo
 - **Bandeiras:** Integração com `i18n-iso-countries` — cobertura global com fallback 🌍
-- **i18n Setup:** react-i18next configurado com PT/EN (aplicação nos componentes pendente)
-
-### 🔄 Em Progresso — FASE 1 (Fundações)
-- [x] Theme Variables — CSS com paleta neutra (azul/laranja/dourado), light + dark preparados
-- [x] i18n setup — react-i18next com traduções PT/EN
-- [x] Bandeiras globais — substituído mapa manual por `i18n-iso-countries`
-- [ ] Refactor componentes — cores hardcoded → variáveis CSS
-- [ ] Aplicar i18n — strings hardcoded → `t('key')` nos componentes
-- [ ] Navbar responsiva — desktop + hamburger mobile, com LanguageSwitcher + DarkModeToggle
-- [ ] Auto-save scores — guardar automaticamente quando token existe
+- **Navbar responsiva:** Desktop + hamburger mobile, com DarkModeToggle + LanguageToggle
+- **Dark Mode:** Toggle funcional, preferência guardada em localStorage
+- **i18n:** react-i18next com PT/EN aplicado em todos os componentes
+- **Theme Variables:** Paleta neutra (azul/laranja/dourado), light + dark mode
 
 ### ⏳ Próximos Passos
 

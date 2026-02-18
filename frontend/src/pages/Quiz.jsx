@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getQuestion, saveScore } from '../services/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -9,8 +10,9 @@ import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(en);
 
-function Quiz() {
+function Quiz({ token, user, onLogin }) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     
     const [difficulty, setDifficulty] = useState('easy');
     const [question, setQuestion] = useState(null);
@@ -23,32 +25,29 @@ function Quiz() {
     const [loading, setLoading] = useState(false);
     const [usedPlayerIds, setUsedPlayerIds] = useState([]);
     const [showLoginModal, setShowLoginModal] = useState(false);
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
+    const [scoreSaved, setScoreSaved] = useState(null);
     
-    // Sistema de ajudas
     const [helpsLeft, setHelpsLeft] = useState(2);
     const [usedHelps, setUsedHelps] = useState({ nationality: false, team: false });
     const [activeHelp, setActiveHelp] = useState(null);
 
-    // Verificar se já tem sessão
     useEffect(() => {
-        const savedToken = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        if (savedToken && savedUser) {
-            setToken(savedToken);
-            setUser(JSON.parse(savedUser));
+        if (gameOver && token && scoreSaved === null) {
+            saveScore(score, difficulty, token)
+                .then(res => {
+                    if (res.isNewRecord) setScoreSaved('record');
+                    else setScoreSaved('exists');
+                })
+                .catch(() => setScoreSaved('error'));
         }
-    }, []);
+    }, [gameOver]);
 
-    // Carregar pergunta quando jogo inicia
     useEffect(() => {
         if (!gameOver && gameStarted) {
             loadQuestion();
         }
     }, [gameStarted]);
 
-    // Timer countdown
     useEffect(() => {
         if (gameOver || selectedAnswer !== null || !question || !gameStarted) return;
 
@@ -68,7 +67,7 @@ function Quiz() {
     const loadQuestion = async () => {
         setLoading(true);
         setSelectedAnswer(null);
-        setActiveHelp(null); // reset ajuda ao carregar nova pergunta
+        setActiveHelp(null);
         setTimeLeft(8);
         try {
             const data = await getQuestion(difficulty, usedPlayerIds);
@@ -110,7 +109,6 @@ function Quiz() {
     const useHelp = () => {
         if (helpsLeft === 0) return;
 
-        // escolher ajuda aleatória entre as disponíveis
         const availableHelps = [];
         if (!usedHelps.nationality) availableHelps.push('nationality');
         if (!usedHelps.team) availableHelps.push('team');
@@ -122,12 +120,10 @@ function Quiz() {
         setActiveHelp(randomHelp);
         setUsedHelps({ ...usedHelps, [randomHelp]: true });
         setHelpsLeft(helpsLeft - 1);
-        setTimeLeft(prev => prev + 5); // ← ADICIONA ESTA LINHA
+        setTimeLeft(prev => prev + 5);
     };
 
-    const startGame = () => {
-        setGameStarted(true);
-    };
+    const startGame = () => setGameStarted(true);
 
     const resetGame = () => {
         setScore(0);
@@ -140,6 +136,7 @@ function Quiz() {
         setHelpsLeft(2);
         setUsedHelps({ nationality: false, team: false });
         setActiveHelp(null);
+        setScoreSaved(null);
     };
 
     const changeDifficulty = (newDifficulty) => {
@@ -154,40 +151,42 @@ function Quiz() {
         setHelpsLeft(2);
         setUsedHelps({ nationality: false, team: false });
         setActiveHelp(null);
+        setScoreSaved(null);
     };
 
-    // Converter código do país para emoji de bandeira
     const getCountryCode = (countryName) => {
-    // Casos especiais que a lib não resolve
-    const exceptions = {
-        'England': 'gb-eng',
-        'USA': 'us',
-        'Korea Republic': 'kr',
-    };
-    if (exceptions[countryName]) return exceptions[countryName];
-    
-    const code = countries.getAlpha2Code(countryName, 'en');
-    return code ? code.toLowerCase() : 'un';
+        const exceptions = {
+            'England': 'gb-eng',
+            'USA': 'us',
+            'Korea Republic': 'kr',
+        };
+        if (exceptions[countryName]) return exceptions[countryName];
+        const code = countries.getAlpha2Code(countryName, 'en');
+        return code ? code.toLowerCase() : 'un';
     };
 
     const getFlagEmoji = (countryName) => {
-    const code = getCountryCode(countryName);
-    if (code === 'un') return '🌍';
-    if (code === 'gb-eng') return '🏴󠁧󠁢󠁥󠁬󠁳󠁿'; // England especial
-    // Converter código ISO para emoji
-    return code.toUpperCase().replace(/./g, c =>
-        String.fromCodePoint(c.charCodeAt(0) + 127397)
-    );
+        const code = getCountryCode(countryName);
+        if (code === 'un') return '🌍';
+        if (code === 'gb-eng') return '🏴󠁧󠁢󠁥󠁬󠁳󠁿';
+        return code.toUpperCase().replace(/./g, c =>
+            String.fromCodePoint(c.charCodeAt(0) + 127397)
+        );
     };
 
-    // Screen de escolha de dificuldade
+    const difficultyLabel = (d) => {
+        if (d === 'easy') return t('quiz.easy');
+        if (d === 'medium') return t('quiz.medium');
+        return t('quiz.hard');
+    };
+
     if (!gameStarted && !gameOver) {
         return (
             <>
-                <div className="min-h-screen bg-background flex items-center justify-center p-4">
+                <div className="min-h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
                     <Card className="max-w-md w-full p-8 text-center space-y-6">
-                        <h1 className="text-4xl font-bold">⚽ Quiz</h1>
-                        <p className="text-muted-foreground">Escolhe a dificuldade:</p>
+                        <h1 className="text-4xl font-bold text-foreground">⚽ {t('quiz.title')}</h1>
+                        <p className="text-muted-foreground">{t('quiz.selectDifficulty')}</p>
                         
                         <div className="space-y-3">
                             <Button 
@@ -196,7 +195,7 @@ function Quiz() {
                                 variant={difficulty === 'easy' ? 'default' : 'outline'}
                                 onClick={() => changeDifficulty('easy')}
                             >
-                                Fácil
+                                {t('quiz.easy')}
                             </Button>
                             <Button 
                                 size="lg" 
@@ -204,7 +203,7 @@ function Quiz() {
                                 variant={difficulty === 'medium' ? 'default' : 'outline'}
                                 onClick={() => changeDifficulty('medium')}
                             >
-                                Médio
+                                {t('quiz.medium')}
                             </Button>
                             <Button 
                                 size="lg" 
@@ -212,24 +211,12 @@ function Quiz() {
                                 variant={difficulty === 'hard' ? 'default' : 'outline'}
                                 onClick={() => changeDifficulty('hard')}
                             >
-                                Difícil
+                                {t('quiz.hard')}
                             </Button>
                         </div>
 
-                        <Button 
-                            size="lg" 
-                            className="w-full mt-4"
-                            onClick={startGame}
-                        >
-                            Começar ▶️
-                        </Button>
-
-                        <Button 
-                            variant="ghost" 
-                            className="w-full"
-                            onClick={() => navigate('/')}
-                        >
-                            ← Voltar
+                        <Button size="lg" className="w-full mt-4" onClick={startGame}>
+                            {t('quiz.start')}
                         </Button>
                     </Card>
                 </div>
@@ -237,86 +224,64 @@ function Quiz() {
                 <LoginModal 
                     open={showLoginModal}
                     onClose={() => setShowLoginModal(false)}
-                    onSuccess={async (newToken, newUser) => {
-                        setToken(newToken);
-                        setUser(newUser);
-                        try {
-                            await saveScore(score, difficulty, newToken);
-                            alert('Pontuação guardada!');
-                            navigate('/leaderboard');
-                        } catch (error) {
-                            alert('Erro ao guardar pontuação');
-                        }
+                    onSuccess={(newToken, newUser) => {
+                        onLogin(newToken, newUser);
+                        setShowLoginModal(false);
                     }}
                 />
             </>
         );
     }
 
-    // Screen de Game Over
     if (gameOver) {
         return (
             <>
-                <div className="min-h-screen bg-background flex items-center justify-center p-4">
+                <div className="min-h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
                     <Card className="max-w-md w-full p-8 text-center space-y-6">
-                        <h1 className="text-4xl font-bold">Game Over! 💀</h1>
+                        <h1 className="text-4xl font-bold text-foreground">{t('gameOver.title')}</h1>
                         <p className="text-6xl font-bold text-primary">{score}</p>
                         <p className="text-muted-foreground">
-                            Dificuldade: {difficulty === 'easy' ? 'Fácil' : difficulty === 'medium' ? 'Médio' : 'Difícil'}
+                            {t('gameOver.difficulty')} {difficultyLabel(difficulty)}
                         </p>
-                        
-                        <div className="space-y-3">
-                            <Button 
-                                size="lg" 
-                                className="w-full"
-                                onClick={resetGame}
-                            >
-                                🔄 Jogar Novamente
-                            </Button>
-                            
-                            <Button 
-                                variant="outline" 
-                                className="w-full"
-                                onClick={async () => {
-                                    if (token) {
-                                        try {
-                                            await saveScore(score, difficulty, token);
-                                            alert('Pontuação guardada!');
-                                            navigate('/leaderboard');
-                                        } catch (error) {
-                                            alert('Erro ao guardar pontuação');
-                                        }
-                                    } else {
-                                        setShowLoginModal(true);
-                                    }
-                                }}
-                            >
-                                💾 Guardar Pontuação
-                            </Button>
 
-                            <Button 
-                                variant="ghost" 
-                                className="w-full"
-                                onClick={() => navigate('/')}
-                            >
-                                ← Voltar ao Início
+                        {token ? (
+                            <div className="text-sm">
+                                {scoreSaved === null && <p className="text-muted-foreground">{t('quiz.saving')}</p>}
+                                {scoreSaved === 'record' && <p className="text-success font-bold">{t('quiz.newRecord')}</p>}
+                                {scoreSaved === 'exists' && <p className="text-muted-foreground">{t('quiz.betterScore')}</p>}
+                                {scoreSaved === 'error' && <p className="text-destructive">{t('quiz.saveError')}</p>}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                                <button className="underline text-foreground" onClick={() => setShowLoginModal(true)}>
+                                    {t('quiz.registerLink')}
+                                </button>{' '}
+                                {t('quiz.registerPrompt')}
+                            </p>
+                        )}
+
+                        <div className="space-y-3">
+                            <Button size="lg" className="w-full" onClick={resetGame}>
+                                {t('gameOver.playAgain')}
+                            </Button>
+                            <Button variant="ghost" className="w-full text-foreground" onClick={() => navigate('/')}>
+                                {t('gameOver.backHome')}
                             </Button>
                         </div>
                     </Card>
                 </div>
 
-                <LoginModal 
+                <LoginModal
                     open={showLoginModal}
                     onClose={() => setShowLoginModal(false)}
                     onSuccess={async (newToken, newUser) => {
-                        setToken(newToken);
-                        setUser(newUser);
+                        onLogin(newToken, newUser);
                         try {
-                            await saveScore(score, difficulty, newToken);
-                            alert('Pontuação guardada!');
-                            navigate('/leaderboard');
-                        } catch (error) {
-                            alert('Erro ao guardar pontuação');
+                            const res = await saveScore(score, difficulty, newToken);
+                            if (res.isNewRecord) setScoreSaved('record');
+                            else setScoreSaved('exists');
+                        } catch {
+                            setScoreSaved('error');
                         }
                     }}
                 />
@@ -324,17 +289,16 @@ function Quiz() {
         );
     }
 
-    if (loading) return <div className="p-8 text-center">A carregar...</div>;
-    if (!question) return <div className="p-8 text-center">Erro ao carregar pergunta</div>;
+    if (loading) return <div className="p-8 text-center text-foreground">{t('common.loading')}</div>;
+    if (!question) return <div className="p-8 text-center text-foreground">{t('common.error')}</div>;
 
     return (
         <>
-            <div className="min-h-screen bg-background p-8">
+            <div className="min-h-[calc(100vh-4rem)] bg-background p-8">
                 <div className="max-w-2xl mx-auto space-y-6">
-                    {/* Header com vidas, timer, score e ajudas */}
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-4">
-                            <h1 className="text-2xl font-bold">Quiz</h1>
+                            <h1 className="text-2xl font-bold text-foreground">{t('quiz.title')}</h1>
                             <div className="flex gap-1">
                                 {[...Array(3)].map((_, i) => (
                                     <span key={i} className="text-2xl">
@@ -345,7 +309,6 @@ function Quiz() {
                         </div>
                         
                         <div className="flex items-center gap-4">
-                            {/* Botão de ajuda */}
                             <button
                                 onClick={useHelp}
                                 disabled={helpsLeft === 0}
@@ -364,17 +327,16 @@ function Quiz() {
                                 )}
                             </button>
 
-                            <div className="text-3xl font-bold">
-                                ⏱️ {timeLeft}s
+                            <div className="text-3xl font-bold text-foreground">
+                                ⏱️ {t('quiz.time', { seconds: timeLeft })}
                             </div>
-                            <div className="text-xl font-bold">
+                            <div className="text-xl font-bold text-foreground">
                                 ⭐ {score}
                             </div>
                         </div>
                     </div>
 
                     <Card className="p-6">
-                        {/* Container da foto com overlay de ajuda */}
                         <div className="relative w-64 h-64 mx-auto mb-6">
                             <img 
                                 src={question.photo} 
@@ -382,7 +344,6 @@ function Quiz() {
                                 className="w-full h-full object-cover rounded-lg"
                             />
                             
-                            {/* Overlay de ajuda */}
                             {activeHelp === 'nationality' && (
                                 <div className="absolute top-2 right-2 rounded-lg shadow-lg flex items-center gap-2">
                                     <img 
@@ -404,7 +365,6 @@ function Quiz() {
                             )}
                         </div>
 
-                        {/* Opções de resposta */}
                         <div className="space-y-2">
                             {question.options.map((option) => (
                                 <Button
@@ -418,7 +378,7 @@ function Quiz() {
                                                 : 'destructive'
                                             : 'outline'
                                     }
-                                    className="w-full"
+                                    className="w-full text-foreground"
                                 >
                                     {option}
                                 </Button>
@@ -426,13 +386,9 @@ function Quiz() {
                         </div>
                     </Card>
 
-                    {/* Botões de navegação */}
-                    <div className="flex justify-between items-center">
-                        <Button variant="ghost" onClick={() => navigate('/')}>
-                            ← Voltar
-                        </Button>
-                        <Button variant="outline" onClick={() => navigate('/leaderboard')}>
-                            🏆 Leaderboard
+                    <div className="flex justify-center">
+                        <Button variant="destructive" onClick={() => { resetGame(); navigate('/'); }}>
+                            {t('quiz.abandon')}
                         </Button>
                     </div>
                 </div>
@@ -441,19 +397,11 @@ function Quiz() {
             <LoginModal 
                 open={showLoginModal}
                 onClose={() => setShowLoginModal(false)}
-                onSuccess={async (newToken, newUser) => {
-                    setToken(newToken);
-                    setUser(newUser);
-                    try {
-                        await saveScore(score, difficulty, newToken);
-                        alert('Pontuação guardada!');
-                        navigate('/leaderboard');
-                    } catch (error) {
-                        alert('Erro ao guardar pontuação');
-                    }
+                onSuccess={(newToken, newUser) => {
+                    onLogin(newToken, newUser);
+                    setShowLoginModal(false);
                 }}
             />
-            
         </>
     );
 }

@@ -3,10 +3,9 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 
-// middleware para verificar o token JWT
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // formato: "Bearer TOKEN"
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
         return res.status(401).json({ error: 'Token não fornecido' });
@@ -16,18 +15,16 @@ const authenticateToken = (req, res, next) => {
         if (err) {
             return res.status(403).json({ error: 'Token inválido' });
         }
-        req.user = user; // adiciona info do user ao request
+        req.user = user;
         next();
     });
 };
 
-// POST /api/leaderboard - guardar pontuação (requer autenticação)
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const { score, difficulty } = req.body;
         const user_id = req.user.id;
 
-        // validar inputs
         if (!score || !difficulty) {
             return res.status(400).json({ error: 'Score e dificuldade são obrigatórios' });
         }
@@ -37,13 +34,23 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'Dificuldade inválida' });
         }
 
-        // inserir pontuação na BD
+        // verificar se já existe score melhor
+        const [existing] = await db.execute(
+            'SELECT score FROM scores WHERE user_id = ? AND difficulty = ? ORDER BY score DESC LIMIT 1',
+            [user_id, difficulty]
+        );
+
+        if (existing.length > 0 && existing[0].score >= score) {
+            return res.json({ saved: false, isNewRecord: false });
+        }
+
+        // inserir só se for novo record
         await db.execute(
             'INSERT INTO scores (user_id, score, difficulty) VALUES (?, ?, ?)',
             [user_id, score, difficulty]
         );
 
-        res.status(201).json({ message: 'Pontuação guardada com sucesso' });
+        res.status(201).json({ saved: true, isNewRecord: true });
 
     } catch (error) {
         console.error(error);
@@ -51,12 +58,10 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
-// GET /api/leaderboard?difficulty=easy - ver top pontuações
 router.get('/', async (req, res) => {
     try {
         const { difficulty } = req.query;
 
-        // se não especificar dificuldade, mostra todas
         let query = `
             SELECT 
                 users.username,

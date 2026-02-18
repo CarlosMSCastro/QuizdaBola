@@ -16,18 +16,24 @@
     "easy": "Fácil",
     "medium": "Médio",
     "hard": "Difícil",
-    "start": "Começar ▶️"
+    "start": "Começar ▶️",
+    "abandon": "Abandonar Jogo",
+    "saving": "A guardar...",
+    "newRecord": "🏆 Novo record pessoal!",
+    "betterScore": "Já tens um score melhor nesta dificuldade.",
+    "saveError": "Erro ao guardar pontuação.",
+    "registerPrompt": "para entrar no leaderboard",
+    "registerLink": "Registe-se"
   },
   "gameOver": {
     "title": "Game Over! 💀",
     "difficulty": "Dificuldade:",
     "playAgain": "🔄 Jogar Novamente",
-    "saveScore": "💾 Guardar Pontuação",
     "backHome": "← Voltar ao Início"
   },
   "leaderboard": {
     "title": "🏆 Leaderboard",
-    "back": "← Voltar",
+    "back": "Voltar",
     "empty": "Ainda não há pontuações nesta dificuldade."
   },
   "auth": {
@@ -40,6 +46,12 @@
     "switchToRegister": "Criar conta nova",
     "switchToLogin": "Já tenho conta",
     "processing": "A processar..."
+  },
+  "navbar": {
+    "darkMode": "Modo escuro",
+    "lightMode": "Modo claro",
+    "logout": "Logout",
+    "login": "Login"
   },
   "common": {
     "loading": "A carregar...",
