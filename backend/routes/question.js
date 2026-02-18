@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         // preparar exclusão de IDs
         const excludeIds = exclude ? exclude.split(',').map(id => parseInt(id)) : [];
         
-        let query = 'SELECT * FROM players WHERE difficulty = ?';
+        let query = 'SELECT * FROM players WHERE difficulty = ? AND is_photo_placeholder = 0';
         const params = [difficulty];
 
         if (excludeIds.length > 0) {
@@ -36,8 +36,8 @@ router.get('/', async (req, res) => {
 
         const correctPlayer = players[0];
 
-        // buscar 3 opções erradas (também excluindo IDs já usados)
-        let wrongQuery = 'SELECT name FROM players WHERE id != ? AND difficulty = ?';
+        // buscar 3 opções erradas (também excluindo IDs já usados e placeholders)
+        let wrongQuery = 'SELECT name FROM players WHERE id != ? AND difficulty = ? AND is_photo_placeholder = 0';
         const wrongParams = [correctPlayer.id, difficulty];
 
         if (excludeIds.length > 0) {

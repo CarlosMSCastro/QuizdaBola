@@ -1,0 +1,48 @@
+{
+  "landing": {
+    "title": "Quiz da Bola",
+    "subtitle": "Consegues identificar os jogadores da Primeira Liga?",
+    "playNow": "Jogar Agora",
+    "leaderboard": "Ver Leaderboard"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "lives": "Vidas",
+    "score": "Pontuação",
+    "time": "{{seconds}}s",
+    "helps": "Ajudas",
+    "back": "← Voltar",
+    "selectDifficulty": "Escolhe a dificuldade:",
+    "easy": "Fácil",
+    "medium": "Médio",
+    "hard": "Difícil",
+    "start": "Começar ▶️"
+  },
+  "gameOver": {
+    "title": "Game Over! 💀",
+    "difficulty": "Dificuldade:",
+    "playAgain": "🔄 Jogar Novamente",
+    "saveScore": "💾 Guardar Pontuação",
+    "backHome": "← Voltar ao Início"
+  },
+  "leaderboard": {
+    "title": "🏆 Leaderboard",
+    "back": "← Voltar",
+    "empty": "Ainda não há pontuações nesta dificuldade."
+  },
+  "auth": {
+    "login": "🔐 Login",
+    "register": "📝 Registo",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Entrar",
+    "registerButton": "Registar",
+    "switchToRegister": "Criar conta nova",
+    "switchToLogin": "Já tenho conta",
+    "processing": "A processar..."
+  },
+  "common": {
+    "loading": "A carregar...",
+    "error": "Erro"
+  }
+}

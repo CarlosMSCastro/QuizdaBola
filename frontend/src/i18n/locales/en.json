@@ -1,0 +1,48 @@
+{
+  "landing": {
+    "title": "Football Quiz",
+    "subtitle": "Can you identify Primeira Liga players?",
+    "playNow": "Play Now",
+    "leaderboard": "View Leaderboard"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "lives": "Lives",
+    "score": "Score",
+    "time": "{{seconds}}s",
+    "helps": "Helps",
+    "back": "← Back",
+    "selectDifficulty": "Choose difficulty:",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "start": "Start ▶️"
+  },
+  "gameOver": {
+    "title": "Game Over! 💀",
+    "difficulty": "Difficulty:",
+    "playAgain": "🔄 Play Again",
+    "saveScore": "💾 Save Score",
+    "backHome": "← Back to Home"
+  },
+  "leaderboard": {
+    "title": "🏆 Leaderboard",
+    "back": "← Back",
+    "empty": "No scores yet for this difficulty."
+  },
+  "auth": {
+    "login": "🔐 Login",
+    "register": "📝 Register",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "switchToRegister": "Create new account",
+    "switchToLogin": "Already have an account",
+    "processing": "Processing..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error"
+  }
+}

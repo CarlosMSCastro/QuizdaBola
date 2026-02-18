@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 16-Fev-2026 às 06:58
+-- Tempo de geração: 18-Fev-2026 às 19:29
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -949,6 +949,49 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (518668, 'Naziru Shuabiu', 'Naziru', 'Shuabiu', 21, '2004-02-10', NULL, 'Nigeria', 'Nigeria', '184 cm', '75 kg', 0, 'https://media.api-sports.io/football/players/518668.png', 226, 'Rio Ave', 'https://media.api-sports.io/football/teams/226.png', 2024, 'Attacker', 1, 0, 0, NULL, 0, 1, 0, 1, NULL, NULL, 0, 0, 0, NULL, 2, NULL, NULL, NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard'),
 (522181, 'Rodrigo Rodrigues', 'Rodrigo', 'Prata Deusdado Rodrigues', 18, '2007-12-06', 'Lisboa', 'Portugal', 'Portugal', '175', NULL, 0, 'https://media.api-sports.io/football/players/522181.png', 762, 'GIL Vicente', 'https://media.api-sports.io/football/teams/762.png', 2024, 'Midfielder', 1, 1, 9, 6.700000, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, 5, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, 0, 'hard');
 
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `scores`
+--
+
+CREATE TABLE `scores` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `score` int(11) NOT NULL,
+  `difficulty` enum('easy','medium','hard') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Extraindo dados da tabela `scores`
+--
+
+INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`) VALUES
+(2, 2, 2, 'easy', '2026-02-18 03:59:28'),
+(3, 2, 5, 'easy', '2026-02-18 04:56:25');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Extraindo dados da tabela `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
+(1, 'carlos', '$2b$10$ffPxQ19oom3nRq8YI9xMy.7Pm42lwKoZA3LDmsfQHUxPr/mC8dwUy', '2026-02-18 02:21:31'),
+(2, 'adminteste', '$2b$10$WfksijtebqJOkfsAI460L.kgHTh7ViW1OjnwHScuQBBHo9yRgnWay', '2026-02-18 03:58:04');
+
 --
 -- Índices para tabelas despejadas
 --
@@ -958,6 +1001,46 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 --
 ALTER TABLE `players`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Índices para tabela `scores`
+--
+ALTER TABLE `scores`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Índices para tabela `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- AUTO_INCREMENT de tabelas despejadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `scores`
+--
+ALTER TABLE `scores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de tabela `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Restrições para despejos de tabelas
+--
+
+--
+-- Limitadores para a tabela `scores`
+--
+ALTER TABLE `scores`
+  ADD CONSTRAINT `scores_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

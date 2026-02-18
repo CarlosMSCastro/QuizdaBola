@@ -3,17 +3,18 @@
 Quiz interativo de jogadores da Primeira Liga 2024. Reconhece jogadores por foto, compara estatísticas, e testa conhecimento de resultados.
 
 ## Stack
-- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6
+- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6 + react-i18next
 - **Backend:** Node.js + Express + JWT + bcrypt
-- **Base de dados:** MySQL (855 jogadores scraped via API-Football)
+- **Base de dados:** MySQL (788 jogadores válidos, 67 placeholders filtrados)
 
 ## Estrutura
 ```
 frontend/
   src/
     pages/           → Landing, Quiz, Leaderboard
-    components/      → LoginModal, shadcn/ui components
+    components/      → LoginModal, LanguageSwitcher, shadcn/ui
     services/api.js  → Axios API calls
+    i18n/            → config.js + locales (pt.json, en.json)
 backend/
   routes/            → question, auth, leaderboard
   config/db.js       → MySQL pool
@@ -31,13 +32,18 @@ backend/
 - **Navegação:** Landing → Quiz → Leaderboard (React Router)
 - **Backend:** Todos endpoints testados (question, auth, leaderboard)
 - **Base de dados:** 855 jogadores + users + scores
+- **Placeholder Filter:** 67 fotos genéricas identificadas via MD5 e filtradas do jogo
+- **Bandeiras:** Integração com `i18n-iso-countries` — cobertura global com fallback 🌍
+- **i18n Setup:** react-i18next configurado com PT/EN (aplicação nos componentes pendente)
 
-### 🔄 Em Progresso
-- [ ] **FASE 1 — Fundações (3-4h):**
-  - [x] Theme Variables setup — CSS com branding colors
-  - [ ] Refactor componentes atuais (cores hardcoded → variáveis)
-  - [ ] i18n setup (react-i18next PT/EN)
-  - [ ] Utility classes comuns
+### 🔄 Em Progresso — FASE 1 (Fundações)
+- [x] Theme Variables — CSS com paleta neutra (azul/laranja/dourado), light + dark preparados
+- [x] i18n setup — react-i18next com traduções PT/EN
+- [x] Bandeiras globais — substituído mapa manual por `i18n-iso-countries`
+- [ ] Refactor componentes — cores hardcoded → variáveis CSS
+- [ ] Aplicar i18n — strings hardcoded → `t('key')` nos componentes
+- [ ] Navbar responsiva — desktop + hamburger mobile, com LanguageSwitcher + DarkModeToggle
+- [ ] Auto-save scores — guardar automaticamente quando token existe
 
 ### ⏳ Próximos Passos
 
@@ -46,13 +52,11 @@ backend/
   - [ ] Backend: endpoint `/api/stats-battle`
   - [ ] Frontend: `StatsBattle.jsx` (2 jogadores, comparar stats)
   - [ ] Mecânica: 8s timer, 3 vidas, 2 ajudas
-  - [ ] Sem dificuldade (geral)
   
 - [ ] **Trivia Resultados (4h):**
   - [ ] Scrape fixtures da API-Football
   - [ ] Backend: endpoint de resultados
   - [ ] Frontend: `Trivia.jsx`
-  - [ ] Perguntas sobre jogos/equipas
   
 - [ ] **Leaderboard por Modo (2h):**
   - [ ] Alterar BD: adicionar campo `game_mode` em `scores`
@@ -60,41 +64,27 @@ backend/
   
 - [ ] **Perfil do User (2h):**
   - [ ] Página `/profile` com stats agregadas
-  - [ ] Clube mais acertado/falhado
-  - [ ] Jogador favorito
-  - [ ] Win rate, streak máximo
+  - [ ] Clube mais acertado/falhado, win rate, streak máximo
 
 #### **FASE 3 — Expansão (6-8h):**
-- [ ] **Champions League 2024:**
-  - [ ] Scrape ~855 jogadores Champions
-  - [ ] Adicionar à BD (campo `competition`)
-  - [ ] Selector competição (híbrido: dropdown desktop, tabs mobile)
-  - [ ] Mesmos 3 modos para Champions
-  - [ ] Leaderboards por competição
+- [ ] Champions League 2024 (scrape + integração)
+- [ ] Selector de competição
+- [ ] Leaderboards por competição
 
 #### **FASE 4 — Branding & Polish (6-8h):**
-- [ ] Definir identidade visual (logo, paleta final, tipografia)
-- [ ] Trocar theme variables (cores finais)
+- [ ] Identidade visual final (logo, paleta, tipografia)
 - [ ] Animações (hover, transitions, confetti)
-- [ ] Loading states profissionais
-- [ ] Empty/error states
+- [ ] Loading/error/empty states
 - [ ] Responsividade desktop completa
-- [ ] Acessibilidade básica (aria-labels, keyboard nav)
-- [ ] Lazy loading de componentes
+- [ ] Acessibilidade básica + lazy loading
 
 #### **FASE 5 — Deploy (2-3h):**
 - [ ] Railway: backend + MySQL cloud
 - [ ] Vercel: frontend
-- [ ] Variáveis de ambiente produção
-- [ ] CORS configurado
-- [ ] Testes smoke (jogo completo funcionando)
-- [ ] DNS + domínio custom (opcional)
+- [ ] DNS + domínio (quizdabola.com)
 
 #### **FASE 6 — Multiplayer 1v1 (20h - futuro):**
-- [ ] Socket.io (backend + frontend)
-- [ ] Sistema de rooms/matchmaking
-- [ ] Sincronização tempo real
-- [ ] UI: lobby + battle
+- [ ] Socket.io, rooms, matchmaking
 - [ ] BD: tabela `matches` + `pvp_stats`
 
 ## Modos de Jogo Planeados
@@ -105,13 +95,12 @@ backend/
 
 ## Tecnologias de Suporte
 
-- **Bandeiras:** flagcdn.com API
+- **Bandeiras:** `i18n-iso-countries` + flagcdn.com API
 - **Traduções:** react-i18next (PT/EN)
+- **Icons:** Lucide React
 - **Animações:** Tailwind transitions + tailwindcss-animate
-- **Icons:** Lucide React (quando necessário)
 
 ## Deploy Planeado
 - **Frontend:** Vercel
 - **Backend + MySQL:** Railway
 - **Domínio:** quizdabola.com (futuro)
-

@@ -5,6 +5,9 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import LoginModal from '../components/LoginModal';
+import countries from 'i18n-iso-countries';
+import en from 'i18n-iso-countries/langs/en.json';
+countries.registerLocale(en);
 
 function Quiz() {
     const navigate = useNavigate();
@@ -154,57 +157,27 @@ function Quiz() {
     };
 
     // Converter código do país para emoji de bandeira
-    const getFlagEmoji = (countryName) => {
-        const countryMap = {
-            'Portugal': '🇵🇹',
-            'Brazil': '🇧🇷',
-            'Spain': '🇪🇸',
-            'France': '🇫🇷',
-            'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-            'Germany': '🇩🇪',
-            'Italy': '🇮🇹',
-            'Netherlands': '🇳🇱',
-            'Argentina': '🇦🇷',
-            'Uruguay': '🇺🇾',
-            'Colombia': '🇨🇴',
-            'Mexico': '🇲🇽',
-            'Sweden': '🇸🇪',
-            'Denmark': '🇩🇰',
-            'Norway': '🇳🇴',
-            'Belgium': '🇧🇪',
-            'Croatia': '🇭🇷',
-            'Serbia': '🇷🇸',
-            'Turkey': '🇹🇷',
-            'Morocco': '🇲🇦',
-            'Senegal': '🇸🇳',
-            'Nigeria': '🇳🇬',
-            'Ghana': '🇬🇭',
-            'Cameroon': '🇨🇲',
-            'Japan': '🇯🇵',
-            'Korea Republic': '🇰🇷',
-            'Iran': '🇮🇷',
-            'Australia': '🇦🇺',
-            'USA': '🇺🇸',
-            'Canada': '🇨🇦',
-            'Chile': '🇨🇱',
-            'Paraguay': '🇵🇾',
-            'Poland': '🇵🇱',
-            'Switzerland': '🇨🇭',
-            'Austria': '🇦🇹'
-        };
-        
-        console.log('Country:', countryName, 'Flag:', countryMap[countryName]); // debug
-        return countryMap[countryName] || '🌍';
-    };
     const getCountryCode = (countryName) => {
-        const codes = {
-            'Portugal': 'pt', 'Brazil': 'br', 'Spain': 'es', 'France': 'fr',
-            'England': 'gb-eng', 'Germany': 'de', 'Italy': 'it', 'Netherlands': 'nl',
-            'Argentina': 'ar', 'Uruguay': 'uy', 'Czechia': 'cz', 'Poland': 'pl',
-            'USA': 'us', 'Mexico': 'mx', 'Colombia': 'co', 'Belgium': 'be'
-            // adiciona mais conforme necessário
-        };
-        return codes[countryName] || 'un'; // 'un' = ONU (fallback)
+    // Casos especiais que a lib não resolve
+    const exceptions = {
+        'England': 'gb-eng',
+        'USA': 'us',
+        'Korea Republic': 'kr',
+    };
+    if (exceptions[countryName]) return exceptions[countryName];
+    
+    const code = countries.getAlpha2Code(countryName, 'en');
+    return code ? code.toLowerCase() : 'un';
+    };
+
+    const getFlagEmoji = (countryName) => {
+    const code = getCountryCode(countryName);
+    if (code === 'un') return '🌍';
+    if (code === 'gb-eng') return '🏴󠁧󠁢󠁥󠁬󠁳󠁿'; // England especial
+    // Converter código ISO para emoji
+    return code.toUpperCase().replace(/./g, c =>
+        String.fromCodePoint(c.charCodeAt(0) + 127397)
+    );
     };
 
     // Screen de escolha de dificuldade
