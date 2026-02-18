@@ -2,14 +2,17 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api';
 
-// buscar pergunta aleatória
-export const getQuestion = async (difficulty) => {
+
+// buscar pergunta aleatória (com exclusão de IDs)
+export const getQuestion = async (difficulty, excludeIds = []) => {
     const response = await axios.get(`${API_URL}/question`, {
-        params: { difficulty }
+        params: { 
+            difficulty,
+            exclude: excludeIds.join(',')
+        }
     });
     return response.data;
 };
-
 // registar utilizador
 export const register = async (username, password) => {
     const response = await axios.post(`${API_URL}/auth/register`, {

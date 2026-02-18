@@ -1,34 +1,45 @@
+
 # Liga Portugal Quiz
 
-Quiz de fotos de jogadores da Primeira Liga 2024. Aparece uma foto, escolhes o nome certo entre 4 opções.
+Quiz interativo de jogadores da Primeira Liga 2024. Dois modos de jogo: reconhecer jogadores por foto ou comparar estatísticas.
 
 ## Stack
-- **Frontend:** React + Vite + Tailwind + shadcn/ui + React Router
-- **Backend:** Node.js + Express
-- **Base de dados:** MySQL
-- **Dados:** 855 jogadores da API-Football
+- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6
+- **Backend:** Node.js + Express + JWT + bcrypt
+- **Base de dados:** MySQL (855 jogadores scraped)
+- **APIs:** API-Football (dados) + flagcdn.com (bandeiras)
 
 ## Estrutura
 ```
 frontend/
   src/
-    pages/         → Landing, Quiz, Leaderboard
-    components/ui/ → shadcn Button, Card
-    services/      → api.js (chamadas ao backend)
+    pages/           → Landing, Quiz, Leaderboard
+    components/      → LoginModal, shadcn/ui (Button, Card, Badge, Dialog)
+    services/api.js  → Axios calls ao backend
 backend/
-  routes/          → question.js, auth.js, leaderboard.js
-  config/db.js     → ligação MySQL
-  server.js        → servidor Express
-  scrape.js        → recolha de dados (já executado)
+  routes/            → question.js, auth.js, leaderboard.js
+  config/db.js       → MySQL pool
+  server.js          → Express server (porta 3000)
+  scrape.js          → Script de dados (executado)
 ```
 
-## Estado atual
-- ✅ Backend completo (autenticação + endpoints testados)
-- ✅ Frontend com navegação (Landing → Quiz → Leaderboard)
-- ✅ Quiz funcional com dificuldades
-- ⏳ Sistema de login (frontend por fazer)
-- ⏳ Guardar pontuações (integração por fazer)
+## Estado Atual
 
-## Deploy
+### ✅ **Modo Clássico Completo:**
+- Timer 8s por pergunta, 3 vidas
+- Sistema de ajudas (2x): revela nacionalidade ou clube (+5s bonus)
+- Sem repetir jogadores no mesmo jogo
+- Dificuldades: Fácil/Médio/Difícil
+- Login/registo com JWT
+- Guardar pontuações no leaderboard
+- Navegação multi-page funcional
+
+### ⏳ **Por Implementar:**
+- **Stats Battle:** modo de comparação de estatísticas (2 jogadores lado a lado)
+- Leaderboard por modo de jogo (classic vs stats_battle)
+- Branding & polish visual (cores, logo, animações)
+- Deploy (Vercel + Railway)
+
+## Deploy Planeado
 - Frontend: Vercel
 - Backend + MySQL: Railway
