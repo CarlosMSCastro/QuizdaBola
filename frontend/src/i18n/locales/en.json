@@ -3,7 +3,16 @@
     "title": "Football Quiz",
     "subtitle": "Can you identify Primeira Liga players?",
     "playNow": "Play Now",
-    "leaderboard": "View Leaderboard"
+    "leaderboard": "View Leaderboard",
+    "chooseMode": "Choose your game mode",
+    "classic": "Classic",
+    "classicDesc": "Identify players by photo",
+    "stats": "Stats Battle",
+    "statsDesc": "Compare player statistics",
+    "results": "Results",
+    "resultsDesc": "Guess results and goals",
+    "comingSoon": "Coming Soon",
+    "competition": "Liga Portugal Betclic 2024"
   },
   "quiz": {
     "title": "Quiz",

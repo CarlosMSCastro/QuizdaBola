@@ -3,7 +3,16 @@
     "title": "Quiz da Bola",
     "subtitle": "Consegues identificar os jogadores da Primeira Liga?",
     "playNow": "Jogar Agora",
-    "leaderboard": "Ver Leaderboard"
+    "leaderboard": "Ver Leaderboard",
+    "chooseMode": "Escolhe o teu modo de jogo",
+    "classic": "Clássico",
+    "classicDesc": "Identifica jogadores pela foto",
+    "stats": "Stats Battle",
+    "statsDesc": "Compara estatísticas entre jogadores",
+    "results": "Resultados",
+    "resultsDesc": "Adivinha resultados e golos",
+    "comingSoon": "Em Breve",
+    "competition": "Liga Portugal Betclic 2024"
   },
   "quiz": {
     "title": "Quiz",

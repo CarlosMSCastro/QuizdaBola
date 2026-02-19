@@ -2,6 +2,13 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api';
 
+// buscar pergunta para o jogo de stats
+export const getStatsQuestion = async (excludeIds = []) => {
+    const res = await axios.get(`${API_URL}/stats-quiz`, {
+        params: { exclude: excludeIds.join(',') }
+    });
+    return res.data;
+};
 
 // buscar pergunta aleatória (com exclusão de IDs)
 export const getQuestion = async (difficulty, excludeIds = []) => {

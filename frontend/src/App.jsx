@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Quiz from './pages/Quiz';
 import Leaderboard from './pages/Leaderboard';
+import StatsQuiz from './pages/StatsQuiz';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
       </Routes>
     </BrowserRouter>
   );

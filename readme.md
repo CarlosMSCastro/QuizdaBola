@@ -1,6 +1,6 @@
-# Liga Portugal Quiz
+# QuizDaBola
 
-Quiz interativo de jogadores da Primeira Liga 2024. Reconhece jogadores por foto, compara estatísticas, e testa conhecimento de resultados.
+Quiz interativo de futebol com múltiplos modos de jogo. Identifica jogadores por foto, testa conhecimento de estatísticas e muito mais.
 
 ## Stack
 - **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6 + react-i18next
@@ -11,12 +11,12 @@ Quiz interativo de jogadores da Primeira Liga 2024. Reconhece jogadores por foto
 ```
 frontend/
   src/
-    pages/           → Landing, Quiz, Leaderboard
+    pages/           → Landing, Quiz, StatsQuiz, Leaderboard
     components/      → Navbar, LoginModal, shadcn/ui
     services/api.js  → Axios API calls
     i18n/            → config.js + locales (pt.json, en.json)
 backend/
-  routes/            → question, auth, leaderboard
+  routes/            → question, auth, leaderboard, stats-quiz
   config/db.js       → MySQL pool
   server.js          → Express server
 ```
@@ -24,78 +24,65 @@ backend/
 ## Estado Atual
 
 ### ✅ Fase 1 — Completa
-- **Modo Clássico funcional:**
-  - Timer 8s, 3 vidas, sem repetições
-  - Sistema de ajudas (2x): nacionalidade/clube (+5s bonus)
-  - Dificuldades: Fácil/Médio/Difícil
+- **Modo Clássico funcional:** Timer 8s, 3 vidas, 2 ajudas (nacionalidade/clube +5s), sem repetições, dificuldades Fácil/Médio/Difícil
 - **Autenticação:** Login/registo com JWT, tokens em localStorage
 - **Auto-save scores:** Guarda automaticamente se for novo record pessoal
-- **Navegação:** Landing → Quiz → Leaderboard (React Router)
-- **Backend:** Todos endpoints testados (question, auth, leaderboard)
+- **Leaderboard:** Top scores por dificuldade
 - **Base de dados:** 855 jogadores + users + scores
 - **Placeholder Filter:** 67 fotos genéricas identificadas via MD5 e filtradas do jogo
-- **Bandeiras:** Integração com `i18n-iso-countries` — cobertura global com fallback 🌍
-- **Navbar responsiva:** Desktop + hamburger mobile, com DarkModeToggle + LanguageToggle
-- **Dark Mode:** Toggle funcional, preferência guardada em localStorage
-- **i18n:** react-i18next com PT/EN aplicado em todos os componentes
+- **Bandeiras:** `i18n-iso-countries` com cobertura global e fallback 🌍
+- **Navbar responsiva:** Desktop + hamburger mobile, glassmorphism, sticky
+- **Dark Mode:** Toggle funcional, azul-acinzentado (não preto puro), preferência persistida
+- **i18n:** PT/EN aplicado em todos os componentes, language toggle com bandeiras reais
 - **Theme Variables:** Paleta neutra (azul/laranja/dourado), light + dark mode
+- **Landing reestruturada:** Carrossel swiper mobile, 3 cards de modos de jogo
+
+### ✅ Fase 2 (parcial) — Stats Quiz
+- **3 formatos de pergunta:**
+  - **F1** — Adivinhar valor numérico (4 opções plausíveis ±40%)
+  - **F2** — Comparar 2 jogadores (diferença máxima 50%), revela valores após resposta
+  - **F3** — True/False sobre threshold de stat
+- **Stats por posição** com valores mínimos definidos
+- **Sem ajudas** neste modo
+- **Auto-save** com detecção de record pessoal
 
 ### ⏳ Próximos Passos
 
-#### **FASE 2 — Features (10-12h):**
-- [ ] **Stats Battle (4h):**
-  - [ ] Backend: endpoint `/api/stats-battle`
-  - [ ] Frontend: `StatsBattle.jsx` (2 jogadores, comparar stats)
-  - [ ] Mecânica: 8s timer, 3 vidas, 2 ajudas
-  
-- [ ] **Trivia Resultados (4h):**
-  - [ ] Scrape fixtures da API-Football
-  - [ ] Backend: endpoint de resultados
-  - [ ] Frontend: `Trivia.jsx`
-  
-- [ ] **Leaderboard por Modo (2h):**
-  - [ ] Alterar BD: adicionar campo `game_mode` em `scores`
-  - [ ] Filtros: Clássico (easy/med/hard) | Stats Battle | Trivia
-  
-- [ ] **Perfil do User (2h):**
-  - [ ] Página `/profile` com stats agregadas
-  - [ ] Clube mais acertado/falhado, win rate, streak máximo
+#### **FASE 2 — Continuar:**
+- [ ] **Modo Resultados** — perguntas sobre jogos, golos, minutos (requer scrape de fixtures)
+- [ ] **Leaderboard por modo** — adicionar `game_mode` à tabela `scores`
+- [ ] **Perfil do User** — página `/profile` com stats agregadas
 
-#### **FASE 3 — Expansão (6-8h):**
-- [ ] Champions League 2024 (scrape + integração)
-- [ ] Selector de competição
-- [ ] Leaderboards por competição
-
-#### **FASE 4 — Branding & Polish (6-8h):**
-- [ ] Identidade visual final (logo, paleta, tipografia)
-- [ ] Animações (hover, transitions, confetti)
+#### **FASE 4 — Branding & Polish:**
+- [ ] Identidade visual final (logo QuizDaBola, paleta, tipografia)
+- [ ] Cores da Liga Portugal como accent contextual
+- [ ] Animações (hover, confetti, transitions)
 - [ ] Loading/error/empty states
-- [ ] Responsividade desktop completa
 - [ ] Acessibilidade básica + lazy loading
 
-#### **FASE 5 — Deploy (2-3h):**
+#### **FASE 5 — Deploy:**
 - [ ] Railway: backend + MySQL cloud
 - [ ] Vercel: frontend
-- [ ] DNS + domínio (quizdabola.com)
+- [ ] Domínio: quizdabola.com
 
-#### **FASE 6 — Multiplayer 1v1 (20h - futuro):**
+#### **FASE 6 — Multiplayer 1v1 (futuro):**
 - [ ] Socket.io, rooms, matchmaking
 - [ ] BD: tabela `matches` + `pvp_stats`
 
-## Modos de Jogo Planeados
+## Modos de Jogo
 
-1. **🎯 Clássico** — Reconhecer jogador pela foto (atual)
-2. **📊 Stats Battle** — Comparar estatísticas entre 2 jogadores
-3. **🏟️ Trivia** — Perguntas sobre resultados e factos
+1. **🎯 Clássico** — Reconhecer jogador pela foto ✅
+2. **📊 Stats Quiz** — Perguntas sobre estatísticas (F1/F2/F3) ✅
+3. **🏟️ Resultados** — Perguntas sobre jogos e golos ⏳
 
 ## Tecnologias de Suporte
 
-- **Bandeiras:** `i18n-iso-countries` + flagcdn.com API
+- **Bandeiras:** `i18n-iso-countries` + flagcdn.com
 - **Traduções:** react-i18next (PT/EN)
-- **Icons:** Lucide React
+- **Swiper:** Carrossel mobile na Landing
 - **Animações:** Tailwind transitions + tailwindcss-animate
 
 ## Deploy Planeado
 - **Frontend:** Vercel
 - **Backend + MySQL:** Railway
-- **Domínio:** quizdabola.com (futuro)
+- **Domínio:** quizdabola.com
