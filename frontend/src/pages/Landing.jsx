@@ -1,34 +1,30 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
+import { useState } from 'react';
 import 'swiper/css';
-import 'swiper/css/pagination';
 
 const modes = [
     {
         key: 'classic',
-        icon: '🎯',
+        icon: null,
+        image: '/images/classic.png',
         path: '/quiz',
         available: true,
-        gradient: 'from-blue-500/10 to-primary/5',
-        borderHover: 'hover:border-primary hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]',
     },
     {
         key: 'stats',
-        icon: '📊',
+        icon: null,
+        image: '/images/stats.png',
         path: '/stats-quiz',
         available: true,
-        gradient: 'from-orange-500/10 to-secondary/5',
-        borderHover: '',
     },
     {
         key: 'results',
         icon: '🏟️',
+        image: null,
         path: '/results',
         available: false,
-        gradient: 'from-yellow-500/10 to-accent/5',
-        borderHover: '',
     },
 ];
 
@@ -39,37 +35,39 @@ function ModeCard({ mode, onClick }) {
         <div
             onClick={mode.available ? onClick : undefined}
             className={`
-                relative rounded-2xl border p-8 text-center
-                bg-gradient-to-br ${mode.gradient} bg-card
-                h-72 flex flex-col items-center justify-center gap-4
+                relative p-8 text-center group
+                h-96 flex flex-col items-center justify-center gap-4
                 transition-all duration-300
                 ${mode.available
-                    ? `cursor-pointer ${mode.borderHover} hover:-translate-y-1 active:scale-95`
-                    : 'opacity-50 cursor-not-allowed'
+                    ? 'cursor-pointer hover:-translate-y-2 active:scale-95'
+                    : 'opacity-40 cursor-not-allowed'
                 }
             `}
         >
             {!mode.available && (
-                <span className="absolute top-3 right-3 text-xs font-bold bg-muted text-muted-foreground px-2 py-1 rounded-full tracking-wide uppercase">
+                <span className="absolute top-3 right-3 text-xs font-bold bg-white/20 text-white px-2 py-1 rounded-full tracking-wide uppercase">
                     {t('landing.comingSoon')}
                 </span>
             )}
 
-            <span className="text-7xl drop-shadow-sm">{mode.icon}</span>
+            {mode.image
+                ? <img src={mode.image} alt={mode.key} className="w-48 h-48 drop-shadow-lg" />
+                : <span className="text-9xl drop-shadow-lg">{mode.icon}</span>
+            }
 
-            <div className="space-y-1">
-                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+            <div className="space-y-2">
+                <h2 className="text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
                     {t(`landing.${mode.key}`)}
                 </h2>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-white/75 text-sm drop-shadow">
                     {t(`landing.${mode.key}Desc`)}
                 </p>
             </div>
 
             {mode.available && (
-                <span className="text-xs font-semibold text-primary uppercase tracking-widest">
+                <button className="mt-2 px-8 py-3 rounded-full border-2 border-white text-white font-bold text-sm uppercase tracking-widest group-hover:bg-white group-hover:text-green-700 transition-all duration-200">
                     {t('landing.playNow')} →
-                </span>
+                </button>
             )}
         </div>
     );
@@ -78,25 +76,10 @@ function ModeCard({ mode, onClick }) {
 function Landing() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const [activeIndex, setActiveIndex] = useState(0);
 
     return (
         <div className="min-h-[calc(100vh-4rem)] bg-background flex flex-col items-center justify-center p-4 gap-10">
-
-            {/* Header */}
-            <div className="text-center space-y-3">
-                <h1 className="text-5xl font-black text-foreground tracking-tight">
-                    ⚽ QuizDaBola
-                </h1>
-                <div className="inline-flex items-center gap-2 bg-muted px-4 py-1.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    <p className="text-muted-foreground text-sm font-semibold">
-                        {t('landing.competition')}
-                    </p>
-                </div>
-                <p className="text-muted-foreground text-base">
-                    {t('landing.chooseMode')}
-                </p>
-            </div>
 
             {/* Desktop */}
             <div className="hidden md:grid grid-cols-3 gap-6 w-full max-w-4xl">
@@ -109,15 +92,14 @@ function Landing() {
                 ))}
             </div>
 
-            {/* Mobile — swiper */}
-            <div className="md:hidden w-full px-4">
+            {/* Mobile */}
+            <div className="md:hidden w-full flex flex-col items-center gap-4">
                 <Swiper
-                    modules={[Pagination]}
-                    spaceBetween={16}
-                    slidesPerView={1.15}
+                    spaceBetween={12}
+                    slidesPerView={1.25}
                     centeredSlides={true}
-                    pagination={{ clickable: true }}
-                    className="pb-10"
+                    onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                    className="w-full"
                 >
                     {modes.map(mode => (
                         <SwiperSlide key={mode.key}>
@@ -128,6 +110,20 @@ function Landing() {
                         </SwiperSlide>
                     ))}
                 </Swiper>
+
+                {/* Indicador minimalista */}
+                <div className="flex items-center gap-2">
+                    {modes.map((_, i) => (
+                        <div
+                            key={i}
+                            className={`h-1 rounded-full transition-all duration-300 ${
+                                i === activeIndex
+                                    ? 'w-6 bg-white'
+                                    : 'w-3 bg-white/40'
+                            }`}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
