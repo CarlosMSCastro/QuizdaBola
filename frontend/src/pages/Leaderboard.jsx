@@ -8,18 +8,22 @@ import { Card } from '@/components/ui/card';
 function Leaderboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const [gameMode, setGameMode] = useState('classic');
     const [difficulty, setDifficulty] = useState('easy');
     const [scores, setScores] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         loadScores();
-    }, [difficulty]);
+    }, [gameMode, difficulty]);
 
     const loadScores = async () => {
         setLoading(true);
         try {
-            const data = await getLeaderboard(difficulty);
+            const data = await getLeaderboard(
+                gameMode,
+                gameMode === 'classic' ? difficulty : null
+            );
             setScores(data);
         } catch (error) {
             console.error('Erro ao carregar leaderboard:', error);
@@ -39,29 +43,50 @@ function Leaderboard() {
                     </Button>
                 </div>
 
+                {/* Selector de modo */}
                 <div className="flex gap-2">
-                    <Button 
-                        variant={difficulty === 'easy' ? 'default' : 'outline'}
+                    <Button
+                        variant={gameMode === 'classic' ? 'default' : 'outline'}
                         className="text-foreground"
-                        onClick={() => setDifficulty('easy')}
+                        onClick={() => setGameMode('classic')}
                     >
-                        {t('quiz.easy')}
+                        🎯 {t('landing.classic')}
                     </Button>
-                    <Button 
-                        variant={difficulty === 'medium' ? 'default' : 'outline'}
+                    <Button
+                        variant={gameMode === 'stats' ? 'default' : 'outline'}
                         className="text-foreground"
-                        onClick={() => setDifficulty('medium')}
+                        onClick={() => setGameMode('stats')}
                     >
-                        {t('quiz.medium')}
-                    </Button>
-                    <Button 
-                        variant={difficulty === 'hard' ? 'default' : 'outline'}
-                        className="text-foreground"
-                        onClick={() => setDifficulty('hard')}
-                    >
-                        {t('quiz.hard')}
+                        📊 Stats Quiz
                     </Button>
                 </div>
+
+                {/* Selector de dificuldade (só no clássico) */}
+                {gameMode === 'classic' && (
+                    <div className="flex gap-2">
+                        <Button
+                            variant={difficulty === 'easy' ? 'default' : 'outline'}
+                            className="text-foreground"
+                            onClick={() => setDifficulty('easy')}
+                        >
+                            {t('quiz.easy')}
+                        </Button>
+                        <Button
+                            variant={difficulty === 'medium' ? 'default' : 'outline'}
+                            className="text-foreground"
+                            onClick={() => setDifficulty('medium')}
+                        >
+                            {t('quiz.medium')}
+                        </Button>
+                        <Button
+                            variant={difficulty === 'hard' ? 'default' : 'outline'}
+                            className="text-foreground"
+                            onClick={() => setDifficulty('hard')}
+                        >
+                            {t('quiz.hard')}
+                        </Button>
+                    </div>
+                )}
 
                 <Card className="p-6">
                     {scores.length === 0 ? (
@@ -71,7 +96,7 @@ function Leaderboard() {
                     ) : (
                         <div className="space-y-2">
                             {scores.map((score, index) => (
-                                <div 
+                                <div
                                     key={index}
                                     className="flex justify-between items-center p-3 border-b last:border-0"
                                 >

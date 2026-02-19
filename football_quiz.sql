@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19-Fev-2026 às 04:58
+-- Tempo de geração: 19-Fev-2026 às 05:09
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -960,17 +960,19 @@ CREATE TABLE `scores` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `score` int(11) NOT NULL,
-  `difficulty` enum('easy','medium','hard') NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `difficulty` enum('easy','medium','hard') DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `game_mode` enum('classic','stats') DEFAULT 'classic'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `scores`
 --
 
-INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`) VALUES
-(2, 2, 2, 'easy', '2026-02-18 03:59:28'),
-(3, 2, 5, 'easy', '2026-02-18 04:56:25');
+INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`) VALUES
+(2, 2, 2, 'easy', '2026-02-18 03:59:28', 'classic'),
+(3, 2, 5, 'easy', '2026-02-18 04:56:25', 'classic'),
+(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats');
 
 -- --------------------------------------------------------
 
@@ -1024,7 +1026,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `users`

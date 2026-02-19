@@ -33,7 +33,7 @@ function Quiz({ token, user, onLogin }) {
 
     useEffect(() => {
         if (gameOver && token && scoreSaved === null) {
-            saveScore(score, difficulty, token)
+            saveScore(score, 'classic', token, difficulty)
                 .then(res => {
                     if (res.isNewRecord) setScoreSaved('record');
                     else setScoreSaved('exists');

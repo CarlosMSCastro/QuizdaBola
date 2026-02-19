@@ -39,19 +39,18 @@ export const login = async (username, password) => {
 };
 
 // guardar pontuação (requer token)
-export const saveScore = async (score, difficulty, token) => {
-    const response = await axios.post(
-        `${API_URL}/leaderboard`,
-        { score, difficulty },
+export const saveScore = async (score, game_mode, token, difficulty = null) => {
+    const res = await axios.post(`${API_URL}/leaderboard`,
+        { score, game_mode, difficulty },
         { headers: { Authorization: `Bearer ${token}` } }
     );
-    return response.data;
+    return res.data;
 };
 
 // buscar leaderboard
-export const getLeaderboard = async (difficulty) => {
-    const response = await axios.get(`${API_URL}/leaderboard`, {
-        params: { difficulty }
+export const getLeaderboard = async (game_mode, difficulty = null) => {
+    const res = await axios.get(`${API_URL}/leaderboard`, {
+        params: { game_mode, difficulty }
     });
-    return response.data;
+    return res.data;
 };
