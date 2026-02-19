@@ -46,14 +46,21 @@
     "empty": "Ainda não há pontuações nesta dificuldade."
   },
   "auth": {
-    "login": "🔐 Login",
-    "register": "📝 Registo",
+    "login": "Login",
+    "register": "Registo",
+    "loginSubtitle": "Entre para guardar as suas pontuações",
+    "registerSubtitle": "Crie uma conta para competir no leaderboard",
     "username": "Username",
     "password": "Password",
+    "usernamePlaceholder": "Escolha um username",
+    "usernameLoginPlaceholder": "Insira o username",
+    "passwordPlaceholder": "Mínimo 6 caracteres",
+    "passwordLoginPlaceholder": "Insira a password",
     "loginButton": "Entrar",
     "registerButton": "Registar",
-    "switchToRegister": "Criar conta nova",
-    "switchToLogin": "Já tenho conta",
+    "noAccount": "Ainda não tem conta? Registe-se aqui",
+    "hasAccount": "Já tem conta? Entre aqui",
+    "error": "Credenciais inválidas",
     "processing": "A processar..."
   },
   "navbar": {

@@ -46,14 +46,21 @@
     "empty": "No scores yet for this difficulty."
   },
   "auth": {
-    "login": "🔐 Login",
-    "register": "📝 Register",
+    "login": "Login",
+    "register": "Register",
+    "loginSubtitle": "Sign in to save your scores",
+    "registerSubtitle": "Create an account to compete on the leaderboard",
     "username": "Username",
     "password": "Password",
-    "loginButton": "Login",
+    "usernamePlaceholder": "Choose a username",
+    "usernameLoginPlaceholder": "Enter your username",
+    "passwordPlaceholder": "Minimum 6 characters",
+    "passwordLoginPlaceholder": "Enter your password",
+    "loginButton": "Sign In",
     "registerButton": "Register",
-    "switchToRegister": "Create new account",
-    "switchToLogin": "Already have an account",
+    "noAccount": "Don't have an account? Register here",
+    "hasAccount": "Already have an account? Sign in here",
+    "error": "Invalid credentials",
     "processing": "Processing..."
   },
   "navbar": {

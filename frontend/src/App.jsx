@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Quiz from './pages/Quiz';
 import Leaderboard from './pages/Leaderboard';
 import StatsQuiz from './pages/StatsQuiz';
+import Login from './pages/Login';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -25,6 +26,12 @@ function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('darkMode', darkMode);
+
+    const img = darkMode ? '/images/dark_background.png' : '/images/light_background.png';
+    const bg = document.getElementById('app-background');
+    if (bg) {
+      bg.style.backgroundImage = `url('${img}')`;
+    }
   }, [darkMode]);
 
   const handleLogin = (newToken, newUser) => {
@@ -40,21 +47,27 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Navbar 
-        user={user} 
-        onLogout={handleLogout} 
-        onLogin={handleLogin}
-        darkMode={darkMode}
-        onToggleDark={() => setDarkMode(prev => !prev)}
-      />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+          <div
+              id="app-background"
+              className="fixed inset-0 bg-cover bg-center bg-no-repeat blur-[3px] scale-110 -z-10"
+          />
+          <div className="fixed inset-0 -z-10 pointer-events-none bg-black/10 dark:bg-black/50" />
+
+          <Navbar 
+              user={user} 
+              onLogout={handleLogout}
+              darkMode={darkMode}
+              onToggleDark={() => setDarkMode(prev => !prev)}
+          />
+          <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
+          </Routes>
+      </BrowserRouter>
   );
 }
 
