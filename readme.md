@@ -10,7 +10,7 @@ Quiz interativo de futebol — identifica jogadores, testa estatísticas e muito
 ```
 frontend/src/
   pages/       → Landing, Quiz, StatsQuiz, Leaderboard, Login
-  components/  → Navbar, shadcn/ui (Button, Card, Badge, Dialog)
+  components/  → Navbar, Footer, SeasonSelector, shadcn/ui (Button, Card, Badge, Dialog)
   services/    → api.js
   i18n/        → config.js + locales (pt.json, en.json)
 backend/
@@ -21,35 +21,47 @@ backend/
 
 ## Estado Atual
 
-### ✅ Completo (FASE 1 + Polish em progresso)
+### ✅ Completo (FASE 1-3 + FASE 4 Polish em progresso)
 
 **Core Funcional:**
 - **Modo Clássico** — Timer 8s, 3 vidas, 2 ajudas (nacionalidade/clube), 3 dificuldades, sem repetições
 - **Stats Quiz** — 3 formatos de pergunta (F1: opções múltiplas, F2: comparação lado a lado, F3: verdadeiro/falso)
-- **Leaderboard** — Filtros por modo (classic/stats) e dificuldade (easy/medium/hard para Clássico)
-- **Autenticação** — Sistema JWT completo, página de login dedicada com redirect, auto-save de pontuações
-- **i18n** — PT/EN aplicado em todos os componentes, placeholders dinâmicos
-- **Dark Mode** — Tema completo com variáveis CSS (light/dark), preferência persistida em localStorage
-- **BD** — 788 jogadores válidos (Liga Portugal 2024), 67 placeholders filtrados via Python script (MD5 hash)
+- **Leaderboard** — Filtros por modo (classic/stats) e dificuldade (easy/medium/hard para Clássico), responsivo mobile
+- **Autenticação** — Sistema JWT completo, página de login dedicada (sem navbar/footer), redirect flow, auto-save de pontuações
+- **i18n** — PT/EN aplicado em todos os componentes, placeholders dinâmicos, language switcher
+- **Dark Mode** — Tema completo com variáveis CSS (light/dark), preferência persistida em localStorage, toggle integrado
+- **BD** — 855 jogadores (Liga Portugal 2024), 67 placeholders filtrados via Python script (MD5 hash)
 
-**UI/UX:**
-- **Navbar** — Responsiva (desktop + mobile), dark mode toggle, language switcher (PT/EN), hover effects + scale animations
-- **Landing** — Desktop: grid 3 colunas | Mobile: Swiper carrossel com indicadores
-- **Login** — Página dedicada (sem modal), modo dinâmico (login/registo via URL params), autofill styling corrigido
-- **Theme System** — Paleta neutra profissional (amarelo primary, verde secundário), todas as cores usando variáveis CSS
+**UI/UX Polish:**
+- **Navbar** 
+  - Desktop: links horizontais, language flags, dark mode toggle, user dropdown
+  - Mobile (<1024px): menu hamburger com dropdown completo (leaderboard, language grid, theme grid, login/logout)
+  - Mobile (<560px): logo hidden na navbar, aparece como título na Landing
+  - Mobile (<550px): menu hamburger centralizado
+  - Dropdown consistente entre user logado e guest
+- **Landing** 
+  - Desktop: grid 3 colunas com hover scale
+  - Mobile: Swiper carrossel (slidesPerView: 1) com indicadores, active touch feedback
+  - Logo adaptativo (navbar desktop, título mobile)
+- **Login** — Página standalone (sem navbar/footer), botão "Voltar", modo dinâmico (login/registo via URL params), autofill styling corrigido para light/dark
+- **Leaderboard** — Sem navbar/footer, botão voltar com SVG arrow, responsivo mobile (texto compacto, ícones reduzidos)
+- **Footer** — Links GitHub/LinkedIn com SVG icons, ícones maiores em mobile (w-8 h-8), copyright dinâmico
+- **Theme System** — Paleta neutra (amarelo primary #F4D03F, verde secundário), todas as cores usando variáveis CSS, light mode contrast fix
 
 **Técnico:**
 - Todas as cores hardcoded refatoradas para variáveis theme
 - Placeholder detection via MD5 hash (Python script)
 - Filtros automáticos de placeholders no backend
-- Bandeiras via flagcdn.com API com fallback
+- Bandeiras via flagcdn.com API
+- App.jsx: hideNavAndFooter para `/login` e `/leaderboard`
+- Responsividade mobile-first em todos os componentes
 
 ### ⏳ A Fazer
 
 **FASE 4 — Branding & Polish (em progresso):**
-- [ ] Definir identidade visual final (logo, paleta definitiva, tipografia)
+- [ ] SeasonSelector component (Liga Portugal 24/25, 25/26, Champions League - apenas 24/25 ativo)
+- [ ] Definir identidade visual final (logo definitivo, paleta confirmada)
 - [ ] Animações (confetti no acerto, shake no erro, transitions suaves)
-- [ ] Responsividade desktop completa (otimizar layouts)
 - [ ] Acessibilidade (aria-labels, navegação por teclado)
 - [ ] Lazy loading (React.lazy nas rotas)
 - [ ] Otimizações de performance
@@ -62,6 +74,7 @@ backend/
 **FASE 6 — Features Futuras:**
 - [ ] Modo Resultados (scrape fixtures API-Football)
 - [ ] Champions League 2024 (integração multi-competição)
+- [ ] Liga Portugal 2025/26 (próxima época)
 - [ ] Perfil do user (stats, clube favorito, win rate)
 - [ ] Multiplayer 1v1 (Socket.io, rooms, matchmaking)
 
@@ -77,3 +90,5 @@ backend/
 - shadcn/ui componentes copiados ao projeto (customizáveis)
 - MySQL pool: 10 conexões simultâneas
 - JWT expiry: 7 dias
+- Mobile breakpoints: 560px (logo), 550px (menu centering), 1024px (desktop)
+- Theme variables: --primary, --foreground, --background, --muted, etc.

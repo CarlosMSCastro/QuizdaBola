@@ -48,9 +48,20 @@ function Login({ onLogin }) {
     };
 
     return (
-        <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4">
             <div className="w-full max-w-md space-y-8">
                 
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-semibold"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Voltar</span>
+                </button>
+
                 {/* Header */}
                 <div className="text-center space-y-2">
                     <h1 className="text-5xl font-black text-primary tracking-tight">

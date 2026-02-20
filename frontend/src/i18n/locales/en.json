@@ -67,7 +67,9 @@
     "darkMode": "Dark mode",
     "lightMode": "Light mode",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "language": "Language",
+    "theme": "Theme"
   },
   "common": {
     "loading": "Loading...",

@@ -28,18 +28,19 @@ const modes = [
     },
 ];
 
-function ModeCard({ mode, onClick }) {
+function ModeCard({ mode, onClick, isMobile }) {
     const { t } = useTranslation();
 
     return (
         <div
             onClick={mode.available ? onClick : undefined}
             className={`
-                relative p-8 text-center group
-                py-10 flex flex-col items-center justify-center gap-4
+                relative text-center group
+                flex flex-col items-center justify-center
                 transition-all duration-300
+                ${isMobile ? 'p-6 gap-4' : 'p-8 py-10 gap-4'}
                 ${mode.available
-                    ? 'cursor-pointer hover:scale-115'
+                    ? 'cursor-pointer'
                     : 'cursor-not-allowed'
                 }
             `}
@@ -48,32 +49,32 @@ function ModeCard({ mode, onClick }) {
                 ? <img
                     src={mode.image}
                     alt={mode.key}
-                    className={`w-56 h-56 drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${!mode.available ? 'grayscale opacity-70' : ''}`}
-                  />
+                    className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-transform duration-300 ${isMobile ? 'w-40 h-40 active:scale-110' : 'w-56 h-56 group-hover:scale-110'} ${!mode.available ? 'grayscale opacity-70' : ''}`}
+                />
                 : <span
-                    className={`text-9xl drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${!mode.available ? 'grayscale opacity-70' : ''}`}
-                  >
+                    className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${isMobile ? 'text-6xl' : 'text-9xl'} ${!mode.available ? 'grayscale opacity-70' : ''}`}
+                >
                     {mode.icon}
-                  </span>
+                </span>
             }
 
             <div className="space-y-2">
-                <h2 className={`text-3xl font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] ${!mode.available ? 'text-primary/50' : 'text-primary'}`}>
+                <h2 className={`font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] ${isMobile ? 'text-2xl' : 'text-3xl'} ${!mode.available ? 'text-primary/50' : 'text-primary'}`}>
                     {t(`landing.${mode.key}`)}
                 </h2>
-                <p className={`text-sm drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] ${!mode.available ? 'text-foreground/60' : 'text-foreground'}`}>
+                <p className={`drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] ${isMobile ? 'text-sm' : 'text-sm'} ${!mode.available ? 'text-foreground/60' : 'text-foreground'}`}>
                     {t(`landing.${mode.key}Desc`)}
                 </p>
             </div>
 
             {mode.available && (
-                <button className="mt-2 px-8 py-3 rounded-full border-2 border-primary text-foreground font-bold text-sm uppercase tracking-widest group-hover:bg-primary group-hover:text-background transition-all duration-200">
-                    {t('landing.playNow')} →
+                <button className={`rounded-full border-2 border-primary text-foreground font-bold uppercase tracking-widest transition-all duration-200 mt-2 px-8 py-3 text-sm hover:bg-primary hover:text-background active:scale-95`}>
+                    {t('landing.playNow')}
                 </button>
             )}
 
             {!mode.available && (
-                <span className="mt-2 px-8 py-3 rounded-full border-2 border-primary text-muted-foreground font-bold text-sm uppercase tracking-widest">
+                <span className={`rounded-full border-2 border-primary text-muted-foreground font-bold uppercase tracking-widest mt-2 px-8 py-3 text-sm`}>
                     🔒 {t('landing.comingSoon')}
                 </span>
             )}
@@ -87,7 +88,17 @@ function Landing() {
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-4 gap-10">
+        <div className="min-h-[calc(100vh-20rem)] flex flex-col items-center justify-center p-4 gap-8">
+
+            {/* Mobile Logo Title - Only below 560px */}
+            <div className="min-[560px]:hidden flex justify-center">
+                <img
+                    src="/images/logo.png"
+                    alt="QuizDaBola"
+                    className="h-14 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer transition-all duration-200 active:scale-95"
+                    onClick={() => navigate('/')}
+                />
+            </div>
 
             {/* Desktop */}
             <div className="hidden lg:grid grid-cols-3 gap-6 w-full max-w-4xl">
@@ -96,15 +107,16 @@ function Landing() {
                         key={mode.key}
                         mode={mode}
                         onClick={() => navigate(mode.path)}
+                        isMobile={false}
                     />
                 ))}
             </div>
 
-            {/* Mobile */}
-            <div className="lg:hidden w-full flex flex-col items-center gap-4">
+            {/* Mobile - Full width slides */}
+            <div className="lg:hidden w-full max-w-sm mx-auto flex flex-col items-center gap-6">
                 <Swiper
-                    spaceBetween={12}
-                    slidesPerView={1.25}
+                    spaceBetween={20}
+                    slidesPerView={1}
                     centeredSlides={true}
                     onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
                     className="w-full"
@@ -114,6 +126,7 @@ function Landing() {
                             <ModeCard
                                 mode={mode}
                                 onClick={() => navigate(mode.path)}
+                                isMobile={true}
                             />
                         </SwiperSlide>
                     ))}
@@ -123,10 +136,10 @@ function Landing() {
                     {modes.map((_, i) => (
                         <div
                             key={i}
-                            className={`h-1 rounded-full transition-all duration-300 ${
+                            className={`h-1.5 rounded-full transition-all duration-300 ${
                                 i === activeIndex
-                                    ? 'w-6 bg-primary'
-                                    : 'w-3 bg-muted-foreground/40'
+                                    ? 'w-8 bg-primary'
+                                    : 'w-2 bg-muted-foreground/40'
                             }`}
                         />
                     ))}
