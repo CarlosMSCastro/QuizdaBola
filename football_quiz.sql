@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 20-Fev-2026 às 22:57
+-- Tempo de geração: 20-Fev-2026 às 23:18
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -24,10 +24,36 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `players`
+-- Estrutura da tabela `competitions`
 --
 
-CREATE TABLE `players` (
+CREATE TABLE `competitions` (
+  `id` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `logo` varchar(255) NOT NULL,
+  `season` varchar(20) NOT NULL,
+  `country` varchar(50) DEFAULT NULL,
+  `table_name` varchar(100) NOT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Extraindo dados da tabela `competitions`
+--
+
+INSERT INTO `competitions` (`id`, `name`, `logo`, `season`, `country`, `table_name`, `active`, `created_at`) VALUES
+('championsleague2024', 'Champions League 2024', '/images/championsleague.png', '2024/25', 'Europe', 'players_championsleague2024', 0, '2026-02-20 22:17:30'),
+('ligaportugal2024', 'Liga Portugal 2024', '/images/ligaportugal2024.png', '2024/25', 'Portugal', 'players_ligaportugal2024', 1, '2026-02-20 22:07:16'),
+('ligaportugal2025', 'Liga Portugal 2025', '/images/ligaportugal2025.png', '2025/26', 'Portugal', 'players_ligaportugal2025', 0, '2026-02-20 22:17:30');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `players_ligaportugal2024`
+--
+
+CREATE TABLE `players_ligaportugal2024` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `firstname` varchar(100) DEFAULT NULL,
@@ -83,10 +109,10 @@ CREATE TABLE `players` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Extraindo dados da tabela `players`
+-- Extraindo dados da tabela `players_ligaportugal2024`
 --
 
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (37, 'N. Pérez', 'Patricio Nehuén', 'Pérez', 25, '2000-06-24', 'Hurlingham', 'Argentina', 'Argentina', '185', '75', 0, 'https://media.api-sports.io/football/players/37.png', 212, 'FC Porto', 'https://media.api-sports.io/football/teams/212.png', 2024, 'Defender', 25, 24, 2073, 6.912000, 0, 1, 4, 3, 12, 5, 1, 0, 2, NULL, 1731, 7, 63, 27, 9, 24, 184, 100, 5, 3, NULL, 7, 38, 10, 1, 0, 0, 0, 'easy', 0),
 (42, 'Gustavo Assunção', 'Gustavo Enrique', 'Giordano Amaro Assunção da Sil', 25, '2000-03-30', 'São Paulo', 'Brazil', 'Brazil', '178 cm', '68 kg', 0, 'https://media.api-sports.io/football/players/42.png', 242, 'Famalicao', 'https://media.api-sports.io/football/teams/242.png', 2024, 'Midfielder', 0, 0, 0, 6.620000, 0, 0, 0, 1, 14, 7, 0, 0, 0, NULL, 779, 11, NULL, 42, 6, 12, 224, 96, 21, 5, NULL, 28, 49, 0, 0, 0, 3, 0, 'hard', 0),
 (111, 'Rony Lopes', 'Marcos Paulo', 'Mesquita Lopes', 30, '1995-12-28', 'Belém', 'Brazil', 'Portugal', '174', '68', 0, 'https://media.api-sports.io/football/players/111.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Forward', 0, 0, 0, 7.135714, 0, 0, 0, 0, 23, 11, 0, 0, 0, NULL, 340, 21, NULL, 13, NULL, 6, 83, 49, 15, 8, NULL, 18, 9, 0, 0, 0, 0, 1, 'hard', 0),
@@ -203,7 +229,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (20884, 'S. Niakaté', 'Sikou', 'Niakaté', 26, '1999-07-10', 'Montreuil', 'France', 'Mali', '186', '76', 0, 'https://media.api-sports.io/football/players/20884.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Defender', 24, 22, 1963, 7.000000, 0, 2, 3, 4, 8, 3, 1, 0, 1, NULL, 1445, 6, 52, 19, 10, 34, 168, 102, 7, 5, NULL, 16, 24, 4, 0, 0, 0, 0, 'medium', 0),
 (21060, 'H. Sy', 'Harouna', 'Sy', 29, '1996-03-30', 'Rouen', 'France', 'France', '170', '75', 0, 'https://media.api-sports.io/football/players/21060.png', 230, 'Estoril', 'https://media.api-sports.io/football/teams/230.png', 2024, 'Defender', 0, 0, 0, NULL, 0, 0, 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, 'hard', 0),
 (21502, 'M. Merghem', 'Mehdi', 'Merghem', 28, '1997-07-19', 'Aubervilliers', 'France', 'France', '178', '70', 0, 'https://media.api-sports.io/football/players/21502.png', 231, 'Farense', 'https://media.api-sports.io/football/teams/231.png', 2024, 'Attacker', 12, 9, 467, 6.841666, 0, 3, NULL, NULL, 6, 1, NULL, 0, 0, NULL, 123, 8, NULL, 17, NULL, 3, 71, 35, 15, 10, NULL, 5, 13, 2, NULL, 0, 0, 0, 'hard', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (22228, 'Xeka', 'Miguel Ângelo', 'da Silva Rocha', 31, '1994-11-10', 'Paredes', 'Portugal', 'Portugal', '185', '83', 0, 'https://media.api-sports.io/football/players/22228.png', 230, 'Estoril', 'https://media.api-sports.io/football/teams/230.png', 2024, 'Midfielder', 14, 13, 946, 6.821428, 0, 1, NULL, NULL, 9, 3, 1, 0, 1, NULL, 457, 4, NULL, 28, 2, 13, 142, 67, 16, 6, NULL, 18, 29, 6, NULL, 0, 0, 0, 'hard', 0),
 (22251, 'D. Tchamba', 'Duplexe', 'Tchamba Bangou', 27, '1998-07-10', 'Yaoundé', 'Cameroon', 'Cameroon', '191', '78', 0, 'https://media.api-sports.io/football/players/22251.png', 4716, 'Casa Pia', 'https://media.api-sports.io/football/teams/4716.png', 2024, 'Defender', 21, 21, 1817, 7.019047, 0, 0, 4, 4, 8, 3, 2, 0, 1, NULL, 1052, 4, NULL, 31, 17, 34, 155, 90, 9, 6, NULL, 14, 22, 5, 0, 0, 0, 0, 'medium', 0),
 (24115, 'D. Loppy', 'Damien', 'Loppy', 28, '1997-09-18', 'Gwédiawaye', 'Senegal', 'Senegal', '191 cm', '86 kg', 0, 'https://media.api-sports.io/football/players/24115.png', 810, 'Vizela', 'https://media.api-sports.io/football/teams/810.png', 2024, 'Attacker', 30, 23, 1928, 7.100000, 0, 7, 18, 9, 1, NULL, 1, 0, 1, NULL, 82, 9, NULL, 4, NULL, NULL, 26, 13, 9, 6, NULL, 1, 2, 1, 0, 0, 0, 0, 'easy', 0),
@@ -320,7 +346,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (41582, 'Tiago Dantas', 'Tiago Filipe', 'Oliveira Dantas', 25, '2000-12-24', 'Lisboa', 'Portugal', 'Portugal', '170', '58', 0, 'https://media.api-sports.io/football/players/41582.png', 211, 'Benfica', 'https://media.api-sports.io/football/teams/211.png', 2024, 'Midfielder', 0, 0, 0, NULL, 0, 0, 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, 'hard', 0),
 (41586, 'Bernardo Martins', 'Bernardo', 'Sousa Pereira Brites Martins', 28, '1997-12-04', 'Porto', 'Portugal', 'Portugal', '176', '72', 0, 'https://media.api-sports.io/football/players/41586.png', 215, 'Moreirense', 'https://media.api-sports.io/football/teams/215.png', 2024, 'Midfielder', 33, 26, 1673, 6.774193, 0, 7, NULL, NULL, 22, 10, 4, 0, 3, NULL, 660, 23, NULL, 42, 1, 12, 262, 116, 52, 27, NULL, 35, 44, 7, NULL, 0, 0, 0, 'easy', 0),
 (41587, 'Nuno Santos', 'Nuno Miguel', 'Valente Santos', 26, '1999-03-02', 'Porto', 'Portugal', 'Portugal', '179', '73', 0, 'https://media.api-sports.io/football/players/41587.png', 224, 'Guimaraes', 'https://media.api-sports.io/football/teams/224.png', 2024, 'Midfielder', 33, 27, 1916, 6.906250, 0, 6, NULL, NULL, 40, 18, 3, 0, 4, NULL, 843, 29, NULL, 24, 1, 17, 159, 65, 33, 13, NULL, 17, 26, 4, NULL, 0, 0, 0, 'easy', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (41588, 'I. Vukotić', 'Ilija', 'Vukotić', 26, '1999-01-07', 'Podgorica', 'Montenegro', 'Montenegro', '191', '84', 0, 'https://media.api-sports.io/football/players/41588.png', 222, 'Boavista', 'https://media.api-sports.io/football/teams/222.png', 2024, 'Midfielder', 28, 24, 1774, 6.850000, 0, 4, NULL, NULL, 12, 8, 3, 0, 0, NULL, 575, 15, NULL, 37, 8, 17, 203, 112, 16, 9, NULL, 40, 28, 4, NULL, 1, 0, 0, 'medium', 0),
 (41592, 'Úmaro Embaló', 'Úmaro', 'Embaló', 24, '2001-05-06', 'Bissau', 'Guinea-Bissau', 'Portugal', '170', '63', 0, 'https://media.api-sports.io/football/players/41592.png', 224, 'Guimaraes', 'https://media.api-sports.io/football/teams/224.png', 2024, 'Attacker', 7, 0, 141, 6.628571, 0, 7, 0, 8, 3, 2, 2, 0, 0, NULL, 60, NULL, NULL, 2, 1, 1, 20, 9, 4, NULL, NULL, 6, 3, 0, 0, 0, 0, 0, 'hard', 0),
 (41594, 'David Tavares', 'David José', 'Gomes Oliveira Tavares', 26, '1999-03-18', 'Lisboa', 'Portugal', 'Cape Verde', '190', '78', 0, 'https://media.api-sports.io/football/players/41594.png', 242, 'Famalicao', 'https://media.api-sports.io/football/teams/242.png', 2024, 'Midfielder', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'hard', 0),
@@ -436,7 +462,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (125059, 'Héber Pena', 'Héber', 'Pena Picos', 35, '1990-01-16', 'Ferrol', 'Spain', 'Spain', '176 cm', '68 kg', 0, 'https://media.api-sports.io/football/players/125059.png', 810, 'Vizela', 'https://media.api-sports.io/football/teams/810.png', 2024, 'Attacker', 6, 1, 158, 7.200000, 0, 5, 1, 7, NULL, NULL, 0, 0, 0, NULL, 11, 3, NULL, NULL, NULL, 1, 9, 3, 2, 1, NULL, 2, 2, 0, 0, 0, 0, 0, 'hard', 0),
 (126665, 'M. Lacava', 'Matías Rafael', 'Lacava González', 23, '2002-10-24', 'Caracas', 'Venezuela', 'Venezuela', '167', '55', 0, 'https://media.api-sports.io/football/players/126665.png', 810, 'Vizela', 'https://media.api-sports.io/football/teams/810.png', 2024, 'Attacker', 3, 3, 261, 6.900000, 0, 0, 1, 0, 1, 1, 1, 0, 0, NULL, 20, 3, NULL, 2, NULL, 1, 18, 5, 5, NULL, NULL, 1, 2, 0, 0, 0, 0, 0, 'hard', 0),
 (126711, 'A. Kraev', 'Andrian', 'Boykov Kraev', 26, '1999-02-14', 'Vetren', 'Bulgaria', 'Bulgaria', '194', '82', 0, 'https://media.api-sports.io/football/players/126711.png', 4716, 'Casa Pia', 'https://media.api-sports.io/football/teams/4716.png', 2024, 'Midfielder', 33, 26, 1685, 6.646153, 0, 7, NULL, NULL, 11, 2, 1, 0, 0, NULL, 629, 3, NULL, 39, 9, 22, 258, 118, 12, 6, NULL, 14, 57, 9, NULL, 0, 0, 0, 'easy', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (126761, 'Adriano', 'Adriano Firmino', 'dos Santos da Silva', 26, '1999-11-04', 'Rio de Janeiro', 'Brazil', 'Brazil', '186', '79', 0, 'https://media.api-sports.io/football/players/126761.png', 227, 'Santa Clara', 'https://media.api-sports.io/football/teams/227.png', 2024, 'Midfielder', 32, 31, 2648, 6.712500, 0, 1, NULL, NULL, 10, 4, NULL, 0, 2, NULL, 1162, 19, NULL, 41, 7, 17, 218, 100, 46, 23, NULL, 20, 41, 8, NULL, 1, 0, 0, 'easy', 0),
 (126897, 'Zé Ricardo', 'José Ricardo', 'Avelar Ribeiro', 27, '1998-09-04', 'Goiânia', 'Brazil', 'Brazil', '175 cm', '68 kg', 0, 'https://media.api-sports.io/football/players/126897.png', 21595, 'AVS', 'https://media.api-sports.io/football/teams/21595.png', 2024, 'Defender', 0, 0, 0, NULL, 0, 0, 0, 1, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0),
 (126899, 'Z. Sanusi', 'Zaidu', 'Sanusi', 28, '1997-06-13', 'Kebbi State', 'Nigeria', 'Nigeria', '182', '76', 0, 'https://media.api-sports.io/football/players/126899.png', 212, 'FC Porto', 'https://media.api-sports.io/football/teams/212.png', 2024, 'Defender', 12, 7, 62, 6.833333, 0, 5, NULL, NULL, 1, NULL, NULL, 0, 0, NULL, 31, NULL, NULL, NULL, NULL, NULL, 7, 4, 1, 1, NULL, 1, NULL, 0, NULL, 0, 0, 0, 'easy', 0),
@@ -551,7 +577,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (187926, 'Tomás Händel', 'Tomás Romano', 'Pereira Santos Händel', 25, '2000-11-27', 'Guimarães', 'Portugal', 'Portugal', '180', '73', 0, 'https://media.api-sports.io/football/players/187926.png', 224, 'Guimaraes', 'https://media.api-sports.io/football/teams/224.png', 2024, 'Midfielder', 32, 30, 2523, 6.943750, 0, 2, NULL, NULL, 10, 3, 2, 0, 1, NULL, 1531, 27, 42, 43, 2, 36, 205, 102, 28, 14, NULL, 30, 26, 5, NULL, 0, 0, 0, 'easy', 0),
 (188409, 'Fran Delgado', 'Francisco Javier', 'Delgado Rojano', 24, '2001-07-11', NULL, 'Spain', 'Spain', '177 cm', '62 kg', 0, 'https://media.api-sports.io/football/players/188409.png', 231, 'Farense', 'https://media.api-sports.io/football/teams/231.png', 2024, 'Defender', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'hard', 0),
 (189669, 'A. Awudu', 'Abdul', 'Awudu', 24, '2001-01-10', 'Techiman', 'Ghana', 'Ghana', '178 cm', '71 kg', 0, 'https://media.api-sports.io/football/players/189669.png', 810, 'Vizela', 'https://media.api-sports.io/football/teams/810.png', 2024, 'Midfielder', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'hard', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (190985, 'S. Elisor', 'Simon', 'Elisor', 26, '1999-07-22', 'Périgueux', 'France', 'France', '186', '75', 0, 'https://media.api-sports.io/football/players/190985.png', 242, 'Famalicao', 'https://media.api-sports.io/football/teams/242.png', 2024, 'Attacker', 15, 6, 593, 6.740000, 0, 9, 5, 9, 14, 7, 4, 0, 0, NULL, 122, 6, NULL, NULL, NULL, 2, 101, 47, 10, 6, NULL, 20, 22, 2, 0, 0, 0, 0, 'medium', 0),
 (191086, 'I. Mohamed', 'Iyad Inomse', 'M\'Vourani Mohamed', 24, '2001-03-05', 'Dunkerque', 'France', 'Comoros', '191', '80', 0, 'https://media.api-sports.io/football/players/191086.png', 4716, 'Casa Pia', 'https://media.api-sports.io/football/teams/4716.png', 2024, 'Midfielder', 11, 8, 504, 6.530000, 0, 3, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, 192, 3, NULL, 9, 4, 3, 39, 19, 4, 1, NULL, 5, 7, 2, NULL, 1, 0, 0, 'hard', 0),
 (193188, 'A. El Ouazzani', 'Amine', 'El Ouazzani', 24, '2001-07-15', 'Grenoble', 'France', 'Morocco', '188', '64', 0, 'https://media.api-sports.io/football/players/193188.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Attacker', 33, 26, 1598, 6.854545, 0, 7, NULL, NULL, 30, 21, 7, 0, 1, NULL, 309, 19, NULL, 16, 2, 5, 223, 92, 13, 6, NULL, 19, 27, 1, NULL, 0, 0, 0, 'easy', 0),
@@ -666,7 +692,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (301701, 'D. Nandín', 'Dylan Alenxader', 'Nandín Berrutti', 23, '2002-02-28', 'Montevideo', 'Uruguay', 'Uruguay', '181', '76', 0, 'https://media.api-sports.io/football/players/301701.png', 240, 'Arouca', 'https://media.api-sports.io/football/teams/240.png', 2024, 'Attacker', 15, 5, 653, 6.833333, 0, 10, 5, 10, 14, 9, 3, 0, 1, NULL, 126, 5, NULL, 12, 1, 1, 136, 63, 15, 10, NULL, 23, 22, 2, 0, 0, 0, 0, 'medium', 0),
 (302152, 'Pedro Malheiro', 'Pedro Jorge', 'Gonçalves Malheiro', 24, '2001-01-21', NULL, 'Portugal', 'Portugal', '179 cm', '69 kg', 0, 'https://media.api-sports.io/football/players/302152.png', 222, 'Boavista', 'https://media.api-sports.io/football/teams/222.png', 2024, 'Defender', 0, 0, 0, NULL, 0, 0, 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, 'hard', 0),
 (303467, 'A. Fatawu', 'Issahaku Abdul', 'Fatawu', 21, '2004-03-08', 'Tamale', 'Ghana', 'Ghana', '177', '73', 0, 'https://media.api-sports.io/football/players/303467.png', 228, 'Sporting CP', 'https://media.api-sports.io/football/teams/228.png', 2024, 'Attacker', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'medium', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (303951, 'Fran Pereira', 'Francisco João', 'Rodrigues Baptista Monteiro Pe', 23, '2002-02-06', 'Vila Nova de Gaia', 'Portugal', 'Portugal', '185 cm', '75 kg', 0, 'https://media.api-sports.io/football/players/303951.png', 230, 'Estoril', 'https://media.api-sports.io/football/teams/230.png', 2024, 'Midfielder', 1, 0, 12, 6.200000, 0, 1, 0, 2, NULL, NULL, 0, 0, 0, NULL, 10, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 'hard', 1),
 (303972, 'Léo Alabá', 'Leandro', 'Santos do Nascimento', 26, '1999-07-01', 'Bahia', 'Brazil', 'Brazil', '179', '73', 0, 'https://media.api-sports.io/football/players/303972.png', 21595, 'AVS', 'https://media.api-sports.io/football/teams/21595.png', 2024, 'Defender', 4, 4, 335, 6.525000, 0, 0, 1, 5, 3, NULL, 0, 0, 0, NULL, 139, NULL, NULL, 6, 1, 7, 36, 17, 7, 1, NULL, 3, 3, 1, 0, 0, 0, 0, 'hard', 0),
 (304068, 'Thomas Luciano', 'Thomas Luciano', 'Trindade Lopes Mathias', 23, '2002-01-14', 'Porto Alegre', 'Brazil', 'Brazil', '180', NULL, 0, 'https://media.api-sports.io/football/players/304068.png', 762, 'GIL Vicente', 'https://media.api-sports.io/football/teams/762.png', 2024, 'Defender', 0, 0, 0, NULL, 0, 0, 0, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, NULL, NULL, 'hard', 0),
@@ -780,7 +806,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (361371, 'Diego Rodrigues', 'Diego Henrique', 'Oliveira Rodrigues', 20, '2005-05-24', 'Guimarães', 'Portugal', 'Portugal', '185', '74', 0, 'https://media.api-sports.io/football/players/361371.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Midfielder', 10, 5, 161, 6.862500, 0, 5, NULL, NULL, 2, 1, NULL, 0, 1, NULL, 92, 3, NULL, 5, NULL, 1, 26, 12, 2, 2, NULL, 2, 5, 0, NULL, 0, 0, 0, 'hard', 0),
 (361390, 'L. Oliveira', 'Leonardo Daniel', 'de Oliveira', 20, '2005-02-08', 'Porto', 'Portugal', 'Sweden', '187 cm', '80 kg', 0, 'https://media.api-sports.io/football/players/361390.png', 242, 'Famalicao', 'https://media.api-sports.io/football/teams/242.png', 2024, 'Attacker', 1, 0, 30, 6.700000, 0, 1, 0, 1, NULL, NULL, 0, 0, 0, NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0),
 (361415, 'João Muniz', 'João António', 'Nascimento Muniz', 20, '2005-06-26', 'Ribeira Brava', 'Portugal', 'Portugal', '187 cm', '73 kg', 0, 'https://media.api-sports.io/football/players/361415.png', 226, 'Rio Ave', 'https://media.api-sports.io/football/teams/226.png', 2024, 'Defender', 0, 0, 0, NULL, 0, 0, 0, 2, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (361417, 'Francisco Silva', 'Francisco Diogo', 'Pereira Silva', 20, '2005-11-20', 'Costa de Caparica', 'Portugal', 'Portugal', '191', '83', 0, 'https://media.api-sports.io/football/players/361417.png', 228, 'Sporting CP', 'https://media.api-sports.io/football/teams/228.png', 2024, 'Goalkeeper', 0, 0, 0, NULL, 0, 0, 0, 1, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0),
 (361433, 'João Carvalho', 'João Gonçalo', 'Carapinha Carvalho', 21, '2004-04-09', 'Loures', 'Portugal', 'Portugal', '192', '78', 0, 'https://media.api-sports.io/football/players/361433.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Goalkeeper', 0, 0, 0, NULL, 0, 0, 0, 2, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0),
 (361478, 'J. Vinarčík', 'Jakub', 'Vinarčík', 20, '2005-07-11', NULL, 'Slovakia', 'Slovakia', '202', '75', 0, 'https://media.api-sports.io/football/players/361478.png', 240, 'Arouca', 'https://media.api-sports.io/football/teams/240.png', 2024, 'Goalkeeper', 0, 0, 0, NULL, 0, 0, 0, 9, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0),
@@ -893,7 +919,7 @@ INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date
 (432022, 'Tomé de Castro Sousa', 'Tomé', 'de Castro Sousa', 19, '2006-12-16', NULL, 'Portugal', 'Portugal', '190', '82', 0, 'https://media.api-sports.io/football/players/432022.png', 222, 'Boavista', 'https://media.api-sports.io/football/teams/222.png', 2024, 'Goalkeeper', 21, 12, 180, 6.300000, 0, 9, NULL, NULL, NULL, NULL, NULL, 5, 0, 6, 47, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, NULL, 1, NULL, 1, NULL, 0, 0, 0, 'medium', 0),
 (434546, 'José Luís Rocha Tavares', 'José Luís', 'Rocha Tavares', 22, '2003-06-02', NULL, 'Cape Verde', 'Cape Verde', '178', NULL, 0, 'https://media.api-sports.io/football/players/434546.png', 227, 'Santa Clara', 'https://media.api-sports.io/football/teams/227.png', 2024, 'Midfielder', 0, 0, 0, NULL, 0, 0, 0, 1, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 1),
 (436919, 'A. Florea', 'Andrei Gabriele', 'Florea', 20, '2005-05-30', NULL, 'Italy', 'Romania', '184 cm', '70 kg', 0, 'https://media.api-sports.io/football/players/436919.png', 230, 'Estoril', 'https://media.api-sports.io/football/teams/230.png', 2024, 'Midfielder', 0, 0, 0, NULL, 0, 0, 0, 3, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 'hard', 0);
-INSERT INTO `players` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
+INSERT INTO `players_ligaportugal2024` (`id`, `name`, `firstname`, `lastname`, `age`, `birth_date`, `birth_place`, `birth_country`, `nationality`, `height`, `weight`, `injured`, `photo`, `team_id`, `team_name`, `team_logo`, `season`, `position`, `appearences`, `lineups`, `minutes`, `rating`, `captain`, `substitutes_in`, `substitutes_out`, `bench`, `shots_total`, `shots_on`, `goals_total`, `goals_conceded`, `goals_assists`, `goals_saves`, `passes_total`, `passes_key`, `passes_accuracy`, `tackles_total`, `tackles_blocks`, `tackles_interceptions`, `duels_total`, `duels_won`, `dribbles_attempts`, `dribbles_success`, `dribbles_past`, `fouls_drawn`, `fouls_committed`, `cards_yellow`, `cards_yellowred`, `cards_red`, `penalty_scored`, `penalty_missed`, `difficulty`, `is_photo_placeholder`) VALUES
 (437483, 'A.  Bamba', 'Mohamed Aboubakar', 'Bamba', 21, '2004-10-08', 'Vavoua', 'Côte d\'Ivoire', 'Côte d\'Ivoire', '177', '65', 0, 'https://media.api-sports.io/football/players/437483.png', 762, 'GIL Vicente', 'https://media.api-sports.io/football/teams/762.png', 2024, 'Midfielder', 11, 11, 958, 6.900000, 0, 0, NULL, NULL, 11, 4, 1, 0, 0, NULL, 517, 6, NULL, 16, 4, 15, 101, 47, 10, 5, NULL, 8, 15, 3, NULL, 0, 0, 0, 'hard', 0),
 (438663, 'Karel Pérez', 'Karel', 'Pérez Mendoza', 20, '2005-08-25', 'Santiago de Cuba', 'Cuba', 'Cuba', '188', '78', 0, 'https://media.api-sports.io/football/players/438663.png', 762, 'GIL Vicente', 'https://media.api-sports.io/football/teams/762.png', 2024, 'Defender', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'hard', 0),
 (441512, 'Jonatás Noro', 'Jónatas Xavier', 'Zamith Oliveira Noro', 20, '2005-07-09', 'Rio Maior', 'Portugal', 'Portugal', '187 cm', '73 kg', 0, 'https://media.api-sports.io/football/players/441512.png', 217, 'SC Braga', 'https://media.api-sports.io/football/teams/217.png', 2024, 'Defender', 1, 0, 12, 6.700000, 0, 1, 0, 6, 1, NULL, 0, 0, 0, NULL, 7, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 'hard', 0),
@@ -962,21 +988,23 @@ CREATE TABLE `scores` (
   `score` int(11) NOT NULL,
   `difficulty` enum('easy','medium','hard') DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `game_mode` enum('classic','stats') DEFAULT 'classic'
+  `game_mode` enum('classic','stats') DEFAULT 'classic',
+  `competition_id` varchar(50) DEFAULT 'ligaportugal2024'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Extraindo dados da tabela `scores`
 --
 
-INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`) VALUES
-(2, 2, 2, 'easy', '2026-02-18 03:59:28', 'classic'),
-(3, 2, 5, 'easy', '2026-02-18 04:56:25', 'classic'),
-(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats'),
-(5, 2, 26, 'easy', '2026-02-19 23:11:43', 'classic'),
-(6, 3, 7, 'easy', '2026-02-20 04:19:37', 'classic'),
-(7, 3, 3, NULL, '2026-02-20 04:21:45', 'stats'),
-(8, 3, 32, 'easy', '2026-02-20 04:30:20', 'classic');
+INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`, `competition_id`) VALUES
+(2, 2, 2, 'easy', '2026-02-18 03:59:28', 'classic', 'ligaportugal2024'),
+(3, 2, 5, 'easy', '2026-02-18 04:56:25', 'classic', 'ligaportugal2024'),
+(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats', 'ligaportugal2024'),
+(5, 2, 26, 'easy', '2026-02-19 23:11:43', 'classic', 'ligaportugal2024'),
+(6, 3, 7, 'easy', '2026-02-20 04:19:37', 'classic', 'ligaportugal2024'),
+(7, 3, 3, NULL, '2026-02-20 04:21:45', 'stats', 'ligaportugal2024'),
+(8, 3, 32, 'easy', '2026-02-20 04:30:20', 'classic', 'ligaportugal2024'),
+(9, 3, 7, 'hard', '2026-02-20 22:16:50', 'classic', 'ligaportugal2024');
 
 -- --------------------------------------------------------
 
@@ -1004,9 +1032,15 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
 --
 
 --
--- Índices para tabela `players`
+-- Índices para tabela `competitions`
 --
-ALTER TABLE `players`
+ALTER TABLE `competitions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices para tabela `players_ligaportugal2024`
+--
+ALTER TABLE `players_ligaportugal2024`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1014,7 +1048,8 @@ ALTER TABLE `players`
 --
 ALTER TABLE `scores`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_competition` (`competition_id`);
 
 --
 -- Índices para tabela `users`
@@ -1031,7 +1066,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `users`
@@ -1047,6 +1082,7 @@ ALTER TABLE `users`
 -- Limitadores para a tabela `scores`
 --
 ALTER TABLE `scores`
+  ADD CONSTRAINT `fk_scores_competition` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`),
   ADD CONSTRAINT `scores_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 

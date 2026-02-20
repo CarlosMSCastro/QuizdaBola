@@ -1,51 +1,79 @@
 import { useTranslation } from 'react-i18next';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { getCompetitions } from '../services/api';
 import 'swiper/css';
-
-const seasons = [
-    {
-        key: 'ligaportugal2024',
-        label: 'Liga Portugal 24/25',
-        image: '/images/ligaportugal2024.png',
-        available: true,
-    },
-    {
-        key: 'ligaportugal2025',
-        label: 'Liga Portugal 25/26',
-        image: '/images/ligaportugal2025.png',
-        available: false,
-    },
-    {
-        key: 'championsleague',
-        label: 'Champions 2024/25',
-        image: '/images/championsleague.png',
-        available: false,
-    },
-];
 
 function SeasonSelector({ selectedSeason, onSeasonChange }) {
     const { t } = useTranslation();
     const [activeIndex, setActiveIndex] = useState(0);
+    const [competitions, setCompetitions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const swiperRef = useRef(null);
+
+    useEffect(() => {
+        // Buscar TODAS as competições (ativas e inativas)
+        const fetchCompetitions = async () => {
+            try {
+                const data = await getCompetitions();
+                setCompetitions(data);
+                
+                // Definir índice inicial baseado na competição selecionada
+                const selectedIndex = data.findIndex(c => c.id === selectedSeason);
+                if (selectedIndex !== -1) {
+                    setActiveIndex(selectedIndex);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar competições:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCompetitions();
+    }, [selectedSeason]);
 
     const handleSlideChange = (swiper) => {
         const newIndex = swiper.activeIndex;
         setActiveIndex(newIndex);
         
-        // Se o slide for de uma season não disponível, volta para a disponível
-        if (!seasons[newIndex].available) {
+        const competition = competitions[newIndex];
+        
+        // Se for inativa, volta para a ativa após 1 segundo
+        if (competition && !competition.active) {
             setTimeout(() => {
-                const availableIndex = seasons.findIndex(s => s.available);
-                if (availableIndex !== -1 && swiperRef.current) {
-                    swiperRef.current.slideTo(availableIndex);
-                    onSeasonChange(seasons[availableIndex].key);
+                const activeIndex = competitions.findIndex(c => c.active);
+                if (activeIndex !== -1 && swiperRef.current) {
+                    swiperRef.current.slideTo(activeIndex);
+                    onSeasonChange(competitions[activeIndex].id);
                 }
-            }, 1000); // Delay para mostrar o slide locked antes de voltar
-        } else {
-            onSeasonChange(seasons[newIndex].key);
+            }, 1000);
+        } else if (competition) {
+            onSeasonChange(competition.id);
         }
     };
+
+    const handleCompetitionClick = (competition) => {
+        if (competition.active) {
+            onSeasonChange(competition.id);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="w-full max-w-4xl mx-auto text-center py-8">
+                <p className="text-lg text-foreground">{t('common.loading') || 'A carregar...'}</p>
+            </div>
+        );
+    }
+
+    if (competitions.length === 0) {
+        return (
+            <div className="w-full max-w-4xl mx-auto text-center py-8">
+                <p className="text-lg text-muted-foreground">Nenhuma competição disponível</p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-4xl mx-auto space-y-8">
@@ -55,15 +83,15 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
 
             {/* Desktop - Grid */}
             <div className="hidden md:grid grid-cols-3 gap-6">
-                {seasons.map((season) => (
+                {competitions.map((competition) => (
                     <button
-                        key={season.key}
-                        onClick={() => season.available && onSeasonChange(season.key)}
-                        disabled={!season.available}
+                        key={competition.id}
+                        onClick={() => handleCompetitionClick(competition)}
+                        disabled={!competition.active}
                         className={`
                             relative flex flex-col items-center gap-4 p-4 transition-all duration-300
-                            ${season.available
-                                ? selectedSeason === season.key
+                            ${competition.active
+                                ? selectedSeason === competition.id
                                     ? 'scale-110'
                                     : 'hover:scale-105 active:scale-100'
                                 : 'cursor-not-allowed opacity-50'
@@ -71,18 +99,20 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
                         `}
                     >
                         <img
-                            src={season.image}
-                            alt={season.label}
-                            className={`w-full h-36 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${!season.available ? 'grayscale' : ''}`}
+                            src={competition.logo}
+                            alt={competition.name}
+                            className={`w-full h-36 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
+                                !competition.active ? 'grayscale' : ''
+                            }`}
                         />
                         
                         <span className={`text-base font-bold text-center ${
-                            selectedSeason === season.key ? 'text-primary' : 'text-foreground'
+                            selectedSeason === competition.id ? 'text-primary' : 'text-foreground'
                         }`}>
-                            {season.label}
+                            {competition.name}
                         </span>
 
-                        {!season.available && (
+                        {!competition.active && (
                             <span className="absolute top-2 right-2 px-3 py-1 rounded-full bg-primary/90 text-background text-xs font-bold backdrop-blur-sm">
                                 🔒 {t('landing.comingSoon') || 'Em breve'}
                             </span>
@@ -99,34 +129,37 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
                     centeredSlides={true}
                     onSlideChange={handleSlideChange}
                     onSwiper={(swiper) => (swiperRef.current = swiper)}
+                    initialSlide={activeIndex}
                     className="w-full max-w-sm"
                 >
-                    {seasons.map((season) => (
-                        <SwiperSlide key={season.key}>
+                    {competitions.map((competition) => (
+                        <SwiperSlide key={competition.id}>
                             <button
-                                onClick={() => season.available && onSeasonChange(season.key)}
-                                disabled={!season.available}
+                                onClick={() => handleCompetitionClick(competition)}
+                                disabled={!competition.active}
                                 className={`
                                     relative flex flex-col items-center gap-4 p-6 w-full transition-all duration-300
-                                    ${season.available
+                                    ${competition.active
                                         ? 'active:scale-95'
                                         : 'cursor-not-allowed opacity-50'
                                     }
                                 `}
                             >
                                 <img
-                                    src={season.image}
-                                    alt={season.label}
-                                    className={`w-full h-40 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${!season.available ? 'grayscale' : ''}`}
+                                    src={competition.logo}
+                                    alt={competition.name}
+                                    className={`w-full h-40 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
+                                        !competition.active ? 'grayscale' : ''
+                                    }`}
                                 />
                                 
                                 <span className={`text-lg font-bold text-center ${
-                                    selectedSeason === season.key ? 'text-primary' : 'text-foreground'
+                                    selectedSeason === competition.id ? 'text-primary' : 'text-foreground'
                                 }`}>
-                                    {season.label}
+                                    {competition.name}
                                 </span>
 
-                                {!season.available && (
+                                {!competition.active && (
                                     <span className="absolute top-4 right-4 px-3 py-1 rounded-full bg-primary/90 text-background text-xs font-bold backdrop-blur-sm">
                                         🔒 {t('landing.comingSoon') || 'Em breve'}
                                     </span>
@@ -138,7 +171,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
 
                 {/* Indicators */}
                 <div className="flex items-center gap-2">
-                    {seasons.map((_, i) => (
+                    {competitions.map((_, i) => (
                         <div
                             key={i}
                             className={`h-1.5 rounded-full transition-all duration-300 ${

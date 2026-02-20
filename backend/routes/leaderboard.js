@@ -16,7 +16,7 @@ const authenticateToken = (req, res, next) => {
 
 router.post('/', authenticateToken, async (req, res) => {
     try {
-        const { score, game_mode, difficulty } = req.body;
+        const { score, game_mode, difficulty, competition_id } = req.body;
         const user_id = req.user.id;
 
         if (!score || !game_mode) {
@@ -35,14 +35,16 @@ router.post('/', authenticateToken, async (req, res) => {
             }
         }
 
+        const compId = competition_id || 'ligaportugal2024';
+
         // verificar record existente
         let existingQuery, existingParams;
         if (game_mode === 'classic') {
-            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND difficulty = ? ORDER BY score DESC LIMIT 1';
-            existingParams = [user_id, game_mode, difficulty];
+            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND difficulty = ? AND competition_id = ? ORDER BY score DESC LIMIT 1';
+            existingParams = [user_id, game_mode, difficulty, compId];
         } else {
-            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? ORDER BY score DESC LIMIT 1';
-            existingParams = [user_id, game_mode];
+            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND competition_id = ? ORDER BY score DESC LIMIT 1';
+            existingParams = [user_id, game_mode, compId];
         }
 
         const [existing] = await db.execute(existingQuery, existingParams);
@@ -51,8 +53,8 @@ router.post('/', authenticateToken, async (req, res) => {
         }
 
         await db.execute(
-            'INSERT INTO scores (user_id, score, game_mode, difficulty) VALUES (?, ?, ?, ?)',
-            [user_id, score, game_mode, difficulty || null]
+            'INSERT INTO scores (user_id, score, game_mode, competition_id, difficulty) VALUES (?, ?, ?, ?, ?)',
+            [user_id, score, game_mode, compId, difficulty || null]
         );
 
         res.status(201).json({ saved: true, isNewRecord: true });
@@ -65,10 +67,10 @@ router.post('/', authenticateToken, async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const { game_mode, difficulty } = req.query;
+        const { game_mode, difficulty, competition_id } = req.query;
 
         let query = `
-            SELECT users.username, scores.score, scores.game_mode, scores.difficulty, scores.created_at
+            SELECT users.username, scores.score, scores.game_mode, scores.difficulty, scores.competition_id, scores.created_at
             FROM scores
             JOIN users ON scores.user_id = users.id
             WHERE 1=1
@@ -83,6 +85,11 @@ router.get('/', async (req, res) => {
         if (difficulty && game_mode === 'classic') {
             query += ' AND scores.difficulty = ?';
             params.push(difficulty);
+        }
+
+        if (competition_id) {
+            query += ' AND scores.competition_id = ?';
+            params.push(competition_id);
         }
 
         query += ' ORDER BY scores.score DESC, scores.created_at ASC LIMIT 100';

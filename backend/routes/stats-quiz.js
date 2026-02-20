@@ -84,11 +84,26 @@ const generateF1Options = (correctValue, stat) => {
     return [...options].sort(() => Math.random() - 0.5);
 };
 
-// GET /api/stats-quiz?exclude=1,2,3
+// GET /api/stats-quiz?exclude=1,2,3&competition_id=ligaportugal2024
 router.get('/', async (req, res) => {
     try {
-        const excludeIds = req.query.exclude
-            ? req.query.exclude.split(',').map(Number).filter(Boolean)
+        const { exclude, competition_id } = req.query;
+
+        // validar e buscar competição
+        const competitionId = competition_id || 'ligaportugal2024';
+        const [competitions] = await db.execute(
+            'SELECT table_name FROM competitions WHERE id = ? AND active = 1',
+            [competitionId]
+        );
+
+        if (competitions.length === 0) {
+            return res.status(404).json({ error: 'Competição não encontrada' });
+        }
+
+        const tableName = competitions[0].table_name;
+
+        const excludeIds = exclude
+            ? exclude.split(',').map(Number).filter(Boolean)
             : [];
 
         const formats = ['F1', 'F2', 'F3'];
@@ -107,7 +122,7 @@ router.get('/', async (req, res) => {
             // 1 jogador, adivinhar valor
             const [players] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
-                FROM players
+                FROM ${tableName}
                 ${baseFilter}
                 AND ${stat} >= ?
                 ${excludeList}
@@ -138,7 +153,7 @@ router.get('/', async (req, res) => {
             // 2 jogadores, comparar
             const [pool] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
-                FROM players
+                FROM ${tableName}
                 ${baseFilter}
                 AND ${stat} >= ?
                 ${excludeList}
@@ -186,7 +201,7 @@ router.get('/', async (req, res) => {
             // F3 — True/False
             const [players] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
-                FROM players
+                FROM ${tableName}
                 ${baseFilter}
                 AND ${stat} >= ?
                 ${excludeList}
