@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { getQuestion, saveScore } from '../services/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import SeasonSelector from '../components/SeasonSelector';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(en);
@@ -13,6 +13,7 @@ function Quiz({ token, user, onLogin }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     
+    const [selectedSeason, setSelectedSeason] = useState('ligaportugal2024');
     const [difficulty, setDifficulty] = useState('easy');
     const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -139,17 +140,6 @@ function Quiz({ token, user, onLogin }) {
 
     const changeDifficulty = (newDifficulty) => {
         setDifficulty(newDifficulty);
-        setScore(0);
-        setLives(3);
-        setTimeLeft(8);
-        setGameOver(false);
-        setGameStarted(false);
-        setSelectedAnswer(null);
-        setUsedPlayerIds([]);
-        setHelpsLeft(2);
-        setUsedHelps({ nationality: false, team: false });
-        setActiveHelp(null);
-        setScoreSaved(null);
     };
 
     const getCountryCode = (countryName) => {
@@ -163,66 +153,78 @@ function Quiz({ token, user, onLogin }) {
         return code ? code.toLowerCase() : 'un';
     };
 
-    const getFlagEmoji = (countryName) => {
-        const code = getCountryCode(countryName);
-        if (code === 'un') return '🌍';
-        if (code === 'gb-eng') return '🏴󠁧󠁢󠁥󠁬󠁳󠁿';
-        return code.toUpperCase().replace(/./g, c =>
-            String.fromCodePoint(c.charCodeAt(0) + 127397)
-        );
-    };
-
     const difficultyLabel = (d) => {
         if (d === 'easy') return t('quiz.easy');
         if (d === 'medium') return t('quiz.medium');
         return t('quiz.hard');
     };
 
+    const difficultyEmoji = (d) => {
+        if (d === 'easy') return '😊';
+        if (d === 'medium') return '😐';
+        return '😈';
+    };
+
     if (!gameStarted && !gameOver) {
         return (
-            <div className="min-h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
-                <Card className="max-w-md w-full p-8 text-center space-y-6">
-                    <h1 className="text-4xl font-bold text-foreground">⚽ {t('quiz.title')}</h1>
-                    <p className="text-muted-foreground">{t('quiz.selectDifficulty')}</p>
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <div className="max-w-4xl w-full space-y-10">
                     
-                    <div className="space-y-3">
-                        <Button 
-                            size="lg" 
-                            className="w-full"
-                            variant={difficulty === 'easy' ? 'default' : 'outline'}
-                            onClick={() => changeDifficulty('easy')}
-                        >
-                            {t('quiz.easy')}
-                        </Button>
-                        <Button 
-                            size="lg" 
-                            className="w-full"
-                            variant={difficulty === 'medium' ? 'default' : 'outline'}
-                            onClick={() => changeDifficulty('medium')}
-                        >
-                            {t('quiz.medium')}
-                        </Button>
-                        <Button 
-                            size="lg" 
-                            className="w-full"
-                            variant={difficulty === 'hard' ? 'default' : 'outline'}
-                            onClick={() => changeDifficulty('hard')}
-                        >
-                            {t('quiz.hard')}
-                        </Button>
-                    </div>
+                    {/* Back Button */}
+                    <button
+                        onClick={() => navigate('/')}
+                        className="px-8 py-3 rounded-full border-2 border-primary text-foreground font-bold text-sm uppercase tracking-widest hover:bg-primary hover:text-background transition-all duration-200 shadow-lg hover:scale-105 active:scale-95"
+                    >
+                        ← Voltar
+                    </button>
 
-                    <Button size="lg" className="w-full mt-4" onClick={startGame}>
-                        {t('quiz.start')}
-                    </Button>
-                </Card>
+                    {/* Season Selector */}
+                    <SeasonSelector 
+                        selectedSeason={selectedSeason}
+                        onSeasonChange={setSelectedSeason}
+                    />
+
+                    {/* Difficulty Selector */}
+                    <div className="max-w-xl mx-auto text-center space-y-6">
+                        <h2 className="text-2xl font-bold text-primary">
+                            {t('quiz.selectDifficulty')}
+                        </h2>
+                        
+                        <div className="flex gap-3 justify-center">
+                            {['easy', 'medium', 'hard'].map((diff) => (
+                                <button
+                                    key={diff}
+                                    onClick={() => changeDifficulty(diff)}
+                                    className={`
+                                        flex flex-col items-center gap-2 px-6 py-4 rounded-2xl font-bold text-sm uppercase tracking-wide
+                                        transition-all duration-300
+                                        ${difficulty === diff
+                                            ? 'bg-primary text-background scale-110 shadow-2xl'
+                                            : 'bg-muted/50 text-foreground hover:bg-muted hover:scale-105'
+                                        }
+                                    `}
+                                >
+                                    <span className="text-3xl">{difficultyEmoji(diff)}</span>
+                                    <span>{t(`quiz.${diff}`)}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={startGame}
+                            className="px-12 py-4 rounded-full bg-primary text-background font-bold text-lg uppercase tracking-widest hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
+                        >
+                            {t('quiz.start')} →
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (gameOver) {
         return (
-            <div className="min-h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
+            <div className="min-h-screen flex items-center justify-center p-4">
                 <Card className="max-w-md w-full p-8 text-center space-y-6">
                     <h1 className="text-4xl font-bold text-foreground">{t('gameOver.title')}</h1>
                     <p className="text-6xl font-bold text-primary">{score}</p>
@@ -262,106 +264,188 @@ function Quiz({ token, user, onLogin }) {
         );
     }
 
-    if (loading) return <div className="p-8 text-center text-foreground">{t('common.loading')}</div>;
-    if (!question) return <div className="p-8 text-center text-foreground">{t('common.error')}</div>;
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="text-6xl animate-bounce">⚽</div>
+                    <p className="text-xl font-bold text-foreground">{t('common.loading')}</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!question) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="text-6xl">❌</div>
+                    <p className="text-xl font-bold text-foreground">{t('common.error')}</p>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="px-8 py-3 rounded-full border-2 border-primary text-foreground font-bold text-sm uppercase tracking-widest hover:bg-primary hover:text-background transition-all duration-200"
+                    >
+                        ← Voltar
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] bg-background p-8">
-            <div className="max-w-2xl mx-auto space-y-6">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold text-foreground">{t('quiz.title')}</h1>
-                        <div className="flex gap-1">
-                            {[...Array(3)].map((_, i) => (
-                                <span key={i} className="text-2xl">
-                                    {i < lives ? '❤️' : '🖤'}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={useHelp}
-                            disabled={helpsLeft === 0}
-                            className={`relative text-4xl transition-all ${
-                                helpsLeft === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110'
-                            }`}
-                        >
-                            💡
-                            {helpsLeft > 0 && (
-                                <Badge 
-                                    variant="destructive" 
-                                    className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
-                                >
-                                    {helpsLeft}
-                                </Badge>
-                            )}
-                        </button>
-
-                        <div className="text-3xl font-bold text-foreground">
-                            ⏱️ {t('quiz.time', { seconds: timeLeft })}
-                        </div>
-                        <div className="text-xl font-bold text-foreground">
-                            ⭐ {score}
-                        </div>
-                    </div>
+        <div className="min-h-screen p-4 md:p-8">
+            <div className="max-w-3xl mx-auto space-y-6">
+                
+                {/* Timer Bar - FIRST */}
+                <div className="relative w-full h-3 bg-muted rounded-full overflow-hidden">
+                    <div 
+                        className={`h-full transition-all duration-1000 ease-linear ${
+                            timeLeft <= 2 
+                                ? 'bg-destructive animate-pulse' 
+                                : timeLeft <= 4 
+                                    ? 'bg-orange-500' 
+                                    : 'bg-primary'
+                        }`}
+                        style={{ width: `${(timeLeft / 8) * 100}%` }}
+                    />
+                    {timeLeft <= 2 && (
+                        <div className="absolute inset-0 bg-destructive/20 animate-ping" />
+                    )}
                 </div>
 
-                <Card className="p-6">
-                    <div className="relative w-64 h-64 mx-auto mb-6">
+                {/* Main Card */}
+                <div className={`relative transition-all duration-300 ${
+                    timeLeft <= 2 ? 'animate-shake' : ''
+                }`}>
+                    
+                    {/* Player Photo - SECOND */}
+                    <div className="relative mx-auto w-full max-w-sm aspect-square mb-4">
                         <img 
                             src={question.photo} 
                             alt="Jogador" 
-                            className="w-full h-full object-cover rounded-lg"
+                            className="w-full h-full object-cover rounded-3xl shadow-2xl"
                         />
                         
+                        {/* Vignette effect when time is low */}
+                        {timeLeft <= 2 && (
+                            <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-destructive/30 rounded-3xl animate-pulse pointer-events-none" />
+                        )}
+
+                        {/* Helps Overlay - On top of image */}
                         {activeHelp === 'nationality' && (
-                            <div className="absolute top-2 right-2 rounded-lg shadow-lg flex items-center gap-2">
+                            <div className="absolute top-4 right-4 rounded-2xl bg-card/90 backdrop-blur-md p-3 shadow-2xl animate-in fade-in zoom-in duration-300">
                                 <img 
                                     src={`https://flagcdn.com/48x36/${getCountryCode(question.nationality)}.png`}
                                     alt={question.nationality}
-                                    className="w-12 h-9"
+                                    className="w-16 h-12 object-contain"
                                 />
                             </div>
                         )}
                         
                         {activeHelp === 'team' && question.team_logo && (
-                            <div className="absolute top-2 right-2 rounded-lg shadow-lg">
+                            <div className="absolute top-4 right-4 rounded-2xl bg-card/90 backdrop-blur-md p-3 shadow-2xl animate-in fade-in zoom-in duration-300">
                                 <img 
                                     src={question.team_logo} 
                                     alt="Logo equipa" 
-                                    className="w-16 h-16 object-contain"
+                                    className="w-20 h-20 object-contain"
                                 />
                             </div>
                         )}
                     </div>
 
-                    <div className="space-y-2">
-                        {question.options.map((option) => (
-                            <Button
-                                key={option}
-                                onClick={() => handleAnswer(option)}
-                                disabled={selectedAnswer !== null}
-                                variant={
-                                    selectedAnswer === option
-                                        ? option === question.correctAnswer
-                                            ? 'default'
-                                            : 'destructive'
-                                        : 'outline'
-                                }
-                                className="w-full text-foreground"
+                    {/* Stats Bar - THIRD (Lives, Help, Score) */}
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="flex gap-1">
+                                {[...Array(3)].map((_, i) => (
+                                    <span 
+                                        key={i} 
+                                        className={`text-3xl transition-all duration-300 ${
+                                            i < lives ? 'scale-100' : 'scale-75 opacity-30'
+                                        }`}
+                                    >
+                                        {i < lives ? '❤️' : '🖤'}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                            {/* Help Button */}
+                            <button
+                                onClick={useHelp}
+                                disabled={helpsLeft === 0}
+                                className={`relative transition-all ${
+                                    helpsLeft === 0 
+                                        ? 'opacity-30 cursor-not-allowed scale-90' 
+                                        : 'hover:scale-110 active:scale-95'
+                                }`}
                             >
-                                {option}
-                            </Button>
-                        ))}
-                    </div>
-                </Card>
+                                <div className="text-5xl">💡</div>
+                                {helpsLeft > 0 && (
+                                    <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black">
+                                        {helpsLeft}
+                                    </div>
+                                )}
+                            </button>
 
-                <div className="flex justify-center">
-                    <Button variant="destructive" onClick={() => { resetGame(); navigate('/'); }}>
+                            {/* Score */}
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 backdrop-blur-sm">
+                                <span className="text-2xl">⭐</span>
+                                <span className="text-2xl font-black text-primary">{score}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Answer Options */}
+                    <div className="space-y-3">
+                        {question.options.map((option) => {
+                            const isSelected = selectedAnswer === option;
+                            const isCorrect = option === question.correctAnswer;
+                            const showResult = selectedAnswer !== null;
+                            
+                            return (
+                                <button
+                                    key={option}
+                                    onClick={() => handleAnswer(option)}
+                                    disabled={selectedAnswer !== null}
+                                    className={`
+                                        w-full px-6 py-4 rounded-2xl font-bold text-lg
+                                        transition-all duration-300 relative overflow-hidden
+                                        ${!showResult
+                                            ? 'bg-card hover:bg-primary/20 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                                            : isSelected
+                                                ? isCorrect
+                                                    ? 'bg-green-500 text-white scale-105 shadow-2xl'
+                                                    : 'bg-destructive text-white scale-95'
+                                                : isCorrect && showResult
+                                                    ? 'bg-green-500/20 text-green-600 dark:text-green-400'
+                                                    : 'bg-card/50 opacity-50'
+                                        }
+                                    `}
+                                >
+                                    <span className="relative z-10 flex items-center justify-between">
+                                        <span>{option}</span>
+                                        {showResult && isSelected && (
+                                            <span className="text-2xl">
+                                                {isCorrect ? '✓' : '✗'}
+                                            </span>
+                                        )}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Abandon Button */}
+                <div className="flex justify-center pt-4">
+                    <button
+                        onClick={() => { resetGame(); navigate('/'); }}
+                        className="px-6 py-2 rounded-full border border-destructive/50 text-destructive font-semibold text-sm hover:bg-destructive/10 transition-all"
+                    >
                         {t('quiz.abandon')}
-                    </Button>
+                    </button>
                 </div>
             </div>
         </div>

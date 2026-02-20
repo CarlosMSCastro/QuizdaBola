@@ -10,7 +10,8 @@ import Footer from './components/Footer';
 
 function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkMode }) {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login';
+  const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login' || location.pathname === '/quiz' || location.pathname === '/stats-quiz';
+  
 
   return (
     <>

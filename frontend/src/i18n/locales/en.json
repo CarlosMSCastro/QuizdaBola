@@ -25,14 +25,15 @@
     "easy": "Easy",
     "medium": "Medium",
     "hard": "Hard",
-    "start": "Start ▶️",
+    "start": "Start",
     "abandon": "Abandon Game",
     "saving": "Saving...",
     "newRecord": "🏆 New personal record!",
     "betterScore": "You already have a better score on this difficulty.",
     "saveError": "Error saving score.",
     "registerPrompt": "to enter the leaderboard",
-    "registerLink": "Register"
+    "registerLink": "Register",
+    "selectSeason": "Choose the Competition: "
   },
   "gameOver": {
     "title": "Game Over! 💀",

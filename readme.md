@@ -1,94 +1,65 @@
 # QuizDaBola
 
-Quiz interativo de futebol — identifica jogadores, testa estatísticas e muito mais.
+Quiz interativo de futebol português — identifica jogadores e testa conhecimento de estatísticas da Liga Portugal.
 
 ## Stack
-- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6 + react-i18next + Swiper
-- **Backend:** Node.js + Express + JWT + bcrypt + MySQL
+- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6 + react-i18n + Swiper
+- **Backend:** Node.js + Express + JWT + MySQL
 
 ## Estrutura
 ```
 frontend/src/
   pages/       → Landing, Quiz, StatsQuiz, Leaderboard, Login
-  components/  → Navbar, Footer, SeasonSelector, shadcn/ui (Button, Card, Badge, Dialog)
+  components/  → Navbar, Footer, SeasonSelector, shadcn/ui
   services/    → api.js
-  i18n/        → config.js + locales (pt.json, en.json)
+  i18n/        → pt.json, en.json
 backend/
   routes/      → question, auth, leaderboard, stats-quiz
-  config/      → db.js
   server.js
 ```
 
-## Estado Atual
+## Features
 
-### ✅ Completo (FASE 1-3 + FASE 4 Polish em progresso)
+### ✅ Modos de Jogo
+- **Clássico** — Identifica jogadores por foto (timer 8s, 3 vidas, 2 ajudas, 3 dificuldades)
+- **Stats Quiz** — 3 formatos de perguntas sobre estatísticas (F1: múltipla escolha, F2: comparação, F3: V/F)
 
-**Core Funcional:**
-- **Modo Clássico** — Timer 8s, 3 vidas, 2 ajudas (nacionalidade/clube), 3 dificuldades, sem repetições
-- **Stats Quiz** — 3 formatos de pergunta (F1: opções múltiplas, F2: comparação lado a lado, F3: verdadeiro/falso)
-- **Leaderboard** — Filtros por modo (classic/stats) e dificuldade (easy/medium/hard para Clássico), responsivo mobile
-- **Autenticação** — Sistema JWT completo, página de login dedicada (sem navbar/footer), redirect flow, auto-save de pontuações
-- **i18n** — PT/EN aplicado em todos os componentes, placeholders dinâmicos, language switcher
-- **Dark Mode** — Tema completo com variáveis CSS (light/dark), preferência persistida em localStorage, toggle integrado
-- **BD** — 855 jogadores (Liga Portugal 2024), 67 placeholders filtrados via Python script (MD5 hash)
+### ✅ Core
+- Autenticação JWT com login/registo
+- Leaderboard com filtros (modo + dificuldade)
+- i18n (PT/EN)
+- Dark/Light mode
+- BD: 855 jogadores Liga Portugal 2024/25
 
-**UI/UX Polish:**
-- **Navbar** 
-  - Desktop: links horizontais, language flags, dark mode toggle, user dropdown
-  - Mobile (<1024px): menu hamburger com dropdown completo (leaderboard, language grid, theme grid, login/logout)
-  - Mobile (<560px): logo hidden na navbar, aparece como título na Landing
-  - Mobile (<550px): menu hamburger centralizado
-  - Dropdown consistente entre user logado e guest
-- **Landing** 
-  - Desktop: grid 3 colunas com hover scale
-  - Mobile: Swiper carrossel (slidesPerView: 1) com indicadores, active touch feedback
-  - Logo adaptativo (navbar desktop, título mobile)
-- **Login** — Página standalone (sem navbar/footer), botão "Voltar", modo dinâmico (login/registo via URL params), autofill styling corrigido para light/dark
-- **Leaderboard** — Sem navbar/footer, botão voltar com SVG arrow, responsivo mobile (texto compacto, ícones reduzidos)
-- **Footer** — Links GitHub/LinkedIn com SVG icons, ícones maiores em mobile (w-8 h-8), copyright dinâmico
-- **Theme System** — Paleta neutra (amarelo primary #F4D03F, verde secundário), todas as cores usando variáveis CSS, light mode contrast fix
+### ✅ UI/UX
+- **Quiz/StatsQuiz:** Timer bar progressivo, animações shake/vignette quando tempo crítico, feedback visual verde/vermelho, hover primary nas respostas
+- **SeasonSelector:** Swiper mobile, grid desktop, apenas Liga Portugal 24/25 ativo (25/26 e CL locked)
+- **Navbar:** Desktop horizontal, mobile dropdown hamburger (centralizado <550px)
+- **Landing:** Grid desktop, swiper mobile com indicadores
+- **Responsive:** Mobile-first, breakpoints 550px/560px/1024px
+- **No navbar/footer:** Quiz, StatsQuiz, Leaderboard, Login
 
-**Técnico:**
-- Todas as cores hardcoded refatoradas para variáveis theme
-- Placeholder detection via MD5 hash (Python script)
-- Filtros automáticos de placeholders no backend
-- Bandeiras via flagcdn.com API
-- App.jsx: hideNavAndFooter para `/login` e `/leaderboard`
-- Responsividade mobile-first em todos os componentes
-
-### ⏳ A Fazer
-
-**FASE 4 — Branding & Polish (em progresso):**
-- [ ] SeasonSelector component (Liga Portugal 24/25, 25/26, Champions League - apenas 24/25 ativo)
-- [ ] Definir identidade visual final (logo definitivo, paleta confirmada)
-- [ ] Animações (confetti no acerto, shake no erro, transitions suaves)
-- [ ] Acessibilidade (aria-labels, navegação por teclado)
-- [ ] Lazy loading (React.lazy nas rotas)
-- [ ] Otimizações de performance
+### ⏳ Pendente
+**FASE 4 — Polish:**
+- [ ] Animações (confetti acerto, shake erro)
+- [ ] Acessibilidade (aria-labels, keyboard nav)
+- [ ] Lazy loading rotas
+- [ ] Performance optimizations
 
 **FASE 5 — Deploy:**
-- [ ] Railway: backend + MySQL cloud
-- [ ] Vercel: frontend
-- [ ] DNS + domínio (quizdabola.com)
+- [ ] Railway (backend + MySQL)
+- [ ] Vercel (frontend)
+- [ ] Domínio
 
-**FASE 6 — Features Futuras:**
-- [ ] Modo Resultados (scrape fixtures API-Football)
-- [ ] Champions League 2024 (integração multi-competição)
-- [ ] Liga Portugal 2025/26 (próxima época)
-- [ ] Perfil do user (stats, clube favorito, win rate)
-- [ ] Multiplayer 1v1 (Socket.io, rooms, matchmaking)
+**FASE 6 — Futuro:**
+- [ ] Modo Resultados
+- [ ] Champions League + Liga Portugal 25/26
+- [ ] Perfil user
+- [ ] Multiplayer 1v1
 
-## Modos de Jogo
-1. **⚽ Clássico** ✅ — Identifica jogadores pela foto
-2. **📊 Stats Quiz** ✅ — Compara estatísticas entre jogadores
-3. **🏟️ Resultados** ⏳ — Adivinha resultados e golos
-4. **⚔️ 1v1 Online** ⏳ — Multiplayer em tempo real
-
-## Notas Técnicas
-- React Router v6 (downgrade de v7 por incompatibilidade)
-- Tailwind v4 inline config (sem tailwind.config.js tradicional)
-- shadcn/ui componentes copiados ao projeto (customizáveis)
-- MySQL pool: 10 conexões simultâneas
-- JWT expiry: 7 dias
-- Mobile breakpoints: 560px (logo), 550px (menu centering), 1024px (desktop)
-- Theme variables: --primary, --foreground, --background, --muted, etc.
+## Tech Notes
+- Tailwind v4 inline config
+- MySQL: 855 players, 67 placeholders filtered (MD5 hash)
+- JWT expiry: 7 days
+- Theme: CSS variables (--primary, --foreground, --background, etc.)
+- Bandeiras: flagcdn.com API
