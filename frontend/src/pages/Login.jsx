@@ -54,12 +54,11 @@ function Login({ onLogin }) {
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-semibold"
+                    className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    <span>Voltar</span>
                 </button>
 
                 {/* Header */}
