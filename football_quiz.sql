@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19-Fev-2026 às 05:09
+-- Tempo de geração: 20-Fev-2026 às 22:57
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -972,7 +972,11 @@ CREATE TABLE `scores` (
 INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`) VALUES
 (2, 2, 2, 'easy', '2026-02-18 03:59:28', 'classic'),
 (3, 2, 5, 'easy', '2026-02-18 04:56:25', 'classic'),
-(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats');
+(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats'),
+(5, 2, 26, 'easy', '2026-02-19 23:11:43', 'classic'),
+(6, 3, 7, 'easy', '2026-02-20 04:19:37', 'classic'),
+(7, 3, 3, NULL, '2026-02-20 04:21:45', 'stats'),
+(8, 3, 32, 'easy', '2026-02-20 04:30:20', 'classic');
 
 -- --------------------------------------------------------
 
@@ -992,7 +996,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
-(2, 'adminteste', '$2b$10$WfksijtebqJOkfsAI460L.kgHTh7ViW1OjnwHScuQBBHo9yRgnWay', '2026-02-18 03:58:04');
+(2, 'adminteste', '$2b$10$WfksijtebqJOkfsAI460L.kgHTh7ViW1OjnwHScuQBBHo9yRgnWay', '2026-02-18 03:58:04'),
+(3, 'CarlosCastro', '$2b$10$MSoMDLriH56aNWvjYismj..mgR1aR/cv06BgCXdA1WCkRYgkNZyaa', '2026-02-20 04:18:43');
 
 --
 -- Índices para tabelas despejadas
@@ -1026,13 +1031,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restrições para despejos de tabelas
