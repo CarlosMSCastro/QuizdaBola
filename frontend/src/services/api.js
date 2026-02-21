@@ -26,10 +26,9 @@ export const getStatsQuestion = async (excludeIds = [], competitionId = 'ligapor
 };
 
 // buscar pergunta aleatória (com exclusão de IDs)
-export const getQuestion = async (difficulty, excludeIds = [], competitionId = 'ligaportugal2024') => {
+export const getQuestion = async (excludeIds = [], competitionId = 'ligaportugal2024') => {
     const response = await axios.get(`${API_URL}/question`, {
         params: { 
-            difficulty,
             exclude: excludeIds.join(','),
             competition_id: competitionId
         }

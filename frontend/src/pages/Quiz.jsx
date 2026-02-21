@@ -12,10 +12,9 @@ countries.registerLocale(en);
 function Quiz({ token, user, onLogin }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    
+    const [showTimeBonus, setShowTimeBonus] = useState(false);
     const [selectedSeason, setSelectedSeason] = useState('ligaportugal2024');
     const [currentCompetition, setCurrentCompetition] = useState(null);
-    const [difficulty, setDifficulty] = useState('easy');
     const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
@@ -31,7 +30,8 @@ function Quiz({ token, user, onLogin }) {
         const saved = localStorage.getItem('quizMuted');
         return saved === 'true';
     });
-    
+
+    const [currentQuestionDifficulty, setCurrentQuestionDifficulty] = useState(null);
     const [helpsLeft, setHelpsLeft] = useState(2);
     const [usedHelps, setUsedHelps] = useState({ nationality: false, team: false });
     const [activeHelp, setActiveHelp] = useState(null);
@@ -49,8 +49,13 @@ function Quiz({ token, user, onLogin }) {
     useEffect(() => {
         // Initialize audio with real files
         correctSoundRef.current = new Audio('/sounds/correct.mp3');
+        correctSoundRef.current.volume = 0.3; // 30%
+        
         wrongSoundRef.current = new Audio('/sounds/wrong.mp3');
+        wrongSoundRef.current.volume = 0.2; // 30%
+        
         urgentSoundRef.current = new Audio('/sounds/urgent.mp3');
+        urgentSoundRef.current.volume = 0.3; // 30%
     }, []);
 
     useEffect(() => {
@@ -71,14 +76,14 @@ function Quiz({ token, user, onLogin }) {
 
     useEffect(() => {
         if (gameOver && token && scoreSaved === null && score > 0) { // Adiciona && score > 0
-            saveScore(score, 'classic', token, difficulty, selectedSeason)
+            saveScore(score, 'classic', token,  selectedSeason)
                 .then(res => {
                     if (res.isNewRecord) setScoreSaved('record');
                     else setScoreSaved('exists'); // Guarda mas não mostra nada
                 })
                 .catch(() => setScoreSaved('error'));
         }
-    }, [gameOver, score, token, scoreSaved, difficulty, selectedSeason]); // Adiciona score nas dependências
+    }, [gameOver, score, token, scoreSaved, selectedSeason]); // Adiciona score nas dependências
 
     useEffect(() => {
         if (!gameOver && gameStarted) {
@@ -115,8 +120,9 @@ function Quiz({ token, user, onLogin }) {
         setTimeLeft(10);
         setTimerExpired(false);
         try {
-            const data = await getQuestion(difficulty, usedPlayerIds, selectedSeason);
+            const data = await getQuestion(usedPlayerIds, selectedSeason); // REMOVER difficulty
             setQuestion(data);
+            setCurrentQuestionDifficulty(data.difficulty); // ADICIONAR - guardar dificuldade da pergunta
             setUsedPlayerIds([...usedPlayerIds, data.id]);
         } catch (error) {
             console.error('Erro ao carregar pergunta:', error);
@@ -180,6 +186,10 @@ function Quiz({ token, user, onLogin }) {
         setUsedHelps({ ...usedHelps, [randomHelp]: true });
         setHelpsLeft(helpsLeft - 1);
         setTimeLeft(prev => prev + 5);
+        
+        // Mostrar mensagem de +5s
+        setShowTimeBonus(true);
+        setTimeout(() => setShowTimeBonus(false), 2000); // Desaparece após 2s
     };
 
     const startGame = () => setGameStarted(true);
@@ -199,9 +209,6 @@ function Quiz({ token, user, onLogin }) {
         setScoreSaved(null);
     };
 
-    const changeDifficulty = (newDifficulty) => {
-        setDifficulty(newDifficulty);
-    };
 
     const getCountryCode = (countryName) => {
         const exceptions = {
@@ -214,11 +221,6 @@ function Quiz({ token, user, onLogin }) {
         return code ? code.toLowerCase() : 'un';
     };
 
-    const difficultyLabel = (d) => {
-        if (d === 'easy') return t('quiz.easy');
-        if (d === 'medium') return t('quiz.medium');
-        return t('quiz.hard');
-    };
 
     const getTimerColor = () => {
         const percentage = (timeLeft / 10) * 100;
@@ -257,41 +259,7 @@ function Quiz({ token, user, onLogin }) {
                         onSeasonChange={setSelectedSeason}
                     />
 
-                    {/* Difficulty Selector */}
-                    <div className="max-w-2xl mx-auto text-center space-y-6">
-                        <h2 className="text-xl md:text-2xl font-black text-primary">
-                            {t('quiz.selectDifficulty')}
-                        </h2>
-                        
-                        <div className="inline-flex p-1 bg-muted/50 dark:bg-muted rounded-full relative">
-                            {/* Sliding background */}
-                            <div 
-                                className="absolute top-1 bottom-1 bg-primary rounded-full transition-all duration-300 ease-out"
-                                style={{
-                                    left: difficulty === 'easy' ? '0.25rem' : difficulty === 'medium' ? 'calc(33.333% + 0.083rem)' : 'calc(66.666% - 0.083rem)',
-                                    width: 'calc(33.333% - 0.166rem)'
-                                }}
-                            />
-                            
-                            {/* Buttons */}
-                            {['easy', 'medium', 'hard'].map((diff) => (
-                                <button
-                                    key={diff}
-                                    onClick={() => changeDifficulty(diff)}
-                                    className={`
-                                        relative z-10 px-8 md:px-12 py-3 md:py-4 rounded-full font-bold text-sm md:text-base
-                                        transition-all duration-300
-                                        ${difficulty === diff
-                                            ? 'text-background'
-                                            : 'text-foreground hover:text-foreground/80'
-                                        }
-                                    `}
-                                >
-                                    {t(`quiz.${diff}`)}
-                                </button>
-                            ))}
-                        </div>
-
+                    <div className="max-w-2xl mx-auto text-center">
                         <button
                             onClick={startGame}
                             className="px-8 py-3 rounded-full bg-primary text-background font-bold text-lg uppercase tracking-widest hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
@@ -330,10 +298,6 @@ function Quiz({ token, user, onLogin }) {
                             </div>
                         </div>
 
-                        {/* Difficulty */}
-                        <p className="text-lg md:text-xl text-muted-foreground">
-                            {t('gameOver.difficulty') || 'Dificuldade'}: <span className="font-bold text-foreground">{difficultyLabel(difficulty)}</span>
-                        </p>
 
                         {/* Record Notification - Only if NEW RECORD */}
                         {token && scoreSaved === 'record' && (
@@ -424,7 +388,6 @@ function Quiz({ token, user, onLogin }) {
                                 <img src={currentCompetition.logo} alt={currentCompetition.name} className="w-8 h-8 object-contain" />
                                 <div>
                                     <h3 className="text-sm font-bold text-foreground">{currentCompetition.name}</h3>
-                                    <p className="text-xs text-muted-foreground">{difficultyLabel(difficulty)}</p>
                                 </div>
                             </>
                         )}
@@ -469,30 +432,46 @@ function Quiz({ token, user, onLogin }) {
 
                 {/* Timer Bar - Directly below image */}
                 {!timerExpired ? (
-                    <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
-                        {/* Barra principal com gradiente animado */}
-                        <div 
-                            className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
-                            style={{ 
-                                width: `${(timeLeft / 10) * 100}%`,
-                                transition: 'width 1s linear'
-                            }}
-                        >
-                            {/* Brilho superior */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                    showTimeBonus ? (
+                        // Mensagem de bónus de tempo
+                        <div className="relative w-full h-8 bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-green-500/60 flex items-center justify-center">
+                            {/* Efeito de pulsação */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-emerald-500/30 animate-pulse" />
                             
-                            {/* Brilho lateral animado */}
-                            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/40 to-transparent" />
+                            {/* Ondas expansivas */}
+                            <div className="absolute inset-0 animate-ping bg-green-500/20 rounded-2xl" />
+                            
+                            {/* Texto */}
+                            <span className="relative z-10 text-base md:text-lg font-black text-green-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
+                                ⏱️ +5s
+                            </span>
                         </div>
-                        
-                        {/* Efeito de perigo quando tempo baixo */}
-                        {timeLeft <= 2 && (
-                            <div className="absolute inset-0 bg-red-500/20 animate-pulse rounded-full" />
-                        )}
-                        
-                        {/* Reflexo de vidro */}
-                        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-full pointer-events-none" />
-                    </div>
+                    ) : (
+                        <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
+                            {/* Barra principal com gradiente animado */}
+                            <div 
+                                className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
+                                style={{ 
+                                    width: `${(timeLeft / 10) * 100}%`,
+                                    transition: 'width 1s linear'
+                                }}
+                            >
+                                {/* Brilho superior */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                                
+                                {/* Brilho lateral animado */}
+                                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/40 to-transparent" />
+                            </div>
+                            
+                            {/* Efeito de perigo quando tempo baixo */}
+                            {timeLeft <= 2 && (
+                                <div className="absolute inset-0 bg-red-500/20 animate-pulse rounded-full" />
+                            )}
+                            
+                            {/* Reflexo de vidro */}
+                            <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-full pointer-events-none" />
+                        </div>
+                    )
                 ) : (
                     // Mensagem FORTE quando acaba
                     <div className="relative w-full h-8 bg-gradient-to-r from-orange-600/40 to-red-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/60 flex items-center justify-center">

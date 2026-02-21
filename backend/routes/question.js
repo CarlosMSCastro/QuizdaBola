@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
             team_logo: correctPlayer.team_logo,
             correctAnswer: correctPlayer.name,
             options,
-            difficulty // Enviamos a dificuldade para o frontend saber
+            difficulty // Enviamos a dificuldade para o frontend poder guardar se necessário
         });
 
     } catch (error) {

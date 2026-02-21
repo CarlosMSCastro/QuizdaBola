@@ -16,7 +16,7 @@ const authenticateToken = (req, res, next) => {
 
 router.post('/', authenticateToken, async (req, res) => {
     try {
-        const { score, game_mode, difficulty, competition_id } = req.body;
+        const { score, game_mode, competition_id } = req.body;
         const user_id = req.user.id;
 
         if (!score || !game_mode) {
@@ -28,33 +28,21 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'Modo inválido' });
         }
 
-        if (game_mode === 'classic') {
-            const validDifficulties = ['easy', 'medium', 'hard'];
-            if (!difficulty || !validDifficulties.includes(difficulty)) {
-                return res.status(400).json({ error: 'Dificuldade inválida' });
-            }
-        }
-
         const compId = competition_id || 'ligaportugal2024';
 
-        // verificar record existente
-        let existingQuery, existingParams;
-        if (game_mode === 'classic') {
-            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND difficulty = ? AND competition_id = ? ORDER BY score DESC LIMIT 1';
-            existingParams = [user_id, game_mode, difficulty, compId];
-        } else {
-            existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND competition_id = ? ORDER BY score DESC LIMIT 1';
-            existingParams = [user_id, game_mode, compId];
-        }
+        // verificar record existente (SEM difficulty)
+        const existingQuery = 'SELECT score FROM scores WHERE user_id = ? AND game_mode = ? AND competition_id = ? ORDER BY score DESC LIMIT 1';
+        const existingParams = [user_id, game_mode, compId];
 
         const [existing] = await db.execute(existingQuery, existingParams);
         if (existing.length > 0 && existing[0].score >= score) {
             return res.json({ saved: false, isNewRecord: false });
         }
 
+        // Guardar score SEM difficulty
         await db.execute(
-            'INSERT INTO scores (user_id, score, game_mode, competition_id, difficulty) VALUES (?, ?, ?, ?, ?)',
-            [user_id, score, game_mode, compId, difficulty || null]
+            'INSERT INTO scores (user_id, score, game_mode, competition_id) VALUES (?, ?, ?, ?)',
+            [user_id, score, game_mode, compId]
         );
 
         res.status(201).json({ saved: true, isNewRecord: true });
@@ -67,10 +55,10 @@ router.post('/', authenticateToken, async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const { game_mode, difficulty, competition_id } = req.query;
+        const { game_mode, competition_id } = req.query;
 
         let query = `
-            SELECT users.username, scores.score, scores.game_mode, scores.difficulty, scores.competition_id, scores.created_at
+            SELECT users.username, scores.score, scores.game_mode, scores.competition_id, scores.created_at
             FROM scores
             JOIN users ON scores.user_id = users.id
             WHERE 1=1
@@ -80,11 +68,6 @@ router.get('/', async (req, res) => {
         if (game_mode) {
             query += ' AND scores.game_mode = ?';
             params.push(game_mode);
-        }
-
-        if (difficulty && game_mode === 'classic') {
-            query += ' AND scores.difficulty = ?';
-            params.push(difficulty);
         }
 
         if (competition_id) {

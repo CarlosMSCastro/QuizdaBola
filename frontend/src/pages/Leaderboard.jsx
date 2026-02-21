@@ -7,7 +7,6 @@ function Leaderboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [gameMode, setGameMode] = useState('classic');
-    const [difficulty, setDifficulty] = useState('easy');
     const [league, setLeague] = useState('global');
     const [leagueDropdownOpen, setLeagueDropdownOpen] = useState(false);
     const [scores, setScores] = useState([]);
@@ -39,7 +38,7 @@ function Leaderboard() {
 
     useEffect(() => {
         loadScores();
-    }, [gameMode, difficulty, league]);
+    }, [gameMode, league]);
 
     useEffect(() => {
         const handler = (e) => {
@@ -57,7 +56,7 @@ function Leaderboard() {
             const competitionId = league === 'global' ? null : league;
             const data = await getLeaderboard(
                 gameMode,
-                gameMode === 'classic' ? difficulty : null,
+                null, // Sempre null agora
                 competitionId
             );
             setScores(data);
@@ -112,7 +111,7 @@ function Leaderboard() {
                     </button>
 
                     {leagueDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-card/95 dark:bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden z-10 border border-border">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-card/15 dark:bg-card/95 backdrop-blur-xs rounded-2xl shadow-2xl overflow-hidden z-10 border border-border">
                             {leagues.map((lg) => {
                                 const isActive = lg.id === 'global' || lg.active;
                                 
@@ -181,24 +180,6 @@ function Leaderboard() {
                     </button>
                 </div>
 
-                {/* Selector de Dificuldade (Classic only) */}
-                {gameMode === 'classic' && (
-                    <div className="flex gap-2 md:gap-4">
-                        {['easy', 'medium', 'hard'].map((diff) => (
-                            <button
-                                key={diff}
-                                onClick={() => setDifficulty(diff)}
-                                className={`flex-1 px-3 md:px-6 py-2 md:py-4 rounded-xl font-bold text-sm md:text-lg transition-all ${
-                                    difficulty === diff
-                                        ? 'bg-primary text-background shadow-lg'
-                                        : 'bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 dark:text-foreground text-accent'
-                                }`}
-                            >
-                                {t(`quiz.${diff}`)}
-                            </button>
-                        ))}
-                    </div>
-                )}
 
                 {/* Leaderboard */}
                 {scores.length === 0 ? (

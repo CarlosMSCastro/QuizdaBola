@@ -62,28 +62,6 @@ const randomStat = () => {
     return { stat, category, config };
 };
 
-// Gerar opções plausíveis para F1
-const generateF1Options = (correctValue, stat) => {
-    const options = new Set([correctValue]);
-    const isDecimal = stat === 'rating';
-    const range = Math.max(Math.ceil(correctValue * 0.4), 2);
-
-    let attempts = 0;
-    while (options.size < 4 && attempts < 100) {
-        attempts++;
-        const delta = Math.floor(Math.random() * range * 2) - range;
-        let val = correctValue + delta;
-        if (val <= 0) val = 1;
-        if (isDecimal) {
-            val = parseFloat((correctValue + (Math.random() * 0.8 - 0.4)).toFixed(2));
-            if (val <= 5.0) val = 5.5;
-        }
-        if (val !== correctValue) options.add(val);
-    }
-
-    return [...options].sort(() => Math.random() - 0.5);
-};
-
 // GET /api/stats-quiz?exclude=1,2,3&competition_id=ligaportugal2024
 router.get('/', async (req, res) => {
     try {
@@ -106,8 +84,27 @@ router.get('/', async (req, res) => {
             ? exclude.split(',').map(Number).filter(Boolean)
             : [];
 
-        const formats = ['F1', 'F2', 'F3'];
-        const format = formats[Math.floor(Math.random() * formats.length)];
+        // MUDANÇA 1: Remover F1 - só F2 (80%) e F3 (20%)
+        // MUDANÇA 2: Aumentar % de perguntas de rating
+        const rand = Math.random() * 100;
+        let format;
+        if (rand < 80) {
+            format = 'F2'; // 80% comparações
+        } else {
+            format = 'F3'; // 20% True/False
+        }
+
+        // MUDANÇA 3: Jogadores fáceis muito mais frequentes
+        // 75% easy, 20% medium, 5% hard
+        const diffRand = Math.random() * 100;
+        let difficulty;
+        if (diffRand < 75) {
+            difficulty = 'easy';
+        } else if (diffRand < 95) {
+            difficulty = 'medium';
+        } else {
+            difficulty = 'hard';
+        }
 
         const { stat, category, config } = randomStat();
         const minimum = config.minimums[stat];
@@ -116,40 +113,10 @@ router.get('/', async (req, res) => {
         const excludePlaceholder = `AND is_photo_placeholder = 0`;
         const excludeList = excludeIds.length > 0 ? `AND id NOT IN (${excludeIds.join(',')})` : '';
         const positionFilter = `AND position IN (${positions.map(p => `'${p}'`).join(',')})`;
-        const baseFilter = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter}`;
+        const difficultyFilter = `AND difficulty = '${difficulty}'`; // Filtro de dificuldade
+        const baseFilter = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter} ${difficultyFilter}`;
 
-        if (format === 'F1') {
-            // 1 jogador, adivinhar valor
-            const [players] = await db.execute(`
-                SELECT id, name, photo, team_logo, position, ${stat}
-                FROM ${tableName}
-                ${baseFilter}
-                AND ${stat} >= ?
-                ${excludeList}
-                ORDER BY RAND() LIMIT 1
-            `, [minimum]);
-
-            if (players.length === 0) return res.status(404).json({ error: 'Sem jogadores disponíveis' });
-
-            const player = players[0];
-            const correctValue = stat === 'rating'
-                ? parseFloat(parseFloat(player[stat]).toFixed(2))
-                : player[stat];
-
-            const options = generateF1Options(correctValue, stat);
-            const label = STAT_LABELS[stat];
-
-            return res.json({
-                format: 'F1',
-                question_pt: `Quantos ${label.pt} teve ${player.name} esta época?`,
-                question_en: `How many ${label.en} did ${player.name} have this season?`,
-                players: [{ id: player.id, name: player.name, photo: player.photo, team_logo: player.team_logo }],
-                stat,
-                correctAnswer: correctValue,
-                options
-            });
-
-        } else if (format === 'F2') {
+        if (format === 'F2') {
             // 2 jogadores, comparar
             const [pool] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
