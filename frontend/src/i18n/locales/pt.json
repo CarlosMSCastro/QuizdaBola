@@ -33,7 +33,8 @@
     "saveError": "Erro ao guardar pontuação.",
     "registerPrompt": "para entrar no leaderboard",
     "registerLink": "Registe-se",
-    "selectSeason": "Escolhe a Competição"
+    "selectSeason": "Escolhe a Competição",
+    "timeUp": "Tempo esgotado!"
   },
   "gameOver": {
     "title": "Game Over! 💀",

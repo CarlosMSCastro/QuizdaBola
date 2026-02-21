@@ -33,7 +33,8 @@
     "saveError": "Error saving score.",
     "registerPrompt": "to enter the leaderboard",
     "registerLink": "Register",
-    "selectSeason": "Choose the Competition: "
+    "selectSeason": "Choose the Competition: ",
+    "timeUp": "Time's Up!"
   },
   "gameOver": {
     "title": "Game Over! 💀",

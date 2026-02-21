@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getQuestion, saveScore } from '../services/api';
+import { getQuestion, saveScore, getCompetition } from '../services/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -14,12 +14,14 @@ function Quiz({ token, user, onLogin }) {
     const { t } = useTranslation();
     
     const [selectedSeason, setSelectedSeason] = useState('ligaportugal2024');
+    const [currentCompetition, setCurrentCompetition] = useState(null);
     const [difficulty, setDifficulty] = useState('easy');
     const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);
-    const [timeLeft, setTimeLeft] = useState(8);
+    const [timeLeft, setTimeLeft] = useState(10);
+    const [timerExpired, setTimerExpired] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -43,8 +45,24 @@ function Quiz({ token, user, onLogin }) {
     }, []);
 
     useEffect(() => {
+        // Buscar dados da competição selecionada
+        const fetchCompetition = async () => {
+            try {
+                const data = await getCompetition(selectedSeason);
+                setCurrentCompetition(data);
+            } catch (error) {
+                console.error('Erro ao buscar competição:', error);
+            }
+        };
+
+        if (selectedSeason) {
+            fetchCompetition();
+        }
+    }, [selectedSeason]);
+
+    useEffect(() => {
         if (gameOver && token && scoreSaved === null) {
-            saveScore(score, 'classic', token, difficulty)
+            saveScore(score, 'classic', token, difficulty, selectedSeason)
                 .then(res => {
                     if (res.isNewRecord) setScoreSaved('record');
                     else setScoreSaved('exists');
@@ -60,7 +78,7 @@ function Quiz({ token, user, onLogin }) {
     }, [gameStarted]);
 
     useEffect(() => {
-        if (gameOver || selectedAnswer !== null || !question || !gameStarted) return;
+        if (gameOver || selectedAnswer !== null || !question || !gameStarted || timerExpired) return;
 
         // Play urgent sound when timer is low
         if (timeLeft === 3 && urgentSoundRef.current) {
@@ -70,24 +88,25 @@ function Quiz({ token, user, onLogin }) {
 
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
-                if (prev <= 1) {
+                if (prev <= 0) { // Mudado de <= 1 para <= 0
                     handleTimeout();
-                    return 8;
+                    return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft]);
+    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired]);
 
     const loadQuestion = async () => {
         setLoading(true);
         setSelectedAnswer(null);
         setActiveHelp(null);
-        setTimeLeft(8);
+        setTimeLeft(10);
+        setTimerExpired(false);
         try {
-            const data = await getQuestion(difficulty, usedPlayerIds);
+            const data = await getQuestion(difficulty, usedPlayerIds, selectedSeason);
             setQuestion(data);
             setUsedPlayerIds([...usedPlayerIds, data.id]);
         } catch (error) {
@@ -97,6 +116,8 @@ function Quiz({ token, user, onLogin }) {
     };
 
     const handleTimeout = () => {
+        setTimerExpired(true);
+        
         if (wrongSoundRef.current) {
             wrongSoundRef.current.currentTime = 0;
             wrongSoundRef.current.play().catch(() => {});
@@ -104,9 +125,9 @@ function Quiz({ token, user, onLogin }) {
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
-            setGameOver(true);
+            setTimeout(() => setGameOver(true), 2000);
         } else {
-            setTimeout(() => loadQuestion(), 1000);
+            setTimeout(() => loadQuestion(), 2500); // Mudado de 2000 para 2500 - dá mais tempo para ver a mensagem
         }
     };
 
@@ -119,7 +140,7 @@ function Quiz({ token, user, onLogin }) {
                 correctSoundRef.current.play().catch(() => {});
             }
             setScore(score + 1);
-            setTimeout(() => loadQuestion(), 1500);
+            setTimeout(() => loadQuestion(), 2000);
         } else {
             if (wrongSoundRef.current) {
                 wrongSoundRef.current.currentTime = 0;
@@ -128,9 +149,9 @@ function Quiz({ token, user, onLogin }) {
             const newLives = lives - 1;
             setLives(newLives);
             if (newLives <= 0) {
-                setTimeout(() => setGameOver(true), 1500);
+                setTimeout(() => setGameOver(true), 2000);
             } else {
-                setTimeout(() => loadQuestion(), 1500);
+                setTimeout(() => loadQuestion(), 2000);
             }
         }
     };
@@ -157,7 +178,8 @@ function Quiz({ token, user, onLogin }) {
     const resetGame = () => {
         setScore(0);
         setLives(3);
-        setTimeLeft(8);
+        setTimeLeft(10);
+        setTimerExpired(false);
         setGameOver(false);
         setGameStarted(false);
         setSelectedAnswer(null);
@@ -190,7 +212,7 @@ function Quiz({ token, user, onLogin }) {
     };
 
     const getTimerColor = () => {
-        const percentage = (timeLeft / 8) * 100;
+        const percentage = (timeLeft / 10) * 100;
         if (percentage > 75) return 'from-green-500 to-green-400';
         if (percentage > 50) return 'from-yellow-500 to-yellow-400';
         if (percentage > 25) return 'from-orange-500 to-orange-400';
@@ -198,7 +220,7 @@ function Quiz({ token, user, onLogin }) {
     };
 
     const getTimerGlow = () => {
-        const percentage = (timeLeft / 8) * 100;
+        const percentage = (timeLeft / 10) * 100;
         if (percentage > 75) return 'shadow-[0_0_20px_rgba(34,197,94,0.5)]';
         if (percentage > 50) return 'shadow-[0_0_20px_rgba(234,179,8,0.5)]';
         if (percentage > 25) return 'shadow-[0_0_20px_rgba(249,115,22,0.5)]';
@@ -207,7 +229,7 @@ function Quiz({ token, user, onLogin }) {
 
     if (!gameStarted && !gameOver) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="min-h-screen flex items-center justify-center p-4 page-transition">
                 <div className="max-w-4xl w-full space-y-10">
                     
                     {/* Back Button */}
@@ -275,7 +297,7 @@ function Quiz({ token, user, onLogin }) {
 
     if (gameOver) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="min-h-screen flex items-center justify-center p-4 page-transition">
                 <Card className="max-w-md w-full p-8 text-center space-y-6">
                     <h1 className="text-4xl font-bold text-foreground">{t('gameOver.title')}</h1>
                     <p className="text-6xl font-bold text-primary">{score}</p>
@@ -317,7 +339,7 @@ function Quiz({ token, user, onLogin }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center page-transition">
                 <div className="text-center space-y-4">
                     <div className="text-6xl animate-bounce">⚽</div>
                     <p className="text-xl font-bold text-foreground">{t('common.loading')}</p>
@@ -328,7 +350,7 @@ function Quiz({ token, user, onLogin }) {
 
     if (!question) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center page-transition">
                 <div className="text-center space-y-4">
                     <div className="text-6xl">❌</div>
                     <p className="text-xl font-bold text-foreground">{t('common.error')}</p>
@@ -346,28 +368,32 @@ function Quiz({ token, user, onLogin }) {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-            <Card className="w-full max-w-lg p-6 md:p-8 space-y-5">
+        <div className="min-h-screen flex items-center justify-center p-4 page-transition">
+            <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
                 
                 {/* Header - League Info */}
                 <div className="flex items-center justify-between pb-4 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <img src="/images/ligaportugal2024.png" alt="Liga Portugal" className="w-8 h-8 object-contain" />
-                        <div>
-                            <h3 className="text-sm font-bold text-foreground">Liga Portugal 2024</h3>
-                            <p className="text-xs text-muted-foreground">{difficultyLabel(difficulty)}</p>
-                        </div>
+                        {currentCompetition && (
+                            <>
+                                <img src={currentCompetition.logo} alt={currentCompetition.name} className="w-8 h-8 object-contain" />
+                                <div>
+                                    <h3 className="text-sm font-bold text-foreground">{currentCompetition.name}</h3>
+                                    <p className="text-xs text-muted-foreground">{difficultyLabel(difficulty)}</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                     
                     {/* Score */}
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
-                        <span className="text-xs font-semibold text-muted-foreground">Pontuação</span>
+                        <span className="text-sm font-semibold dark:text-muted-foreground text-foreground">{t('quiz.score') || 'Pontuação'}</span>
                         <span className="text-xl font-black text-primary">{score}</span>
                     </div>
                 </div>
 
                 {/* Player Photo */}
-                <div className="relative mx-auto w-full max-w-[280px] aspect-square">
+                <div className="relative mx-auto w-full max-w-[280px] aspect-square border-2 border-primary rounded-3xl">
                     <img 
                         src={question.photo} 
                         alt="Jogador" 
@@ -376,7 +402,7 @@ function Quiz({ token, user, onLogin }) {
 
                     {/* Helps Overlay */}
                     {activeHelp === 'nationality' && (
-                        <div className="absolute top-3 right-3 rounded-xl bg-card/95 backdrop-blur-md p-2 shadow-xl animate-in fade-in zoom-in duration-300">
+                        <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
                             <img 
                                 src={`https://flagcdn.com/48x36/${getCountryCode(question.nationality)}.png`}
                                 alt={question.nationality}
@@ -386,7 +412,7 @@ function Quiz({ token, user, onLogin }) {
                     )}
                     
                     {activeHelp === 'team' && question.team_logo && (
-                        <div className="absolute top-3 right-3 rounded-xl bg-card/95 backdrop-blur-md p-2 shadow-xl animate-in fade-in zoom-in duration-300">
+                        <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
                             <img 
                                 src={question.team_logo} 
                                 alt="Logo equipa" 
@@ -397,17 +423,46 @@ function Quiz({ token, user, onLogin }) {
                 </div>
 
                 {/* Timer Bar - Directly below image */}
-                <div className="relative w-full h-4 bg-border/30 rounded-full overflow-hidden">
-                    <div 
-                        className={`h-full transition-all duration-1000 ease-linear bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()} ${
-                            timeLeft <= 2 ? 'animate-pulse' : ''
-                        }`}
-                        style={{ width: `${(timeLeft / 8) * 100}%` }}
-                    />
-                    {timeLeft <= 2 && (
-                        <div className="absolute inset-0 bg-red-500/20 animate-ping rounded-full" />
-                    )}
-                </div>
+                {!timerExpired ? (
+                    <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
+                        {/* Barra principal com gradiente animado */}
+                        <div 
+                            className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
+                            style={{ 
+                                width: `${(timeLeft / 10) * 100}%`,
+                                transition: 'width 1s linear'
+                            }}
+                        >
+                            {/* Brilho superior */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                            
+                            {/* Brilho lateral animado */}
+                            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/40 to-transparent" />
+                        </div>
+                        
+                        {/* Efeito de perigo quando tempo baixo */}
+                        {timeLeft <= 2 && (
+                            <div className="absolute inset-0 bg-red-500/20 animate-pulse rounded-full" />
+                        )}
+                        
+                        {/* Reflexo de vidro */}
+                        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-full pointer-events-none" />
+                    </div>
+                ) : (
+                    // Mensagem FORTE quando acaba
+                    <div className="relative w-full h-8 bg-gradient-to-r from-orange-600/40 to-red-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/60 flex items-center justify-center">
+                        {/* Efeito de pulsação forte */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 to-red-500/30 animate-pulse" />
+                        
+                        {/* Ondas expansivas */}
+                        <div className="absolute inset-0 animate-ping bg-red-500/20 rounded-2xl" />
+                        
+                        {/* Texto GRANDE e forte */}
+                        <span className="relative z-10 text-base md:text-lg font-black text-orange-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
+                            ⏰ {t('quiz.timeUp') || 'TEMPO ESGOTADO!'}
+                        </span>
+                    </div>
+                )}
 
                 {/* Lives & Help */}
                 <div className="flex justify-between items-center">
@@ -415,11 +470,13 @@ function Quiz({ token, user, onLogin }) {
                         {[...Array(3)].map((_, i) => (
                             <span 
                                 key={i} 
-                                className={`text-2xl transition-all duration-300 ${
-                                    i < lives ? 'scale-100' : 'scale-75 opacity-30'
+                                className={`text-2xl inline-block transition-all duration-300 ${
+                                    i < lives 
+                                        ? 'scale-100' 
+                                        : 'scale-75 opacity-30 grayscale'
                                 }`}
                             >
-                                {i < lives ? '❤️' : '🖤'}
+                                ⚽
                             </span>
                         ))}
                     </div>
@@ -433,7 +490,7 @@ function Quiz({ token, user, onLogin }) {
                                 : 'hover:scale-110 active:scale-95'
                         }`}
                     >
-                        <div className="text-4xl">💡</div>
+                        <div className="text-4xl">❓</div>
                         {helpsLeft > 0 && (
                             <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black">
                                 {helpsLeft}
@@ -458,11 +515,11 @@ function Quiz({ token, user, onLogin }) {
                                     w-full px-5 py-3 rounded-xl font-semibold text-base
                                     transition-all duration-300
                                     ${!showResult
-                                        ? 'bg-card hover:bg-primary/10 hover:scale-[1.01] active:scale-[0.99] shadow text-foreground'
+                                        ? 'dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90'
                                         : isSelected
                                             ? isCorrect
                                                 ? 'bg-success text-white scale-[1.02] shadow-lg'
-                                                : 'bg-destructive text-white scale-[0.98]'
+                                                : 'bg-destructive text-white scale-[0.98] shadow-lg'
                                             : 'bg-card/30 opacity-50 text-foreground/50'
                                     }
                                 `}

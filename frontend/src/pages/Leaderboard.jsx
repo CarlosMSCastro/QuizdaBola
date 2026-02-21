@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getLeaderboard } from '../services/api';
+import { getLeaderboard, getCompetitions } from '../services/api';
 
 function Leaderboard() {
     const navigate = useNavigate();
@@ -11,15 +11,31 @@ function Leaderboard() {
     const [league, setLeague] = useState('global');
     const [leagueDropdownOpen, setLeagueDropdownOpen] = useState(false);
     const [scores, setScores] = useState([]);
+    const [competitions, setCompetitions] = useState([]);
     const [loading, setLoading] = useState(true);
     const dropdownRef = useRef(null);
 
+    // Opção "Global" + competições da API
     const leagues = [
-        { id: 'global', name: 'Global', logo: null },
-        { id: 'ligaportugal2024', name: 'Liga Portugal 2024', logo: '/images/ligaportugal2024.png' }
+        { id: 'global', name: 'Global', logo: null, active: true },
+        ...competitions
     ];
 
     const selectedLeague = leagues.find(l => l.id === league);
+
+    useEffect(() => {
+        // Buscar competições da API
+        const fetchCompetitions = async () => {
+            try {
+                const data = await getCompetitions();
+                setCompetitions(data);
+            } catch (error) {
+                console.error('Erro ao buscar competições:', error);
+            }
+        };
+
+        fetchCompetitions();
+    }, []);
 
     useEffect(() => {
         loadScores();
@@ -38,15 +54,25 @@ function Leaderboard() {
     const loadScores = async () => {
         setLoading(true);
         try {
+            const competitionId = league === 'global' ? null : league;
             const data = await getLeaderboard(
                 gameMode,
-                gameMode === 'classic' ? difficulty : null
+                gameMode === 'classic' ? difficulty : null,
+                competitionId
             );
             setScores(data);
         } catch (error) {
             console.error('Erro ao carregar leaderboard:', error);
         }
         setLoading(false);
+    };
+
+    const handleLeagueClick = (lg) => {
+        // Só permite selecionar se for Global ou se a competição estiver ativa
+        if (lg.id === 'global' || lg.active) {
+            setLeague(lg.id);
+            setLeagueDropdownOpen(false);
+        }
     };
 
     if (loading) return <div className="p-8 text-center text-foreground">{t('common.loading')}</div>;
@@ -77,35 +103,54 @@ function Leaderboard() {
                         className="w-full flex items-center justify-between gap-3 px-4 md:px-6 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-lg transition-all bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 text-foreground"
                     >
                         <div className="flex items-center gap-3">
-                            {selectedLeague.logo && (
+                            {selectedLeague?.logo && (
                                 <img src={selectedLeague.logo} alt={selectedLeague.name} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
                             )}
-                            <span>{selectedLeague.name}</span>
+                            <span>{selectedLeague?.name || 'Global'}</span>
                         </div>
                         <span className={`text-muted-foreground transition-transform duration-300 ${leagueDropdownOpen ? 'rotate-180' : ''}`}>▾</span>
                     </button>
 
                     {leagueDropdownOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-card/95 dark:bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden z-10 border border-border">
-                            {leagues.map((lg) => (
-                                <button
-                                    key={lg.id}
-                                    onClick={() => {
-                                        setLeague(lg.id);
-                                        setLeagueDropdownOpen(false);
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 font-bold text-sm md:text-lg transition-all ${
-                                        league === lg.id
-                                            ? 'bg-primary text-background'
-                                            : 'hover:bg-muted/50 dark:hover:bg-muted/30 text-foreground'
-                                    }`}
-                                >
-                                    {lg.logo && (
-                                        <img src={lg.logo} alt={lg.name} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
-                                    )}
-                                    <span>{lg.name}</span>
-                                </button>
-                            ))}
+                            {leagues.map((lg) => {
+                                const isActive = lg.id === 'global' || lg.active;
+                                
+                                return (
+                                    <button
+                                        key={lg.id}
+                                        onClick={() => handleLeagueClick(lg)}
+                                        disabled={!isActive}
+                                        className={`
+                                            relative w-full flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 font-bold text-sm md:text-lg transition-all
+                                            ${!isActive ? 'cursor-not-allowed opacity-50' : ''}
+                                            ${league === lg.id
+                                                ? 'bg-primary text-background'
+                                                : isActive 
+                                                    ? 'hover:bg-muted/50 dark:hover:bg-muted/30 text-foreground'
+                                                    : 'text-foreground'
+                                            }
+                                        `}
+                                    >
+                                        {lg.logo && (
+                                            <img 
+                                                src={lg.logo} 
+                                                alt={lg.name} 
+                                                className={`w-6 h-6 md:w-8 md:h-8 object-contain ${
+                                                    !isActive ? 'grayscale' : ''
+                                                }`}
+                                            />
+                                        )}
+                                        <span>{lg.name}</span>
+                                        
+                                        {!isActive && (
+                                            <span className="ml-auto px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold">
+                                                🔒 {t('landing.comingSoon') || 'Em breve'}
+                                            </span>
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -165,7 +210,7 @@ function Leaderboard() {
                 ) : (
                     <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl">
                         {/* League Header - Desktop only */}
-                        {league !== 'global' && (
+                        {league !== 'global' && selectedLeague?.logo && (
                             <div className="hidden md:flex items-center gap-3 px-8 py-4 dark:bg-muted/60 bg-muted/40 border-b border-border">
                                 <img src={selectedLeague.logo} alt={selectedLeague.name} className="w-8 h-8 object-contain" />
                                 <span className="font-black text-lg text-foreground">{selectedLeague.name}</span>
