@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 20-Fev-2026 às 23:18
+-- Tempo de geração: 21-Fev-2026 às 05:00
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -1004,7 +1004,9 @@ INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `gam
 (6, 3, 7, 'easy', '2026-02-20 04:19:37', 'classic', 'ligaportugal2024'),
 (7, 3, 3, NULL, '2026-02-20 04:21:45', 'stats', 'ligaportugal2024'),
 (8, 3, 32, 'easy', '2026-02-20 04:30:20', 'classic', 'ligaportugal2024'),
-(9, 3, 7, 'hard', '2026-02-20 22:16:50', 'classic', 'ligaportugal2024');
+(9, 3, 7, 'hard', '2026-02-20 22:16:50', 'classic', 'ligaportugal2024'),
+(10, 3, 47, 'easy', '2026-02-21 02:57:40', 'classic', 'ligaportugal2024'),
+(11, 3, 4, 'medium', '2026-02-21 02:58:56', 'classic', 'ligaportugal2024');
 
 -- --------------------------------------------------------
 
@@ -1066,7 +1068,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de tabela `users`

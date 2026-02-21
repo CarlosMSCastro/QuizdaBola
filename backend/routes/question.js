@@ -2,16 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// GET /api/question?difficulty=easy&exclude=1,2,3&competition_id=ligaportugal2024
+// GET /api/question?exclude=1,2,3&competition_id=ligaportugal2024
 router.get('/', async (req, res) => {
     try {
-        const { difficulty, exclude, competition_id } = req.query;
-
-        // validar dificuldade
-        const validDifficulties = ['easy', 'medium', 'hard'];
-        if (!validDifficulties.includes(difficulty)) {
-            return res.status(400).json({ error: 'Dificuldade inválida' });
-        }
+        const { exclude, competition_id } = req.query;
 
         // validar e buscar competição
         const competitionId = competition_id || 'ligaportugal2024';
@@ -25,6 +19,18 @@ router.get('/', async (req, res) => {
         }
 
         const tableName = competitions[0].table_name;
+
+        // Determinar dificuldade baseada em probabilidade
+        // 46% easy, 40% medium, 14% hard
+        const rand = Math.random() * 100;
+        let difficulty;
+        if (rand < 46) {
+            difficulty = 'easy';
+        } else if (rand < 86) { // 46 + 40 = 86
+            difficulty = 'medium';
+        } else {
+            difficulty = 'hard';
+        }
 
         // preparar exclusão de IDs
         const excludeIds = exclude ? exclude.split(',').map(id => parseInt(id)) : [];
@@ -75,7 +81,8 @@ router.get('/', async (req, res) => {
             nationality: correctPlayer.nationality,
             team_logo: correctPlayer.team_logo,
             correctAnswer: correctPlayer.name,
-            options
+            options,
+            difficulty // Enviamos a dificuldade para o frontend saber
         });
 
     } catch (error) {
