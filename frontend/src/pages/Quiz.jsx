@@ -27,6 +27,10 @@ function Quiz({ token, user, onLogin }) {
     const [loading, setLoading] = useState(false);
     const [usedPlayerIds, setUsedPlayerIds] = useState([]);
     const [scoreSaved, setScoreSaved] = useState(null);
+    const [isMuted, setIsMuted] = useState(() => {
+        const saved = localStorage.getItem('quizMuted');
+        return saved === 'true';
+    });
     
     const [helpsLeft, setHelpsLeft] = useState(2);
     const [usedHelps, setUsedHelps] = useState({ nationality: false, team: false });
@@ -36,6 +40,11 @@ function Quiz({ token, user, onLogin }) {
     const correctSoundRef = useRef(null);
     const wrongSoundRef = useRef(null);
     const urgentSoundRef = useRef(null);
+
+    // Guarda no localStorage sempre que mudar
+    useEffect(() => {
+        localStorage.setItem('quizMuted', isMuted);
+    }, [isMuted]);
 
     useEffect(() => {
         // Initialize audio with real files
@@ -61,15 +70,15 @@ function Quiz({ token, user, onLogin }) {
     }, [selectedSeason]);
 
     useEffect(() => {
-        if (gameOver && token && scoreSaved === null) {
+        if (gameOver && token && scoreSaved === null && score > 0) { // Adiciona && score > 0
             saveScore(score, 'classic', token, difficulty, selectedSeason)
                 .then(res => {
                     if (res.isNewRecord) setScoreSaved('record');
-                    else setScoreSaved('exists');
+                    else setScoreSaved('exists'); // Guarda mas não mostra nada
                 })
                 .catch(() => setScoreSaved('error'));
         }
-    }, [gameOver]);
+    }, [gameOver, score, token, scoreSaved, difficulty, selectedSeason]); // Adiciona score nas dependências
 
     useEffect(() => {
         if (!gameOver && gameStarted) {
@@ -81,14 +90,14 @@ function Quiz({ token, user, onLogin }) {
         if (gameOver || selectedAnswer !== null || !question || !gameStarted || timerExpired) return;
 
         // Play urgent sound when timer is low
-        if (timeLeft === 3 && urgentSoundRef.current) {
+        if (timeLeft === 3 && urgentSoundRef.current && !isMuted) {
             urgentSoundRef.current.currentTime = 0;
             urgentSoundRef.current.play().catch(() => {});
         }
 
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
-                if (prev <= 0) { // Mudado de <= 1 para <= 0
+                if (prev <= 0) {
                     handleTimeout();
                     return 0;
                 }
@@ -97,7 +106,7 @@ function Quiz({ token, user, onLogin }) {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired]);
+    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
 
     const loadQuestion = async () => {
         setLoading(true);
@@ -118,7 +127,7 @@ function Quiz({ token, user, onLogin }) {
     const handleTimeout = () => {
         setTimerExpired(true);
         
-        if (wrongSoundRef.current) {
+        if (wrongSoundRef.current && !isMuted) {
             wrongSoundRef.current.currentTime = 0;
             wrongSoundRef.current.play().catch(() => {});
         }
@@ -127,7 +136,7 @@ function Quiz({ token, user, onLogin }) {
         if (newLives <= 0) {
             setTimeout(() => setGameOver(true), 2000);
         } else {
-            setTimeout(() => loadQuestion(), 2500); // Mudado de 2000 para 2500 - dá mais tempo para ver a mensagem
+            setTimeout(() => loadQuestion(), 2500);
         }
     };
 
@@ -135,14 +144,14 @@ function Quiz({ token, user, onLogin }) {
         setSelectedAnswer(answer);
         
         if (answer === question.correctAnswer) {
-            if (correctSoundRef.current) {
+            if (correctSoundRef.current && !isMuted) {
                 correctSoundRef.current.currentTime = 0;
                 correctSoundRef.current.play().catch(() => {});
             }
             setScore(score + 1);
             setTimeout(() => loadQuestion(), 2000);
         } else {
-            if (wrongSoundRef.current) {
+            if (wrongSoundRef.current && !isMuted) {
                 wrongSoundRef.current.currentTime = 0;
                 wrongSoundRef.current.play().catch(() => {});
             }
@@ -297,46 +306,82 @@ function Quiz({ token, user, onLogin }) {
 
     if (gameOver) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4 page-transition">
-                <Card className="max-w-md w-full p-8 text-center space-y-6">
-                    <h1 className="text-4xl font-bold text-foreground">{t('gameOver.title')}</h1>
-                    <p className="text-6xl font-bold text-primary">{score}</p>
-                    <p className="text-muted-foreground">
-                        {t('gameOver.difficulty')} {difficultyLabel(difficulty)}
-                    </p>
+            <div className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20">
+                <div className="max-w-2xl w-full text-center space-y-8">
+                    
 
-                    {token ? (
-                        <div className="text-sm">
-                            {scoreSaved === null && <p className="text-muted-foreground">{t('quiz.saving')}</p>}
-                            {scoreSaved === 'record' && <p className="text-success font-bold">{t('quiz.newRecord')}</p>}
-                            {scoreSaved === 'exists' && <p className="text-muted-foreground">{t('quiz.betterScore')}</p>}
-                            {scoreSaved === 'error' && <p className="text-destructive">{t('quiz.saveError')}</p>}
+
+                    {/* Game Over Content */}
+                    <div className="space-y-6">
+                        <h1 className="text-5xl md:text-7xl font-black text-primary tracking-tight">
+                            {t('gameOver.title') || 'Game Over'}
+                        </h1>
+                        
+                        {/* Score Display */}
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-sm md:text-base text-muted-foreground uppercase tracking-widest">
+                                {t('quiz.score') || 'Pontuação'}
+                            </span>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+                                <p className="relative text-8xl md:text-9xl font-black text-foreground/60 drop-shadow-2xl">
+                                    {score}
+                                </p>
+                            </div>
                         </div>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">
-                            <button 
-                                className="underline text-foreground hover:text-primary transition-colors" 
-                                onClick={() => navigate('/login?mode=register&redirect=/quiz')}
-                            >
-                                {t('quiz.registerLink')}
-                            </button>{' '}
-                            {t('quiz.registerPrompt')}
-                        </p>
-                    )}
 
-                    <div className="space-y-3">
-                        <Button size="lg" className="w-full" onClick={resetGame}>
-                            {t('gameOver.playAgain')}
-                        </Button>
-                        <Button variant="ghost" className="w-full text-foreground" onClick={() => navigate('/')}>
-                            {t('gameOver.backHome')}
-                        </Button>
+                        {/* Difficulty */}
+                        <p className="text-lg md:text-xl text-muted-foreground">
+                            {t('gameOver.difficulty') || 'Dificuldade'}: <span className="font-bold text-foreground">{difficultyLabel(difficulty)}</span>
+                        </p>
+
+                        {/* Record Notification - Only if NEW RECORD */}
+                        {token && scoreSaved === 'record' && (
+                            <div className="animate-in fade-in zoom-in duration-500">
+                                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-success/20 border-2 border-success">
+                                    <span className="text-3xl">🏆</span>
+                                    <span className="text-lg font-bold text-success">
+                                        {t('quiz.newRecord') || 'Novo Record!'}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Login Prompt for guests */}
+                        {!token && (
+                            <div className="pt-4">
+                                <p className="text-sm md:text-base text-muted-foreground">
+                                    <button 
+                                        className="underline text-primary hover:text-primary/80 transition-colors font-semibold" 
+                                        onClick={() => navigate('/login?mode=register&redirect=/quiz')}
+                                    >
+                                        {t('quiz.registerLink') || 'Regista-te'}
+                                    </button>{' '}
+                                    {t('quiz.registerPrompt') || 'para guardar a tua pontuação!'}
+                                </p>
+                            </div>
+                        )}
                     </div>
-                </Card>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                        <button
+                            onClick={resetGame}
+                            className="px-8 py-4 rounded-full bg-primary text-background font-bold text-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
+                        >
+                            {t('gameOver.playAgain') || 'Jogar Novamente'}
+                        </button>
+                        <button
+                            onClick={() => navigate('/')}
+                            className="px-8 py-4 rounded-full border-2 border-primary text-primary font-bold text-lg hover:bg-primary/10 hover:scale-105 active:scale-95 transition-all duration-200"
+                        >
+                            {t('gameOver.backHome') || 'Voltar ao Início'}
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
-
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center page-transition">
@@ -464,7 +509,7 @@ function Quiz({ token, user, onLogin }) {
                     </div>
                 )}
 
-                {/* Lives & Help */}
+                {/* Lives, Mute & Help */}
                 <div className="flex justify-between items-center">
                     <div className="flex gap-1">
                         {[...Array(3)].map((_, i) => (
@@ -481,22 +526,35 @@ function Quiz({ token, user, onLogin }) {
                         ))}
                     </div>
                     
-                    <button
-                        onClick={useHelp}
-                        disabled={helpsLeft === 0}
-                        className={`relative transition-all ${
-                            helpsLeft === 0 
-                                ? 'opacity-30 cursor-not-allowed scale-90' 
-                                : 'hover:scale-110 active:scale-95'
-                        }`}
-                    >
-                        <div className="text-4xl">❓</div>
-                        {helpsLeft > 0 && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black">
-                                {helpsLeft}
+                    <div className="flex items-center gap-2">
+                        {/* Botão Mute */}
+                        <button
+                            onClick={() => setIsMuted(!isMuted)}
+                            className="relative transition-all hover:scale-110 active:scale-95"
+                        >
+                            <div className="text-4xl">
+                                {isMuted ? '🔇' : '🔊'}
                             </div>
-                        )}
-                    </button>
+                        </button>
+
+                        {/* Botão Help */}
+                        <button
+                            onClick={useHelp}
+                            disabled={helpsLeft === 0}
+                            className={`relative transition-all ${
+                                helpsLeft === 0 
+                                    ? 'opacity-30 cursor-not-allowed scale-90' 
+                                    : 'hover:scale-110 active:scale-95'
+                            }`}
+                        >
+                            <div className="text-4xl">❓</div>
+                            {helpsLeft > 0 && (
+                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black">
+                                    {helpsLeft}
+                                </div>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Answer Options */}
@@ -541,7 +599,7 @@ function Quiz({ token, user, onLogin }) {
                 <div className="flex justify-center pt-2">
                     <button
                         onClick={() => { resetGame(); navigate('/'); }}
-                        className="px-5 py-2 rounded-full border border-destructive/40 text-destructive text-xs font-semibold hover:bg-destructive/10 transition-all"
+                        className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all"
                     >
                         {t('quiz.abandon')}
                     </button>

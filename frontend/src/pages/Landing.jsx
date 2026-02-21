@@ -33,23 +33,18 @@ function ModeCard({ mode, onClick, isMobile }) {
 
     return (
         <div
-            onClick={mode.available ? onClick : undefined}
             className={`
-                relative text-center group
+                relative text-center
                 flex flex-col items-center justify-center
                 transition-all duration-300
-                ${isMobile ? 'p-6 gap-4' : 'p-8 py-10 gap-4'}
-                ${mode.available
-                    ? 'cursor-pointer'
-                    : 'cursor-not-allowed'
-                }
+                ${isMobile ? 'p-6 gap-4' : 'p-4 py-10 gap-6'}
             `}
         >
             {mode.image
                 ? <img
                     src={mode.image}
                     alt={mode.key}
-                    className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-transform duration-300 ${isMobile ? 'w-40 h-40 active:scale-110' : 'w-56 h-56 group-hover:scale-110'} ${!mode.available ? 'grayscale opacity-70' : ''}`}
+                    className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-transform duration-300 object-contain ${isMobile ? 'w-52 h-52' : 'w-72 h-72'} ${mode.available ? 'hover:scale-110' : 'grayscale opacity-70'}`}
                 />
                 : <span
                     className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${isMobile ? 'text-6xl' : 'text-9xl'} ${!mode.available ? 'grayscale opacity-70' : ''}`}
@@ -67,13 +62,14 @@ function ModeCard({ mode, onClick, isMobile }) {
                 </p>
             </div>
 
-            {mode.available && (
-                <button className={`rounded-full border-2 border-primary text-foreground font-bold uppercase tracking-widest transition-all duration-200 mt-2 px-8 py-3 text-sm hover:bg-primary hover:text-background active:scale-95`}>
+            {mode.available ? (
+                <button 
+                    onClick={onClick}
+                    className={`rounded-full bg-primary text-background font-bold uppercase tracking-widest transition-all duration-200 mt-2 px-8 py-3 text-sm hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-xl`}
+                >
                     {t('landing.playNow')}
                 </button>
-            )}
-
-            {!mode.available && (
+            ) : (
                 <span className={`rounded-full border-2 border-primary text-muted-foreground font-bold uppercase tracking-widest mt-2 px-8 py-3 text-sm`}>
                     🔒 {t('landing.comingSoon')}
                 </span>
@@ -88,20 +84,10 @@ function Landing() {
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <div className="min-h-[calc(100vh-20rem)] flex flex-col items-center justify-center p-4 gap-8">
-
-            {/* Mobile Logo Title - Only below 560px */}
-            <div className="min-[560px]:hidden flex justify-center">
-                <img
-                    src="/images/logo.png"
-                    alt="QuizDaBola"
-                    className="h-14 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] cursor-pointer transition-all duration-200 active:scale-95"
-                    onClick={() => navigate('/')}
-                />
-            </div>
+        <div className="min-h-[calc(100vh-16rem)] flex flex-col items-center justify-center p-4 gap-8 pt-16">
 
             {/* Desktop */}
-            <div className="hidden lg:grid grid-cols-3 gap-6 w-full max-w-4xl">
+            <div className="hidden lg:grid grid-cols-3 gap-6 w-full max-w-5xl">
                 {modes.map(mode => (
                     <ModeCard
                         key={mode.key}
@@ -144,6 +130,7 @@ function Landing() {
                         />
                     ))}
                 </div>
+
             </div>
         </div>
     );

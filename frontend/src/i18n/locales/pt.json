@@ -39,7 +39,7 @@
   "gameOver": {
     "title": "Game Over! 💀",
     "difficulty": "Dificuldade:",
-    "playAgain": "🔄 Jogar Novamente",
+    "playAgain": "Jogar Novamente",
     "backHome": "← Voltar ao Início"
   },
   "leaderboard": {
