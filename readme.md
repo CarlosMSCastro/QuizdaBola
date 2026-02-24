@@ -1,172 +1,120 @@
 # QuizDaBola ⚽
 
-Quiz interativo de futebol português — identifica jogadores e testa conhecimento de estatísticas da Liga Portugal.
+Plataforma de quiz interativo sobre futebol — identifica jogadores e testa conhecimento de estatísticas.
 
 ## 🚀 Stack
-- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router v6 + react-i18next + Swiper
+- **Frontend:** React 19 + Vite + Tailwind v4 + shadcn/ui + React Router + i18next + Swiper
 - **Backend:** Node.js + Express + JWT + MySQL
-- **Sounds:** MP3 audio feedback (correct/wrong/urgent)
+- **Deploy:** (Pendente) Railway + Vercel
 
-## 📁 Estrutura
+## 🎮 Modos de Jogo
+
+### Quiz Clássico
+Identifica jogadores por foto (855+ jogadores Liga Portugal 24/25).
+- ⏱️ 10s por pergunta | 3 vidas ⚽
+- 2 ajudas (nacionalidade/equipa) → +5s cada
+- Dificuldade dinâmica: 46% easy, 40% medium, 14% hard
+- Áudio: correto/errado/urgente com mute persistente
+
+### Stats Quiz
+Perguntas sobre estatísticas dos jogadores.
+- **F2 (80%):** Comparação entre 2 jogadores (golos, assistências, rating, etc.)
+- **F3 (20%):** Verdadeiro/Falso
+- Reveal de valores após resposta
+- Dificuldade: 75% easy, 20% medium, 5% hard
+
+### Modo 1v1 Online
+🔒 **Em breve** — Desafios em tempo real contra outros jogadores.
+
+## ✅ Features Implementadas
+
+**Core:**
+- Autenticação JWT (7 dias)
+- Leaderboard global + por competição
+- i18n: Português/English
+- Dark/Light mode com persistência
+- LocalStorage: idioma, tema, última liga/modo escolhido
+- Sistema multi-competição (apenas Liga Portugal 24/25 ativa)
+
+**UI/UX:**
+- Timer progressivo com cores dinâmicas (verde→vermelho)
+- Transições entre páginas: fade + slide direcionais
+- Transições entre perguntas: slide de cima
+- Game Over: fade + zoom
+- Responsive mobile-first (breakpoints: 560px, 1024px)
+- Glassmorphism, glow effects, smooth animations
+
+**Navegação:**
+- Landing: 2 steps (escolher liga → escolher modo)
+- Navbar escondida em: Quiz, StatsQuiz, Leaderboard, Login
+- SeasonSelector: Swiper em mobile + desktop
+
+## 📋 Estrutura
 ```
 frontend/src/
-  pages/       → Landing, Quiz, StatsQuiz, Leaderboard, Login
-  components/  → Navbar, Footer, SeasonSelector, shadcn/ui
-  services/    → api.js
-  i18n/        → pt.json, en.json
+  pages/        → Landing, Quiz, StatsQuiz, Leaderboard, Login
+  components/   → Navbar, Footer, SeasonSelector
+  services/     → api.js
+  i18n/         → config.js, locales/pt.json, en.json
   public/
-    sounds/    → correct.mp3, wrong.mp3, urgent.mp3
-    images/    → classic.png, stats.png, results.png, logo.png
+    sounds/     → correct.mp3, wrong.mp3, urgent.mp3, gameover.mp3
+    images/     → classic.png, stats.png, results.png, logo.png
+
 backend/
-  routes/      → question.js, stats-question.js, auth.js, leaderboard.js, competition.js
-  config/      → db.js
+  routes/       → question.js, stats-question.js, auth.js, leaderboard.js, competition.js
+  config/       → db.js
   server.js
 ```
 
-## 🎮 Features
-
-### ✅ Modos de Jogo
-- **Clássico** — Identifica jogadores por foto
-  - Timer: 10 segundos
-  - 3 vidas (⚽)
-  - 2 ajudas (nacionalidade/equipa) → +5s cada
-  - Dificuldade dinâmica: 46% easy, 40% medium, 14% hard
-  - Sons: correto/errado/urgente (volume 20-30%)
-  - Mute persistente (localStorage)
-
-- **Stats Quiz** — Perguntas sobre estatísticas
-  - 2 formatos ativos:
-    - **F2 (80%):** Comparação entre 2 jogadores
-    - **F3 (20%):** Verdadeiro/Falso
-  - Jogadores: 75% easy, 20% medium, 5% hard
-  - Stats variadas: golos, assistências, rating, passes, tackles, etc.
-  - Reveal de valores após resposta (F2)
-
-### ✅ Core
-- **Autenticação:** JWT (7 dias)
-- **Leaderboard:** Único por modo + competição (sem filtro de dificuldade)
-- **i18n:** PT/EN via react-i18next
-- **Dark/Light mode:** Toggle com persistência
-- **BD:** 855 jogadores Liga Portugal 2024/25 (67 placeholders filtrados via MD5)
-- **Multi-competição:** Sistema preparado (apenas Liga Portugal 24/25 ativa)
-
-### ✅ UI/UX
-
-**Quiz/StatsQuiz:**
-- Timer bar progressivo com cores dinâmicas (verde→amarelo→laranja→vermelho)
-- Efeitos visuais: glow, glassmorphism, reflexos
-- Animações:
-  - Timer baixo (≤2s): pulse + ping
-  - +5s ao usar ajuda (verde)
-  - Tempo esgotado (laranja/vermelho forte)
-  - Transições suaves entre páginas (fadeIn 0.3s)
-- Feedback imediato: verde (✓) / vermelho (✗)
-- Vidas com bolas de futebol (⚽ colorido → grayscale)
-- Botões: mute (🔊/🔇) + help (❓) com contador
-
-**Game Over:**
-- Score gigante com glow effect
-- Notificação de novo record (🏆) apenas se for novo
-- Login prompt para guests
-- Botões: "Jogar Novamente" / "Voltar ao Início"
-
-**SeasonSelector:**
-- Swiper mobile com indicadores
-- Grid desktop (3 colunas)
-- Hover scale nas imagens
-- Locked: Liga Portugal 25/26, Champions League
-
-**Navbar:**
-- Desktop: horizontal com dropdown user menu
-- Mobile: hamburger menu dropdown
-- Logo centralizado em <560px
-- Sem navbar: Quiz, StatsQuiz, Leaderboard, Login
-
-**Landing:**
-- Desktop: grid 3 colunas
-- Mobile: swiper 1 card por vez
-- Hover: scale 110% nas imagens
-- Click apenas no botão "JOGAR AGORA"
-
-**Footer:**
-- Logo pequeno (h-8, opacity-60) em mobile
-- Links: GitHub, LinkedIn
-- Copyright dinâmico
-
-**Responsive:**
-- Mobile-first design
-- Breakpoints: 560px, 1024px (lg)
-
-### ⏳ Pendente
-
-**FASE 4 — Polish:**
-- [ ] Animações extra (confetti acerto, shake erro intensificado)
-- [ ] Acessibilidade (aria-labels, keyboard navigation)
-- [ ] Lazy loading de rotas
-- [ ] Performance optimizations (code splitting, image optimization)
-
-**FASE 5 — Deploy:**
-- [ ] Railway (backend + MySQL)
-- [ ] Vercel (frontend)
-- [ ] Domínio customizado
-- [ ] CI/CD pipeline
-
-**FASE 6 — Futuro:**
-- [ ] Modo Resultados (adivinhar resultado de jogos)
-- [ ] Champions League + Liga Portugal 25/26
-- [ ] Perfil de utilizador (histórico, badges, stats)
-- [ ] Multiplayer 1v1 (tempo real)
-- [ ] Achievements system
-- [ ] Share score nas redes sociais
-
-## 🔧 Tech Notes
-
-**Tailwind v4:**
-- Inline config em `index.css`
-- Custom properties: `--primary`, `--foreground`, `--background`, etc.
-- Dark mode via `.dark` class
+## 🔧 Tech Highlights
 
 **MySQL:**
 - 855 jogadores Liga Portugal 2024/25
-- Campos: `difficulty`, `overall_rating`, `goals_total`, etc.
-- Placeholders filtrados: `is_photo_placeholder = 0`
+- Placeholders filtrados (67 removidos via MD5)
+- Campos: difficulty, overall_rating, goals_total, assists, etc.
 
-**JWT:**
-- Expiry: 7 dias
-- Armazenado em localStorage
-- Refresh automático em cada request
+**Tailwind v4:**
+- Configuração inline em `index.css`
+- Custom properties: `--primary`, `--foreground`, `--background`
+- Dark mode via classe `.dark`
 
 **APIs Externas:**
-- Bandeiras: `flagcdn.com`
-- Logos equipas: armazenados na BD
+- Bandeiras: flagcdn.com
+- Logos: armazenados na BD
 
 **Audio:**
-- 3 sons: correct, wrong, urgent
-- Volumes: 30%, 20%, 30%
-- Mute persistente via localStorage
+- 4 sons (correct, wrong, urgent, gameover)
+- Volume: 10% (0.1)
+- Mute global por modo (localStorage)
 
-**Probabilidades:**
-- **Quiz Clássico:** 46% easy, 40% medium, 14% hard
-- **Stats Quiz (formato):** 80% F2, 20% F3
-- **Stats Quiz (dificuldade):** 75% easy, 20% medium, 5% hard
+## ⏳ Pré-Deploy (Pendente)
 
-## 📝 Convenções
+**Crítico:**
+- [ ] Corrigir erro 404 Stats Quiz (perguntas insuficientes/fallback)
+- [ ] Corrigir nomes estranhos (MT, Álvaro Carreras → Fernandez, Pepê → Aquino)
+- [ ] Repensar Stats Quiz (perguntas mais intuitivas: altura, valor mercado, minutos/golo)
+- [ ] Melhorar ajudas Stats Quiz (mostrar valor de um jogador no F2)
+- [ ] Lazy loading de rotas
 
-**Cores:**
-- Success: verde (#10b981)
-- Destructive: vermelho (#ef4444)
-- Primary: dourado (#f4d03f)
-- Muted: cinza adaptativo
+**Importante:**
+- [ ] Adicionar Liga Brasileira (Brasileirão 2024)
+- [ ] A11y básico (aria-labels, keyboard nav, contrast)
+- [ ] Mais jogadores dos 3 grandes (Benfica, Porto, Sporting)
 
-**Animações:**
-- Duração padrão: 300ms
-- Easing: ease-in-out
-- Transições de página: fadeIn com translateY(10px)
+**Nice to have:**
+- [ ] Feature-first refactor
+- [ ] SEO (meta tags, Open Graph, sitemap)
 
-**Componentes shadcn/ui:**
-- Button, Card, Input
-- Totalmente customizados com Tailwind
+## 🚀 Roadmap Futuro
+
+- Modo Resultados (adivinhar resultados de jogos)
+- Mais competições (Champions League, Liga Portuguesa 25/26, outros países)
+- Perfil de utilizador (histórico, badges, estatísticas)
+- Multiplayer 1v1 em tempo real (WebSockets)
+- Achievements system
+- Share score (redes sociais)
 
 ---
 
-**Última atualização:** Fevereiro 2025
+**Última atualização:** Fevereiro 2025  
+**Status:** 🟡 Pré-Deploy (correções finais)
