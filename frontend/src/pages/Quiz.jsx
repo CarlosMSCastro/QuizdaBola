@@ -8,11 +8,11 @@ import en from 'i18n-iso-countries/langs/en.json';
 import EndGame from '../components/EndGame';
 countries.registerLocale(en);
 
-function Quiz({ token, user, onLogin }) {
+function Quiz({ token}) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [showTimeBonus, setShowTimeBonus] = useState(false);
-    const [selectedSeason, setSelectedSeason] = useState(() => {
+    const [selectedSeason] = useState(() => {
         return localStorage.getItem('selectedSeason') || 'ligaportugal2024';
     });
     const [currentCompetition, setCurrentCompetition] = useState(null);
@@ -32,7 +32,6 @@ function Quiz({ token, user, onLogin }) {
         return saved === 'true';
     });
 
-    const [currentQuestionDifficulty, setCurrentQuestionDifficulty] = useState(null);
     const [helpsLeft, setHelpsLeft] = useState(2);
     const [usedHelps, setUsedHelps] = useState({ nationality: false, team: false });
     const [activeHelp, setActiveHelp] = useState(null);
@@ -58,6 +57,48 @@ function Quiz({ token, user, onLogin }) {
         urgentSoundRef.current.volume = 0.1;
 
     }, []);
+
+    const stopUrgentSound = () => {
+        if (urgentSoundRef.current) {
+            urgentSoundRef.current.pause();
+            urgentSoundRef.current.currentTime = 0;
+        }
+    };
+
+    const loadQuestion = async () => {
+        stopUrgentSound();
+        setLoading(true);
+        setSelectedAnswer(null);
+        setActiveHelp(null);
+        setTimeLeft(10);
+        setTimerExpired(false);
+        try {
+            const data = await getQuestion(usedPlayerIds, selectedSeason);
+            setQuestion(data);
+            setUsedPlayerIds([...usedPlayerIds, data.id]);
+        } catch (error) {
+            console.error('Erro ao carregar pergunta:', error);
+        }
+        setLoading(false);
+    };
+
+
+    const handleTimeout = () => {
+        stopUrgentSound();
+        setTimerExpired(true);
+        
+        if (wrongSoundRef.current && !isMuted) {
+            wrongSoundRef.current.currentTime = 0;
+            wrongSoundRef.current.play().catch(() => {});
+        }
+        const newLives = lives - 1;
+        setLives(newLives);
+        if (newLives <= 0) {
+            setTimeout(() => setGameOver(true), 2000);
+        } else {
+            setTimeout(() => loadQuestion(), 2500);
+        }
+    };
 
     useEffect(() => {
         const fetchCompetition = async () => {
@@ -91,6 +132,7 @@ function Quiz({ token, user, onLogin }) {
         }
     }, [gameOver, score, token, scoreSaved, selectedSeason]);
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         if (!gameOver && gameStarted) {
             loadQuestion();
@@ -118,40 +160,8 @@ function Quiz({ token, user, onLogin }) {
         return () => clearInterval(timer);
     }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
 
-    const loadQuestion = async () => {
-        stopUrgentSound();
-        setLoading(true);
-        setSelectedAnswer(null);
-        setActiveHelp(null);
-        setTimeLeft(10);
-        setTimerExpired(false);
-        try {
-            const data = await getQuestion(usedPlayerIds, selectedSeason);
-            setQuestion(data);
-            setCurrentQuestionDifficulty(data.difficulty);
-            setUsedPlayerIds([...usedPlayerIds, data.id]);
-        } catch (error) {
-            console.error('Erro ao carregar pergunta:', error);
-        }
-        setLoading(false);
-    };
 
-    const handleTimeout = () => {
-        stopUrgentSound();
-        setTimerExpired(true);
-        
-        if (wrongSoundRef.current && !isMuted) {
-            wrongSoundRef.current.currentTime = 0;
-            wrongSoundRef.current.play().catch(() => {});
-        }
-        const newLives = lives - 1;
-        setLives(newLives);
-        if (newLives <= 0) {
-            setTimeout(() => setGameOver(true), 2000);
-        } else {
-            setTimeout(() => loadQuestion(), 2500);
-        }
-    };
+
 
     const handleAnswer = (answer) => {
         stopUrgentSound();
@@ -241,12 +251,6 @@ function Quiz({ token, user, onLogin }) {
         return 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
     };
 
-    const stopUrgentSound = () => {
-        if (urgentSoundRef.current) {
-            urgentSoundRef.current.pause();
-            urgentSoundRef.current.currentTime = 0;
-        }
-    };
 
 
     if (gameOver) {

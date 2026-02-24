@@ -13,7 +13,8 @@ import TestAnimations from './pages/TestAnimations';
 function PageTransition({ children }) {
   const location = useLocation();
   const [prevPath, setPrevPath] = useState('/');
-
+  
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setPrevPath(location.pathname);
   }, [location.pathname]);

@@ -40,6 +40,22 @@ function Leaderboard() {
         fetchCompetitions();
     }, []);
 
+    const loadScores = async () => {
+    setLoading(true);
+    try {
+        const competitionId = league === 'global' ? null : league;
+        const data = await getLeaderboard(
+            gameMode,
+            null, // Sempre null agora
+            competitionId
+        );
+        setScores(data);
+    } catch (error) {
+        console.error('Erro ao carregar leaderboard:', error);
+    }
+    setLoading(false);
+};
+    /* eslint-disable react-hooks/exhaustive-deps */ //para remover o warning do vscode
     useEffect(() => {
         loadScores();
     }, [gameMode, league]);
@@ -54,21 +70,6 @@ function Leaderboard() {
         return () => document.removeEventListener('mousedown', handler);
     }, []);
 
-    const loadScores = async () => {
-        setLoading(true);
-        try {
-            const competitionId = league === 'global' ? null : league;
-            const data = await getLeaderboard(
-                gameMode,
-                null, // Sempre null agora
-                competitionId
-            );
-            setScores(data);
-        } catch (error) {
-            console.error('Erro ao carregar leaderboard:', error);
-        }
-        setLoading(false);
-    };
 
     const handleLeagueClick = (lg) => {
         // Só permite selecionar se for Global ou se a competição estiver ativa

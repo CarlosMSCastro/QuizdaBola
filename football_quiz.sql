@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 21-Fev-2026 às 05:51
+-- Tempo de geração: 24-Fev-2026 às 21:56
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -999,14 +999,13 @@ CREATE TABLE `scores` (
 INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`, `competition_id`) VALUES
 (2, 2, 2, 'easy', '2026-02-18 03:59:28', 'classic', 'ligaportugal2024'),
 (3, 2, 5, 'easy', '2026-02-18 04:56:25', 'classic', 'ligaportugal2024'),
-(4, 2, 4, NULL, '2026-02-19 04:07:40', 'stats', 'ligaportugal2024'),
 (5, 2, 26, 'easy', '2026-02-19 23:11:43', 'classic', 'ligaportugal2024'),
 (6, 3, 7, 'easy', '2026-02-20 04:19:37', 'classic', 'ligaportugal2024'),
 (7, 3, 3, NULL, '2026-02-20 04:21:45', 'stats', 'ligaportugal2024'),
 (8, 3, 32, 'easy', '2026-02-20 04:30:20', 'classic', 'ligaportugal2024'),
 (9, 3, 7, 'hard', '2026-02-20 22:16:50', 'classic', 'ligaportugal2024'),
 (11, 3, 4, 'medium', '2026-02-21 02:58:56', 'classic', 'ligaportugal2024'),
-(12, 3, 6, NULL, '2026-02-21 04:47:25', 'stats', 'ligaportugal2024');
+(16, 3, 6, NULL, '2026-02-24 03:12:00', 'stats', 'ligaportugal2024');
 
 -- --------------------------------------------------------
 
@@ -1068,7 +1067,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de tabela `users`

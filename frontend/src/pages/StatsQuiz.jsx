@@ -5,14 +5,13 @@ import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import EndGame from '../components/EndGame';
 
-function StatsQuiz({ token, user }) {
+function StatsQuiz({ token }) {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const lang = i18n.language === 'pt' ? 'pt' : 'en';
     
     const [showTimeBonus, setShowTimeBonus] = useState(false);
-    const [selectedSeason, setSelectedSeason] = useState(() => {
-        // Busca do localStorage ao iniciar
+    const [selectedSeason] = useState(() => {
         return localStorage.getItem('selectedSeason') || 'ligaportugal2024';
     });
     const [currentCompetition, setCurrentCompetition] = useState(null);
@@ -35,6 +34,7 @@ function StatsQuiz({ token, user }) {
 
     const [helpsLeft, setHelpsLeft] = useState(2);
     const [usedHelps, setUsedHelps] = useState({ hint1: false, hint2: false });
+    // eslint-disable-next-line no-unused-vars
     const [activeHelp, setActiveHelp] = useState(null);
 
     // Audio refs
@@ -42,15 +42,11 @@ function StatsQuiz({ token, user }) {
     const wrongSoundRef = useRef(null);
     const urgentSoundRef = useRef(null);
 
-
-
-    // Guarda no localStorage sempre que mudar
     useEffect(() => {
         localStorage.setItem('statsQuizMuted', isMuted);
     }, [isMuted]);
 
     useEffect(() => {
-        // Initialize audio with real files
         correctSoundRef.current = new Audio('/sounds/correct.mp3');
         correctSoundRef.current.volume = 0.1;
         
@@ -59,71 +55,15 @@ function StatsQuiz({ token, user }) {
         
         urgentSoundRef.current = new Audio('/sounds/urgent.mp3');
         urgentSoundRef.current.volume = 0.1;
-
-
     }, []);
 
-    useEffect(() => {
-        // Buscar dados da competição selecionada
-        const fetchCompetition = async () => {
-            try {
-                const data = await getCompetition(selectedSeason);
-                setCurrentCompetition(data);
-            } catch (error) {
-                console.error('Erro ao buscar competição:', error);
-            }
-        };
-
-        if (selectedSeason) {
-            fetchCompetition();
-        }
-    }, [selectedSeason]);
-
-    // Iniciar jogo automaticamente quando tiver competição
-    useEffect(() => {
-        if (currentCompetition && !gameStarted && !gameOver) {
-            setGameStarted(true);
-        }
-    }, [currentCompetition, gameStarted, gameOver]);
-
-    useEffect(() => {
-        if (gameOver && token && scoreSaved === null && score > 0) {
-            saveScore(score, 'stats', token, selectedSeason)
-                .then(res => {
-                    if (res.isNewRecord) setScoreSaved('record');
-                    else setScoreSaved('exists');
-                })
-                .catch(() => setScoreSaved('error'));
-        }
-    }, [gameOver, score, token, scoreSaved, selectedSeason]);
-
-    useEffect(() => {
-        if (!gameOver && gameStarted) {
-            loadQuestion();
-        }
-    }, [gameStarted]);
-
-    useEffect(() => {
-        if (gameOver || selectedAnswer !== null || !question || !gameStarted || timerExpired) return;
-
-        // Play urgent sound when timer is low
-        if (timeLeft === 3 && urgentSoundRef.current && !isMuted) {
+    // Declare functions BEFORE useEffects that use them
+    const stopUrgentSound = () => {
+        if (urgentSoundRef.current) {
+            urgentSoundRef.current.pause();
             urgentSoundRef.current.currentTime = 0;
-            urgentSoundRef.current.play().catch(() => {});
         }
-
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 0) {
-                    handleTimeout();
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
+    };
 
     const loadQuestion = async () => {
         stopUrgentSound();
@@ -160,6 +100,67 @@ function StatsQuiz({ token, user }) {
             setTimeout(() => loadQuestion(), 2500);
         }
     };
+
+    useEffect(() => {
+        const fetchCompetition = async () => {
+            try {
+                const data = await getCompetition(selectedSeason);
+                setCurrentCompetition(data);
+            } catch (error) {
+                console.error('Erro ao buscar competição:', error);
+            }
+        };
+
+        if (selectedSeason) {
+            fetchCompetition();
+        }
+    }, [selectedSeason]);
+
+    useEffect(() => {
+        if (currentCompetition && !gameStarted && !gameOver) {
+            setGameStarted(true);
+        }
+    }, [currentCompetition, gameStarted, gameOver]);
+
+    useEffect(() => {
+        if (gameOver && token && scoreSaved === null && score > 0) {
+            saveScore(score, 'stats', token, selectedSeason)
+                .then(res => {
+                    if (res.isNewRecord) setScoreSaved('record');
+                    else setScoreSaved('exists');
+                })
+                .catch(() => setScoreSaved('error'));
+        }
+    }, [gameOver, score, token, scoreSaved, selectedSeason]);
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        if (!gameOver && gameStarted) {
+            loadQuestion();
+        }
+    }, [gameStarted]);
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        if (gameOver || selectedAnswer !== null || !question || !gameStarted || timerExpired) return;
+
+        if (timeLeft === 3 && urgentSoundRef.current && !isMuted) {
+            urgentSoundRef.current.currentTime = 0;
+            urgentSoundRef.current.play().catch(() => {});
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 0) {
+                    handleTimeout();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
 
     const handleAnswer = (answer) => {
         if (selectedAnswer !== null) return;
@@ -265,14 +266,6 @@ function StatsQuiz({ token, user }) {
         if (percentage > 25) return 'shadow-[0_0_20px_rgba(249,115,22,0.5)]';
         return 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
     };
-
-
-    const stopUrgentSound = () => {
-    if (urgentSoundRef.current) {
-        urgentSoundRef.current.pause();
-        urgentSoundRef.current.currentTime = 0;
-    }
-};
 
     if (gameOver) {
         return <EndGame
