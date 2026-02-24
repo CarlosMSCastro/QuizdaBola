@@ -6,8 +6,12 @@ import { getLeaderboard, getCompetitions } from '../services/api';
 function Leaderboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [gameMode, setGameMode] = useState('classic');
-    const [league, setLeague] = useState('global');
+    const [gameMode, setGameMode] = useState(() => {
+        return localStorage.getItem('leaderboardMode') || 'classic';
+    });
+    const [league, setLeague] = useState(() => {
+        return localStorage.getItem('leaderboardLeague') || 'global';
+    });
     const [leagueDropdownOpen, setLeagueDropdownOpen] = useState(false);
     const [scores, setScores] = useState([]);
     const [competitions, setCompetitions] = useState([]);
@@ -70,6 +74,7 @@ function Leaderboard() {
         // Só permite selecionar se for Global ou se a competição estiver ativa
         if (lg.id === 'global' || lg.active) {
             setLeague(lg.id);
+            localStorage.setItem('leaderboardLeague', lg.id);
             setLeagueDropdownOpen(false);
         }
     };
@@ -157,7 +162,10 @@ function Leaderboard() {
                 {/* Selector de Modo */}
                 <div className="flex gap-3 md:gap-4">
                     <button
-                        onClick={() => setGameMode('classic')}
+                        onClick={() => {
+                            setGameMode('classic');
+                            localStorage.setItem('leaderboardMode', 'classic');
+                        }}
                         className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all ${
                             gameMode === 'classic'
                                 ? 'bg-primary text-background shadow-xl'
@@ -168,7 +176,10 @@ function Leaderboard() {
                         <span>{t('landing.classic')}</span>
                     </button>
                     <button
-                        onClick={() => setGameMode('stats')}
+                        onClick={() => {
+                            setGameMode('stats');
+                            localStorage.setItem('leaderboardMode', 'stats');
+                        }}
                         className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all ${
                             gameMode === 'stats'
                                 ? 'bg-primary text-background shadow-xl'

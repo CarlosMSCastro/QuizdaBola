@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { getStatsQuestion, saveScore, getCompetition } from '../services/api';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import SeasonSelector from '../components/SeasonSelector';
 
 function StatsQuiz({ token, user }) {
     const navigate = useNavigate();
@@ -11,7 +10,10 @@ function StatsQuiz({ token, user }) {
     const lang = i18n.language === 'pt' ? 'pt' : 'en';
     
     const [showTimeBonus, setShowTimeBonus] = useState(false);
-    const [selectedSeason, setSelectedSeason] = useState('ligaportugal2024');
+    const [selectedSeason, setSelectedSeason] = useState(() => {
+        // Busca do localStorage ao iniciar
+        return localStorage.getItem('selectedSeason') || 'ligaportugal2024';
+    });
     const [currentCompetition, setCurrentCompetition] = useState(null);
     const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -38,6 +40,22 @@ function StatsQuiz({ token, user }) {
     const correctSoundRef = useRef(null);
     const wrongSoundRef = useRef(null);
     const urgentSoundRef = useRef(null);
+    const gameoverSoundRef = useRef(null);
+    const highscoreSoundRef = useRef(null);
+
+    // Toca som de Game Over quando o ecrã aparece
+    useEffect(() => {
+        if (!gameOver || isMuted) return;
+
+        if (scoreSaved === 'record' && highscoreSoundRef.current) {
+            highscoreSoundRef.current.currentTime = 0;
+            highscoreSoundRef.current.play().catch(() => {});
+        } 
+        else if (scoreSaved && gameoverSoundRef.current) {
+            gameoverSoundRef.current.currentTime = 0;
+            gameoverSoundRef.current.play().catch(() => {});
+        }
+    }, [gameOver, scoreSaved, isMuted]);
 
     // Guarda no localStorage sempre que mudar
     useEffect(() => {
@@ -47,13 +65,19 @@ function StatsQuiz({ token, user }) {
     useEffect(() => {
         // Initialize audio with real files
         correctSoundRef.current = new Audio('/sounds/correct.mp3');
-        correctSoundRef.current.volume = 0.3;
+        correctSoundRef.current.volume = 0.1;
         
         wrongSoundRef.current = new Audio('/sounds/wrong.mp3');
-        wrongSoundRef.current.volume = 0.2;
+        wrongSoundRef.current.volume = 0.1;
         
         urgentSoundRef.current = new Audio('/sounds/urgent.mp3');
-        urgentSoundRef.current.volume = 0.3;
+        urgentSoundRef.current.volume = 0.1;
+
+        gameoverSoundRef.current = new Audio('/sounds/gameover.mp3');
+        gameoverSoundRef.current.volume = 0.1;
+
+        highscoreSoundRef.current = new Audio('/sounds/highscore.mp3');
+        highscoreSoundRef.current.volume = 0.1;
     }, []);
 
     useEffect(() => {
@@ -71,6 +95,13 @@ function StatsQuiz({ token, user }) {
             fetchCompetition();
         }
     }, [selectedSeason]);
+
+    // Iniciar jogo automaticamente quando tiver competição
+    useEffect(() => {
+        if (currentCompetition && !gameStarted && !gameOver) {
+            setGameStarted(true);
+        }
+    }, [currentCompetition, gameStarted, gameOver]);
 
     useEffect(() => {
         if (gameOver && token && scoreSaved === null && score > 0) {
@@ -112,6 +143,7 @@ function StatsQuiz({ token, user }) {
     }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
 
     const loadQuestion = async () => {
+        stopUrgentSound();
         setLoading(true);
         setSelectedAnswer(null);
         setRevealed(false);
@@ -130,6 +162,7 @@ function StatsQuiz({ token, user }) {
     };
 
     const handleTimeout = () => {
+        stopUrgentSound();
         setTimerExpired(true);
         
         if (wrongSoundRef.current && !isMuted) {
@@ -147,6 +180,7 @@ function StatsQuiz({ token, user }) {
 
     const handleAnswer = (answer) => {
         if (selectedAnswer !== null) return;
+        stopUrgentSound();
         setSelectedAnswer(answer);
 
         const correct = String(answer) === String(question.correctAnswer);
@@ -213,12 +247,9 @@ function StatsQuiz({ token, user }) {
         setHelpsLeft(helpsLeft - 1);
         setTimeLeft(prev => prev + 5);
         
-        // Mostrar mensagem de +5s
         setShowTimeBonus(true);
         setTimeout(() => setShowTimeBonus(false), 2000);
     };
-
-    const startGame = () => setGameStarted(true);
 
     const resetGame = () => {
         setScore(0);
@@ -252,52 +283,23 @@ function StatsQuiz({ token, user }) {
         return 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
     };
 
-    if (!gameStarted && !gameOver) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-4 page-transition">
-                <div className="max-w-4xl w-full space-y-10">
-                    
-                    {/* Back Button */}
-                    <button
-                        onClick={() => navigate('/')}
-                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
-                    >
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
 
-                    {/* Season Selector */}
-                    <SeasonSelector 
-                        selectedSeason={selectedSeason}
-                        onSeasonChange={setSelectedSeason}
-                    />
-
-                    <div className="max-w-2xl mx-auto text-center">
-                        <button
-                            onClick={startGame}
-                            className="px-8 py-3 rounded-full bg-primary text-background font-bold text-lg uppercase tracking-widest hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
-                        >
-                            {t('quiz.start')}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
+    const stopUrgentSound = () => {
+    if (urgentSoundRef.current) {
+        urgentSoundRef.current.pause();
+        urgentSoundRef.current.currentTime = 0;
     }
+};
 
     if (gameOver) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20">
+            <div key="gameover" className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20 animate-in fade-in zoom-in duration-500">
                 <div className="max-w-2xl w-full text-center space-y-8">
-                    
-                    {/* Game Over Content */}
                     <div className="space-y-6">
                         <h1 className="text-5xl md:text-7xl font-black text-primary tracking-tight">
                             {t('gameOver.title') || 'Game Over'}
                         </h1>
                         
-                        {/* Score Display */}
                         <div className="flex flex-col items-center gap-2">
                             <span className="text-sm md:text-base text-muted-foreground uppercase tracking-widest">
                                 {t('quiz.score') || 'Pontuação'}
@@ -310,11 +312,9 @@ function StatsQuiz({ token, user }) {
                             </div>
                         </div>
 
-                        {/* Record Notification - Only if NEW RECORD */}
                         {token && scoreSaved === 'record' && (
                             <div className="animate-in fade-in zoom-in duration-500">
                                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-success/20 border-2 border-success">
-                                    <span className="text-3xl">🏆</span>
                                     <span className="text-lg font-bold text-success">
                                         {t('quiz.newRecord') || 'Novo Record!'}
                                     </span>
@@ -322,7 +322,6 @@ function StatsQuiz({ token, user }) {
                             </div>
                         )}
 
-                        {/* Login Prompt for guests */}
                         {!token && (
                             <div className="pt-4">
                                 <p className="text-sm md:text-base text-muted-foreground">
@@ -338,7 +337,6 @@ function StatsQuiz({ token, user }) {
                         )}
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                         <button
                             onClick={resetGame}
@@ -358,7 +356,7 @@ function StatsQuiz({ token, user }) {
         );
     }
 
-    if (loading) {
+    if (loading || !question) {
         return (
             <div className="min-h-screen flex items-center justify-center page-transition">
                 <div className="text-center space-y-4">
@@ -369,32 +367,12 @@ function StatsQuiz({ token, user }) {
         );
     }
 
-    if (!question) {
-        return (
-            <div className="min-h-screen flex items-center justify-center page-transition">
-                <div className="text-center space-y-4">
-                    <div className="text-6xl">❌</div>
-                    <p className="text-xl font-bold text-foreground">{t('common.error')}</p>
-                    <button
-                        onClick={() => navigate('/')}
-                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
-                    >
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     const questionText = lang === 'pt' ? question.question_pt : question.question_en;
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 page-transition">
+        <div key={`${question.id}-${question.format}`} className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in slide-in-from-top duration-300">
             <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
                 
-                {/* Header - League Info */}
                 <div className="flex items-center justify-between pb-4 border-b border-border">
                     <div className="flex items-center gap-3">
                         {currentCompetition && (
@@ -407,23 +385,19 @@ function StatsQuiz({ token, user }) {
                         )}
                     </div>
                     
-                    {/* Score */}
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
                         <span className="text-sm font-semibold dark:text-muted-foreground text-foreground">{t('quiz.score') || 'Pontuação'}</span>
                         <span className="text-xl font-black text-primary">{score}</span>
                     </div>
                 </div>
 
-                {/* Question Text */}
                 <div className="text-center py-2">
                     <p className="text-lg md:text-xl font-bold text-primary">
                         {questionText}
                     </p>
                 </div>
 
-                {/* Question Content */}
                 <div className="space-y-4">
-                    {/* F1 — 1 jogador + opções */}
                     {question.format === 'F1' && (
                         <>
                             <div className="flex flex-col items-center gap-3">
@@ -471,7 +445,6 @@ function StatsQuiz({ token, user }) {
                         </>
                     )}
 
-                    {/* F2 — 2 jogadores lado a lado */}
                     {question.format === 'F2' && (
                         <div className="grid grid-cols-2 gap-3">
                             {question.players.map(player => {
@@ -504,23 +477,28 @@ function StatsQuiz({ token, user }) {
                                                     alt={player.name}
                                                     className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-110"
                                                 />
-                                                {/* Gradiente na base da foto */}
                                                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent" />
                                             </div>
                                             
-                                            {/* Overlay com stat value */}
                                             {revealed && (
                                                 <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-300">
                                                     <div className="text-center">
                                                         <span className="text-white text-5xl font-black drop-shadow-2xl">
-                                                            {player.statValue ?? '—'}
+                                                            {player.statValue 
+                                                                ? (() => {
+                                                                    const numValue = parseFloat(player.statValue);
+                                                                    return !isNaN(numValue) && !Number.isInteger(numValue)
+                                                                        ? numValue.toFixed(2)
+                                                                        : player.statValue;
+                                                                })()
+                                                                : '—'
+                                                            }
                                                         </span>
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
                                         
-                                        {/* Info do jogador */}
                                         <div className="p-3 bg-card/95 backdrop-blur-sm">
                                             <div className="flex items-center justify-center gap-2 mb-1">
                                                 <img src={player.team_logo} alt="logo" className="w-5 h-5 object-contain flex-shrink-0" />
@@ -535,7 +513,6 @@ function StatsQuiz({ token, user }) {
                         </div>
                     )}
 
-                    {/* F3 — True/False */}
                     {question.format === 'F3' && (
                         <>
                             <div className="flex flex-col items-center gap-3">
@@ -553,8 +530,8 @@ function StatsQuiz({ token, user }) {
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                                 {[
-                                    { label: lang === 'pt' ? 'Verdadeiro ✓' : 'True ✓', value: true },
-                                    { label: lang === 'pt' ? 'Falso ✗' : 'False ✗', value: false }
+                                    { label: lang === 'pt' ? 'Verdadeiro' : 'True', value: true },
+                                    { label: lang === 'pt' ? 'Falso' : 'False', value: false }
                                 ].map(opt => {
                                     const isSelected = selectedAnswer === opt.value;
                                     const isCorrect = opt.value === question.correctAnswer;
@@ -587,7 +564,6 @@ function StatsQuiz({ token, user }) {
                     )}
                 </div>
 
-                {/* Timer Bar */}
                 {!timerExpired ? (
                     showTimeBonus ? (
                         <div className="relative w-full h-8 bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-green-500/60 flex items-center justify-center">
@@ -625,7 +601,6 @@ function StatsQuiz({ token, user }) {
                     </div>
                 )}
 
-                {/* Lives, Mute & Help */}
                 <div className="flex justify-between items-center">
                     <div className="flex gap-1">
                         {[...Array(3)].map((_, i) => (
@@ -643,17 +618,15 @@ function StatsQuiz({ token, user }) {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        {/* Botão Mute */}
                         <button
                             onClick={() => setIsMuted(!isMuted)}
                             className="relative transition-all hover:scale-110 active:scale-95"
                         >
-                            <div className="text-4xl">
+                            <div className="text-3xl">
                                 {isMuted ? '🔇' : '🔊'}
                             </div>
                         </button>
 
-                        {/* Botão Help */}
                         <button
                             onClick={useHelp}
                             disabled={helpsLeft === 0}
@@ -673,7 +646,6 @@ function StatsQuiz({ token, user }) {
                     </div>
                 </div>
 
-                {/* Abandon Button */}
                 <div className="flex justify-center pt-2">
                     <button
                         onClick={() => { resetGame(); navigate('/'); }}

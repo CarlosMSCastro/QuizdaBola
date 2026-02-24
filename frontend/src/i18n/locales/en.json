@@ -28,7 +28,7 @@
     "start": "Start",
     "abandon": "Abandon Game",
     "saving": "Saving...",
-    "newRecord": "🏆 New personal record!",
+    "newRecord": "New personal record!",
     "betterScore": "You already have a better score on this difficulty.",
     "saveError": "Error saving score.",
     "registerPrompt": "to enter the leaderboard",

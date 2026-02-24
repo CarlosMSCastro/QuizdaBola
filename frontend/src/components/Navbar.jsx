@@ -53,7 +53,10 @@ function Navbar({ user, onLogout, darkMode, onToggleDark }) {
                         {languages.map((lang) => (
                             <button
                                 key={lang.code}
-                                onClick={() => i18n.changeLanguage(lang.code)}
+                                onClick={() => {
+                                    i18n.changeLanguage(lang.code);
+                                    localStorage.setItem('language', lang.code);
+                                }}
                                 className={`p-2 rounded-lg transition-all ${
                                     i18n.language === lang.code
                                         ? 'bg-foreground/25'
@@ -150,7 +153,10 @@ function Navbar({ user, onLogout, darkMode, onToggleDark }) {
                                         {languages.map((lang) => (
                                             <button
                                                 key={lang.code}
-                                                onClick={() => i18n.changeLanguage(lang.code)}
+                                                onClick={() => {
+                                                    i18n.changeLanguage(lang.code);
+                                                    localStorage.setItem('language', lang.code);
+                                                }}
                                                 className={`px-3 py-2 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold ${
                                                     i18n.language === lang.code
                                                         ? 'bg-primary text-primary-foreground'

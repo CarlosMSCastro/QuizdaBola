@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getQuestion, saveScore, getCompetition } from '../services/api';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import SeasonSelector from '../components/SeasonSelector';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 countries.registerLocale(en);
@@ -13,7 +11,9 @@ function Quiz({ token, user, onLogin }) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [showTimeBonus, setShowTimeBonus] = useState(false);
-    const [selectedSeason, setSelectedSeason] = useState('ligaportugal2024');
+    const [selectedSeason, setSelectedSeason] = useState(() => {
+        return localStorage.getItem('selectedSeason') || 'ligaportugal2024';
+    });
     const [currentCompetition, setCurrentCompetition] = useState(null);
     const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -40,26 +40,44 @@ function Quiz({ token, user, onLogin }) {
     const correctSoundRef = useRef(null);
     const wrongSoundRef = useRef(null);
     const urgentSoundRef = useRef(null);
+    const gameoverSoundRef = useRef(null);
+    const highscoreSoundRef = useRef(null);
 
-    // Guarda no localStorage sempre que mudar
+    useEffect(() => {
+        if (!gameOver || isMuted) return;
+
+        if (scoreSaved === 'record' && highscoreSoundRef.current) {
+            highscoreSoundRef.current.currentTime = 0;
+            highscoreSoundRef.current.play().catch(() => {});
+        } 
+        else if (scoreSaved && gameoverSoundRef.current) {
+            gameoverSoundRef.current.currentTime = 0;
+            gameoverSoundRef.current.play().catch(() => {});
+        }
+    }, [gameOver, scoreSaved, isMuted]);
+
     useEffect(() => {
         localStorage.setItem('quizMuted', isMuted);
     }, [isMuted]);
 
     useEffect(() => {
-        // Initialize audio with real files
         correctSoundRef.current = new Audio('/sounds/correct.mp3');
-        correctSoundRef.current.volume = 0.3; // 30%
+        correctSoundRef.current.volume = 0.1;
         
         wrongSoundRef.current = new Audio('/sounds/wrong.mp3');
-        wrongSoundRef.current.volume = 0.2; // 30%
+        wrongSoundRef.current.volume = 0.1;
         
         urgentSoundRef.current = new Audio('/sounds/urgent.mp3');
-        urgentSoundRef.current.volume = 0.3; // 30%
+        urgentSoundRef.current.volume = 0.1;
+
+        gameoverSoundRef.current = new Audio('/sounds/gameover.mp3');
+        gameoverSoundRef.current.volume = 0.1;
+
+        highscoreSoundRef.current = new Audio('/sounds/highscore.mp3');
+        highscoreSoundRef.current.volume = 0.1;
     }, []);
 
     useEffect(() => {
-        // Buscar dados da competição selecionada
         const fetchCompetition = async () => {
             try {
                 const data = await getCompetition(selectedSeason);
@@ -75,15 +93,21 @@ function Quiz({ token, user, onLogin }) {
     }, [selectedSeason]);
 
     useEffect(() => {
-        if (gameOver && token && scoreSaved === null && score > 0) { // Adiciona && score > 0
-            saveScore(score, 'classic', token,  selectedSeason)
+        if (currentCompetition && !gameStarted && !gameOver) {
+            setGameStarted(true);
+        }
+    }, [currentCompetition, gameStarted, gameOver]);
+
+    useEffect(() => {
+        if (gameOver && token && scoreSaved === null && score > 0) {
+            saveScore(score, 'classic', token, selectedSeason)
                 .then(res => {
                     if (res.isNewRecord) setScoreSaved('record');
-                    else setScoreSaved('exists'); // Guarda mas não mostra nada
+                    else setScoreSaved('exists');
                 })
                 .catch(() => setScoreSaved('error'));
         }
-    }, [gameOver, score, token, scoreSaved, selectedSeason]); // Adiciona score nas dependências
+    }, [gameOver, score, token, scoreSaved, selectedSeason]);
 
     useEffect(() => {
         if (!gameOver && gameStarted) {
@@ -94,7 +118,6 @@ function Quiz({ token, user, onLogin }) {
     useEffect(() => {
         if (gameOver || selectedAnswer !== null || !question || !gameStarted || timerExpired) return;
 
-        // Play urgent sound when timer is low
         if (timeLeft === 3 && urgentSoundRef.current && !isMuted) {
             urgentSoundRef.current.currentTime = 0;
             urgentSoundRef.current.play().catch(() => {});
@@ -114,15 +137,16 @@ function Quiz({ token, user, onLogin }) {
     }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired, isMuted]);
 
     const loadQuestion = async () => {
+        stopUrgentSound();
         setLoading(true);
         setSelectedAnswer(null);
         setActiveHelp(null);
         setTimeLeft(10);
         setTimerExpired(false);
         try {
-            const data = await getQuestion(usedPlayerIds, selectedSeason); // REMOVER difficulty
+            const data = await getQuestion(usedPlayerIds, selectedSeason);
             setQuestion(data);
-            setCurrentQuestionDifficulty(data.difficulty); // ADICIONAR - guardar dificuldade da pergunta
+            setCurrentQuestionDifficulty(data.difficulty);
             setUsedPlayerIds([...usedPlayerIds, data.id]);
         } catch (error) {
             console.error('Erro ao carregar pergunta:', error);
@@ -131,6 +155,7 @@ function Quiz({ token, user, onLogin }) {
     };
 
     const handleTimeout = () => {
+        stopUrgentSound();
         setTimerExpired(true);
         
         if (wrongSoundRef.current && !isMuted) {
@@ -147,6 +172,7 @@ function Quiz({ token, user, onLogin }) {
     };
 
     const handleAnswer = (answer) => {
+        stopUrgentSound();
         setSelectedAnswer(answer);
         
         if (answer === question.correctAnswer) {
@@ -187,12 +213,9 @@ function Quiz({ token, user, onLogin }) {
         setHelpsLeft(helpsLeft - 1);
         setTimeLeft(prev => prev + 5);
         
-        // Mostrar mensagem de +5s
         setShowTimeBonus(true);
-        setTimeout(() => setShowTimeBonus(false), 2000); // Desaparece após 2s
+        setTimeout(() => setShowTimeBonus(false), 2000);
     };
-
-    const startGame = () => setGameStarted(true);
 
     const resetGame = () => {
         setScore(0);
@@ -209,7 +232,6 @@ function Quiz({ token, user, onLogin }) {
         setScoreSaved(null);
     };
 
-
     const getCountryCode = (countryName) => {
         const exceptions = {
             'England': 'gb-eng',
@@ -220,7 +242,6 @@ function Quiz({ token, user, onLogin }) {
         const code = countries.getAlpha2Code(countryName, 'en');
         return code ? code.toLowerCase() : 'un';
     };
-
 
     const getTimerColor = () => {
         const percentage = (timeLeft / 10) * 100;
@@ -238,54 +259,23 @@ function Quiz({ token, user, onLogin }) {
         return 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
     };
 
-    if (!gameStarted && !gameOver) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-4 page-transition">
-                <div className="max-w-4xl w-full space-y-10">
-                    
-                    {/* Back Button */}
-                    <button
-                        onClick={() => navigate('/')}
-                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
-                    >
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
+    const stopUrgentSound = () => {
+        if (urgentSoundRef.current) {
+            urgentSoundRef.current.pause();
+            urgentSoundRef.current.currentTime = 0;
+        }
+    };
 
-                    {/* Season Selector */}
-                    <SeasonSelector 
-                        selectedSeason={selectedSeason}
-                        onSeasonChange={setSelectedSeason}
-                    />
-
-                    <div className="max-w-2xl mx-auto text-center">
-                        <button
-                            onClick={startGame}
-                            className="px-8 py-3 rounded-full bg-primary text-background font-bold text-lg uppercase tracking-widest hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
-                        >
-                            {t('quiz.start')}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     if (gameOver) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20">
+            <div key="gameover" className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20 animate-in fade-in zoom-in duration-500">
                 <div className="max-w-2xl w-full text-center space-y-8">
-                    
-
-
-                    {/* Game Over Content */}
                     <div className="space-y-6">
                         <h1 className="text-5xl md:text-7xl font-black text-primary tracking-tight">
                             {t('gameOver.title') || 'Game Over'}
                         </h1>
                         
-                        {/* Score Display */}
                         <div className="flex flex-col items-center gap-2">
                             <span className="text-sm md:text-base text-muted-foreground uppercase tracking-widest">
                                 {t('quiz.score') || 'Pontuação'}
@@ -298,12 +288,9 @@ function Quiz({ token, user, onLogin }) {
                             </div>
                         </div>
 
-
-                        {/* Record Notification - Only if NEW RECORD */}
                         {token && scoreSaved === 'record' && (
                             <div className="animate-in fade-in zoom-in duration-500">
                                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-success/20 border-2 border-success">
-                                    <span className="text-3xl">🏆</span>
                                     <span className="text-lg font-bold text-success">
                                         {t('quiz.newRecord') || 'Novo Record!'}
                                     </span>
@@ -311,7 +298,6 @@ function Quiz({ token, user, onLogin }) {
                             </div>
                         )}
 
-                        {/* Login Prompt for guests */}
                         {!token && (
                             <div className="pt-4">
                                 <p className="text-sm md:text-base text-muted-foreground">
@@ -327,7 +313,6 @@ function Quiz({ token, user, onLogin }) {
                         )}
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                         <button
                             onClick={resetGame}
@@ -346,7 +331,8 @@ function Quiz({ token, user, onLogin }) {
             </div>
         );
     }
-    if (loading) {
+
+    if (loading || !question) {
         return (
             <div className="min-h-screen flex items-center justify-center page-transition">
                 <div className="text-center space-y-4">
@@ -357,30 +343,10 @@ function Quiz({ token, user, onLogin }) {
         );
     }
 
-    if (!question) {
-        return (
-            <div className="min-h-screen flex items-center justify-center page-transition">
-                <div className="text-center space-y-4">
-                    <div className="text-6xl">❌</div>
-                    <p className="text-xl font-bold text-foreground">{t('common.error')}</p>
-                    <button
-                        onClick={() => navigate('/')}
-                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
-                    >
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 page-transition">
+        <div key={question.id} className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in slide-in-from-top duration-300">
             <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
                 
-                {/* Header - League Info */}
                 <div className="flex items-center justify-between pb-4 border-b border-border">
                     <div className="flex items-center gap-3">
                         {currentCompetition && (
@@ -393,14 +359,12 @@ function Quiz({ token, user, onLogin }) {
                         )}
                     </div>
                     
-                    {/* Score */}
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
                         <span className="text-sm font-semibold dark:text-muted-foreground text-foreground">{t('quiz.score') || 'Pontuação'}</span>
                         <span className="text-xl font-black text-primary">{score}</span>
                     </div>
                 </div>
 
-                {/* Player Photo */}
                 <div className="relative mx-auto w-full max-w-[280px] aspect-square border-2 border-primary rounded-3xl">
                     <img 
                         src={question.photo} 
@@ -408,7 +372,6 @@ function Quiz({ token, user, onLogin }) {
                         className="w-full h-full object-cover rounded-2xl shadow-lg"
                     />
 
-                    {/* Helps Overlay */}
                     {activeHelp === 'nationality' && (
                         <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
                             <img 
@@ -430,25 +393,17 @@ function Quiz({ token, user, onLogin }) {
                     )}
                 </div>
 
-                {/* Timer Bar - Directly below image */}
                 {!timerExpired ? (
                     showTimeBonus ? (
-                        // Mensagem de bónus de tempo
                         <div className="relative w-full h-8 bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-green-500/60 flex items-center justify-center">
-                            {/* Efeito de pulsação */}
                             <div className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-emerald-500/30 animate-pulse" />
-                            
-                            {/* Ondas expansivas */}
                             <div className="absolute inset-0 animate-ping bg-green-500/20 rounded-2xl" />
-                            
-                            {/* Texto */}
                             <span className="relative z-10 text-base md:text-lg font-black text-green-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
                                 ⏱️ +5s
                             </span>
                         </div>
                     ) : (
                         <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
-                            {/* Barra principal com gradiente animado */}
                             <div 
                                 className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
                                 style={{ 
@@ -456,39 +411,25 @@ function Quiz({ token, user, onLogin }) {
                                     transition: 'width 1s linear'
                                 }}
                             >
-                                {/* Brilho superior */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-                                
-                                {/* Brilho lateral animado */}
                                 <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/40 to-transparent" />
                             </div>
-                            
-                            {/* Efeito de perigo quando tempo baixo */}
                             {timeLeft <= 2 && (
                                 <div className="absolute inset-0 bg-red-500/20 animate-pulse rounded-full" />
                             )}
-                            
-                            {/* Reflexo de vidro */}
                             <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-full pointer-events-none" />
                         </div>
                     )
                 ) : (
-                    // Mensagem FORTE quando acaba
                     <div className="relative w-full h-8 bg-gradient-to-r from-orange-600/40 to-red-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/60 flex items-center justify-center">
-                        {/* Efeito de pulsação forte */}
                         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 to-red-500/30 animate-pulse" />
-                        
-                        {/* Ondas expansivas */}
                         <div className="absolute inset-0 animate-ping bg-red-500/20 rounded-2xl" />
-                        
-                        {/* Texto GRANDE e forte */}
                         <span className="relative z-10 text-base md:text-lg font-black text-orange-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
                             ⏰ {t('quiz.timeUp') || 'TEMPO ESGOTADO!'}
                         </span>
                     </div>
                 )}
 
-                {/* Lives, Mute & Help */}
                 <div className="flex justify-between items-center">
                     <div className="flex gap-1">
                         {[...Array(3)].map((_, i) => (
@@ -506,17 +447,15 @@ function Quiz({ token, user, onLogin }) {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        {/* Botão Mute */}
                         <button
                             onClick={() => setIsMuted(!isMuted)}
                             className="relative transition-all hover:scale-110 active:scale-95"
                         >
-                            <div className="text-4xl">
+                            <div className="text-3xl">
                                 {isMuted ? '🔇' : '🔊'}
                             </div>
                         </button>
 
-                        {/* Botão Help */}
                         <button
                             onClick={useHelp}
                             disabled={helpsLeft === 0}
@@ -536,7 +475,6 @@ function Quiz({ token, user, onLogin }) {
                     </div>
                 </div>
 
-                {/* Answer Options */}
                 <div className="space-y-2">
                     {question.options.map((option) => {
                         const isSelected = selectedAnswer === option;
@@ -574,7 +512,6 @@ function Quiz({ token, user, onLogin }) {
                     })}
                 </div>
 
-                {/* Abandon Button */}
                 <div className="flex justify-center pt-2">
                     <button
                         onClick={() => { resetGame(); navigate('/'); }}

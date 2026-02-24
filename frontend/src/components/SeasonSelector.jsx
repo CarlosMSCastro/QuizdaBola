@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { getCompetitions } from '../services/api';
 import 'swiper/css';
 
-function SeasonSelector({ selectedSeason, onSeasonChange }) {
+function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
     const { t } = useTranslation();
     const [activeIndex, setActiveIndex] = useState(0);
     const [competitions, setCompetitions] = useState([]);
@@ -12,13 +12,11 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
     const swiperRef = useRef(null);
 
     useEffect(() => {
-        // Buscar TODAS as competições (ativas e inativas)
         const fetchCompetitions = async () => {
             try {
                 const data = await getCompetitions();
                 setCompetitions(data);
                 
-                // Definir índice inicial baseado na competição selecionada
                 const selectedIndex = data.findIndex(c => c.id === selectedSeason);
                 if (selectedIndex !== -1) {
                     setActiveIndex(selectedIndex);
@@ -39,23 +37,15 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
         
         const competition = competitions[newIndex];
         
-        // Se for inativa, volta para a ativa após 1 segundo
-        if (competition && !competition.active) {
-            setTimeout(() => {
-                const activeIndex = competitions.findIndex(c => c.active);
-                if (activeIndex !== -1 && swiperRef.current) {
-                    swiperRef.current.slideTo(activeIndex);
-                    onSeasonChange(competitions[activeIndex].id);
-                }
-            }, 1000);
-        } else if (competition) {
+        if (competition) {
             onSeasonChange(competition.id);
         }
     };
 
-    const handleCompetitionClick = (competition) => {
-        if (competition.active) {
-            onSeasonChange(competition.id);
+    const handleConfirm = () => {
+        const competition = competitions[activeIndex];
+        if (competition && competition.active && onConfirm) {
+            onConfirm(competition.id, competition);
         }
     };
 
@@ -75,54 +65,52 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
         );
     }
 
+    const activeCompetition = competitions[activeIndex];
+
     return (
         <div className="w-full max-w-4xl mx-auto space-y-8">
             <h2 className="text-2xl md:text-3xl font-bold text-primary text-center">
                 {t('quiz.selectSeason') || 'Escolhe a Competição'}
             </h2>
 
-            {/* Desktop - Grid */}
-            <div className="hidden md:grid grid-cols-3 gap-6">
-                {competitions.map((competition) => (
-                    <button
-                        key={competition.id}
-                        onClick={() => handleCompetitionClick(competition)}
-                        disabled={!competition.active}
-                        className={`
-                            relative flex flex-col items-center gap-4 p-4 transition-all duration-300
-                            ${competition.active
-                                ? selectedSeason === competition.id
-                                    ? 'scale-110'
-                                    : 'hover:scale-105 active:scale-100'
-                                : 'cursor-not-allowed opacity-50'
-                            }
-                        `}
-                    >
-                        <img
-                            src={competition.logo}
-                            alt={competition.name}
-                            className={`w-full h-36 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
-                                !competition.active ? 'grayscale' : ''
-                            }`}
-                        />
-                        
-                        <span className={`text-base font-bold text-center ${
-                            selectedSeason === competition.id ? 'text-primary' : 'text-foreground'
-                        }`}>
-                            {competition.name}
-                        </span>
-
-                        {!competition.active && (
-                            <span className="absolute top-2 right-2 px-3 py-1 rounded-full bg-primary/90 text-background text-xs font-bold backdrop-blur-sm">
-                                🔒 {t('landing.comingSoon') || 'Em breve'}
-                            </span>
-                        )}
-                    </button>
-                ))}
+            {/* Desktop - Swiper */}
+            <div className="hidden md:block w-full">
+                <Swiper
+                    spaceBetween={30}
+                    slidesPerView={1}
+                    centeredSlides={true}
+                    onSlideChange={handleSlideChange}
+                    onSwiper={(swiper) => (swiperRef.current = swiper)}
+                    initialSlide={activeIndex}
+                    className="w-full max-w-2xl mx-auto"
+                >
+                    {competitions.map((competition) => (
+                        <SwiperSlide key={competition.id}>
+                            <div className={`
+                                relative flex flex-col items-center gap-4 p-8 transition-all duration-300
+                                ${competition.active ? '' : 'opacity-50'}
+                            `}>
+                                <img
+                                    src={competition.logo}
+                                    alt={competition.name}
+                                    className={`w-full h-48 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
+                                        !competition.active ? 'grayscale' : ''
+                                    }`}
+                                />
+                                
+                                <span className={`text-2xl font-bold text-center ${
+                                    !competition.active ? 'text-foreground/50' : 'text-foreground'
+                                }`}>
+                                    {competition.name}
+                                </span>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
 
             {/* Mobile - Swiper */}
-            <div className="md:hidden w-full flex flex-col items-center gap-6">
+            <div className="md:hidden w-full">
                 <Swiper
                     spaceBetween={20}
                     slidesPerView={1}
@@ -130,21 +118,14 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
                     onSlideChange={handleSlideChange}
                     onSwiper={(swiper) => (swiperRef.current = swiper)}
                     initialSlide={activeIndex}
-                    className="w-full max-w-sm"
+                    className="w-full max-w-sm mx-auto"
                 >
                     {competitions.map((competition) => (
                         <SwiperSlide key={competition.id}>
-                            <button
-                                onClick={() => handleCompetitionClick(competition)}
-                                disabled={!competition.active}
-                                className={`
-                                    relative flex flex-col items-center gap-4 p-6 w-full transition-all duration-300
-                                    ${competition.active
-                                        ? 'active:scale-95'
-                                        : 'cursor-not-allowed opacity-50'
-                                    }
-                                `}
-                            >
+                            <div className={`
+                                relative flex flex-col items-center gap-4 p-6 transition-all duration-300
+                                ${competition.active ? '' : 'opacity-50'}
+                            `}>
                                 <img
                                     src={competition.logo}
                                     alt={competition.name}
@@ -154,34 +135,47 @@ function SeasonSelector({ selectedSeason, onSeasonChange }) {
                                 />
                                 
                                 <span className={`text-lg font-bold text-center ${
-                                    selectedSeason === competition.id ? 'text-primary' : 'text-foreground'
+                                    !competition.active ? 'text-foreground/50' : 'text-foreground'
                                 }`}>
                                     {competition.name}
                                 </span>
-
-                                {!competition.active && (
-                                    <span className="absolute top-4 right-4 px-3 py-1 rounded-full bg-primary/90 text-background text-xs font-bold backdrop-blur-sm">
-                                        🔒 {t('landing.comingSoon') || 'Em breve'}
-                                    </span>
-                                )}
-                            </button>
+                            </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
+            </div>
 
-                {/* Indicators */}
-                <div className="flex items-center gap-2">
-                    {competitions.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${
-                                i === activeIndex
-                                    ? 'w-8 bg-primary'
-                                    : 'w-2 bg-muted-foreground/40'
-                            }`}
-                        />
-                    ))}
-                </div>
+            {/* Indicators */}
+            <div className="flex items-center justify-center gap-2">
+                {competitions.map((_, i) => (
+                    <div
+                        key={i}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                            i === activeIndex
+                                ? 'w-8 bg-primary'
+                                : 'w-2 bg-muted-foreground/40'
+                        }`}
+                    />
+                ))}
+            </div>
+
+            {/* Botão JOGAR AGORA */}
+            <div className="w-full max-w-sm mx-auto flex justify-center">
+                {activeCompetition && activeCompetition.active ? (
+                    <button
+                        onClick={handleConfirm}
+                        className="px-8 py-3 rounded-full bg-primary text-background font-bold text-lg uppercase tracking-widest hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
+                    >
+                        {t('landing.playNow') || 'JOGAR AGORA'}
+                    </button>
+                ) : (
+                    <button
+                        disabled
+                        className="px-8 py-3 rounded-full border-2 border-primary text-muted-foreground font-bold text-lg uppercase tracking-widest cursor-not-allowed opacity-60"
+                    >
+                        🔒 {t('landing.comingSoon')}
+                    </button>
+                )}
             </div>
         </div>
     );

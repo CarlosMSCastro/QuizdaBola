@@ -7,11 +7,46 @@ import StatsQuiz from './pages/StatsQuiz';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import TestAnimations from './pages/TestAnimations';
+
+// Wrapper para aplicar transições
+function PageTransition({ children }) {
+  const location = useLocation();
+  const [prevPath, setPrevPath] = useState('/');
+
+  useEffect(() => {
+    setPrevPath(location.pathname);
+  }, [location.pathname]);
+
+  // Determina a direção da transição
+  const getTransitionClass = () => {
+    const current = location.pathname;
+    const prev = prevPath;
+
+    // Voltando para Landing (sempre da esquerda)
+    if (current === '/' && prev !== '/') {
+      return 'animate-in fade-in slide-in-from-left duration-500';
+    }
+
+    // Saindo do Landing (sempre da direita)
+    if (prev === '/' && current !== '/') {
+      return 'animate-in fade-in slide-in-from-right duration-500';
+    }
+
+    // Entre outras páginas (fade simples)
+    return 'animate-in fade-in duration-500';
+  };
+
+  return (
+    <div key={location.pathname} className={getTransitionClass()}>
+      {children}
+    </div>
+  );
+}
 
 function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkMode }) {
   const location = useLocation();
   const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login' || location.pathname === '/quiz' || location.pathname === '/stats-quiz';
-  
 
   return (
     <>
@@ -31,13 +66,16 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
       )}
       
       <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
+            <Route path="/test-animations" element={<TestAnimations />} />
+          </Routes>
+        </PageTransition>
       </main>
 
       {!hideNavAndFooter && <Footer />}

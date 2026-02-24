@@ -28,7 +28,7 @@
     "start": "Começar",
     "abandon": "Abandonar Jogo",
     "saving": "A guardar...",
-    "newRecord": "🏆 Novo record pessoal!",
+    "newRecord": "Novo record pessoal!",
     "betterScore": "Já tens um score melhor nesta dificuldade.",
     "saveError": "Erro ao guardar pontuação.",
     "registerPrompt": "para entrar no leaderboard",
