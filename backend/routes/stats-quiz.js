@@ -7,7 +7,7 @@ const STATS_CONFIG = {
     attacking: {
         stats: ['goals_total', 'goals_assists', 'shots_total', 'shots_on', 'dribbles_success', 'penalty_scored'],
         minimums: { goals_total: 3, goals_assists: 2, shots_total: 5, shots_on: 3, dribbles_success: 3, penalty_scored: 1 },
-        positions: ['Attacker', 'Midfielder']
+        positions: ['Attacker', 'Midfielder', 'Forward'] // ← CORRIGIDO: Adicionado Forward
     },
     midfield: {
         stats: ['passes_total', 'passes_key', 'passes_accuracy', 'duels_won'],
@@ -27,7 +27,7 @@ const STATS_CONFIG = {
     universal: {
         stats: ['rating', 'minutes', 'appearences', 'cards_yellow'],
         minimums: { rating: 6.0, minutes: 300, appearences: 5, cards_yellow: 1 },
-        positions: ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
+        positions: ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker', 'Forward'] // ← CORRIGIDO: Adicionado Forward
     }
 };
 
@@ -84,8 +84,7 @@ router.get('/', async (req, res) => {
             ? exclude.split(',').map(Number).filter(Boolean)
             : [];
 
-        // MUDANÇA 1: Remover F1 - só F2 (80%) e F3 (20%)
-        // MUDANÇA 2: Aumentar % de perguntas de rating
+        // Só F2 (80%) e F3 (20%)
         const rand = Math.random() * 100;
         let format;
         if (rand < 80) {
@@ -94,13 +93,12 @@ router.get('/', async (req, res) => {
             format = 'F3'; // 20% True/False
         }
 
-        // MUDANÇA 3: Jogadores fáceis muito mais frequentes
-        // 75% easy, 20% medium, 5% hard
+        // CORRIGIDO: Distribuição baseada na BD real (40% easy, 35% medium, 25% hard)
         const diffRand = Math.random() * 100;
         let difficulty;
-        if (diffRand < 75) {
+        if (diffRand < 40) {
             difficulty = 'easy';
-        } else if (diffRand < 95) {
+        } else if (diffRand < 75) {
             difficulty = 'medium';
         } else {
             difficulty = 'hard';
@@ -113,12 +111,12 @@ router.get('/', async (req, res) => {
         const excludePlaceholder = `AND is_photo_placeholder = 0`;
         const excludeList = excludeIds.length > 0 ? `AND id NOT IN (${excludeIds.join(',')})` : '';
         const positionFilter = `AND position IN (${positions.map(p => `'${p}'`).join(',')})`;
-        const difficultyFilter = `AND difficulty = '${difficulty}'`; // Filtro de dificuldade
+        const difficultyFilter = `AND difficulty = '${difficulty}'`;
         const baseFilter = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter} ${difficultyFilter}`;
 
         if (format === 'F2') {
             // 2 jogadores, comparar
-            const [pool] = await db.execute(`
+            let [pool] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
                 FROM ${tableName}
                 ${baseFilter}
@@ -127,7 +125,26 @@ router.get('/', async (req, res) => {
                 ORDER BY RAND() LIMIT 20
             `, [minimum]);
 
-            if (pool.length < 2) return res.status(404).json({ error: 'Sem jogadores disponíveis' });
+            // CORRIGIDO: Fallback se não encontrar jogadores suficientes
+            if (pool.length < 2) {
+                console.log(`[FALLBACK F2] Poucos jogadores com difficulty=${difficulty}, tentando sem filtro de dificuldade...`);
+                
+                const baseFilterNoDiff = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter}`;
+                
+                [pool] = await db.execute(`
+                    SELECT id, name, photo, team_logo, position, ${stat}
+                    FROM ${tableName}
+                    ${baseFilterNoDiff}
+                    AND ${stat} >= ?
+                    ${excludeList}
+                    ORDER BY RAND() LIMIT 20
+                `, [minimum]);
+            }
+
+            if (pool.length < 2) {
+                console.error(`[ERRO F2] Sem jogadores disponíveis para stat=${stat}, positions=${positions.join(',')}`);
+                return res.status(404).json({ error: 'Sem jogadores disponíveis' });
+            }
 
             // encontrar par plausível (diferença <= 50% do maior)
             let player1 = null, player2 = null;
@@ -146,7 +163,10 @@ router.get('/', async (req, res) => {
                 }
             }
 
-            if (!player1 || !player2) return res.status(404).json({ error: 'Sem par plausível disponível' });
+            if (!player1 || !player2) {
+                console.error(`[ERRO F2] Sem par plausível disponível para stat=${stat}`);
+                return res.status(404).json({ error: 'Sem par plausível disponível' });
+            }
 
             const label = STAT_LABELS[stat];
             const correctId = parseFloat(player1[stat]) > parseFloat(player2[stat]) ? player1.id : player2.id;
@@ -166,7 +186,7 @@ router.get('/', async (req, res) => {
 
         } else {
             // F3 — True/False
-            const [players] = await db.execute(`
+            let [players] = await db.execute(`
                 SELECT id, name, photo, team_logo, position, ${stat}
                 FROM ${tableName}
                 ${baseFilter}
@@ -175,7 +195,26 @@ router.get('/', async (req, res) => {
                 ORDER BY RAND() LIMIT 1
             `, [minimum]);
 
-            if (players.length === 0) return res.status(404).json({ error: 'Sem jogadores disponíveis' });
+            // CORRIGIDO: Fallback se não encontrar jogadores
+            if (players.length === 0) {
+                console.log(`[FALLBACK F3] Nenhum jogador com difficulty=${difficulty}, tentando sem filtro de dificuldade...`);
+                
+                const baseFilterNoDiff = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter}`;
+                
+                [players] = await db.execute(`
+                    SELECT id, name, photo, team_logo, position, ${stat}
+                    FROM ${tableName}
+                    ${baseFilterNoDiff}
+                    AND ${stat} >= ?
+                    ${excludeList}
+                    ORDER BY RAND() LIMIT 1
+                `, [minimum]);
+            }
+
+            if (players.length === 0) {
+                console.error(`[ERRO F3] Sem jogadores disponíveis para stat=${stat}, positions=${positions.join(',')}`);
+                return res.status(404).json({ error: 'Sem jogadores disponíveis' });
+            }
 
             const player = players[0];
             const realValue = parseFloat(player[stat]);
@@ -195,7 +234,7 @@ router.get('/', async (req, res) => {
         }
 
     } catch (error) {
-        console.error(error);
+        console.error('[ERRO STATS-QUIZ]', error);
         res.status(500).json({ error: 'Erro ao gerar pergunta' });
     }
 });
