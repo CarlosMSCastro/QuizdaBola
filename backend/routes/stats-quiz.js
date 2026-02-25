@@ -143,7 +143,7 @@ router.get('/', async (req, res) => {
         `;
 
         // Stat column (handle height as VARCHAR)
-        const statColumn = stat === 'height' ? 'CAST(height AS UNSIGNED)' : stat;
+        const statColumn = stat;
 
         if (format === 'F2') {
             // === F2: COMPARAÇÃO ===

@@ -78,13 +78,15 @@
     "error": "Error"
   },
   "bugReport": {
-    "title": "Report Bug",
-    "subtitle": "Found a problem? Help me figure it oit!",
-    "label": "Describe the problem",
-    "placeholder": "What happened? Where were you?",
-    "submit": "Submit Report",
+    "title": "Report Bug / Suggestion",
+    "subtitle": "Found a problem or have an idea? Let me know!",
+    "label": "Describe the issue or suggestion",
+    "placeholder": "What happened? Where were you? Or what would you like to see?",
+    "submit": "Submit",
     "thanks": "Thank you!",
     "successMessage": "Your report was successfully submitted.",
-    "redirecting": "Redirecting..."
+    "redirecting": "Redirecting...",
+    "foundBug": "Found a bug?",
+    "haveSuggestion": "Have a suggestion?"
   }
 }

@@ -78,13 +78,15 @@
     "error": "Erro"
   },
   "bugReport": {
-    "title": "Reportar Bug",
-    "subtitle": "Encontraste algum problema? Conta-me!",
-    "label": "Descreve o problema",
-    "placeholder": "O que aconteceu? Onde estavas?",
-    "submit": "Enviar Report",
+    "title": "Reportar Bug / Sugestão",
+    "subtitle": "Encontraste algum problema ou tens uma ideia? Conta-me!",
+    "label": "Descreve o problema ou sugestão",
+    "placeholder": "O que aconteceu? Onde estavas? Ou o que gostarias de ver?",
+    "submit": "Enviar",
     "thanks": "Obrigado!",
     "successMessage": "O teu report foi enviado com sucesso.",
-    "redirecting": "A redirecionar..."
+    "redirecting": "A redirecionar...",
+    "foundBug": "Encontrou um bug?",
+    "haveSuggestion": "Tem uma sugestão?"
   }
 }
