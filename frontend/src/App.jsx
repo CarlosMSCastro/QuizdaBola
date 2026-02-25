@@ -49,7 +49,7 @@ function PageTransition({ children }) {
 
 function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkMode }) {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login' || location.pathname === '/quiz' || location.pathname === '/stats-quiz';
+  const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login' || location.pathname === '/quiz' || location.pathname === '/stats-quiz' || location.pathname === '/bug-report';
 
   return (
     <>

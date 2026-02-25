@@ -79,7 +79,7 @@
   },
   "bugReport": {
     "title": "Reportar Bug",
-    "subtitle": "Encontraste algum problema? Ajuda-nos a melhorar!",
+    "subtitle": "Encontraste algum problema? Conta-me!",
     "label": "Descreve o problema",
     "placeholder": "O que aconteceu? Onde estavas?",
     "submit": "Enviar Report",
