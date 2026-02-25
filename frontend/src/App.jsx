@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import Landing from './pages/Landing';
-import Quiz from './pages/Quiz';
-import Leaderboard from './pages/Leaderboard';
-import StatsQuiz from './pages/StatsQuiz';
-import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BugReportButton from './components/BugReportButton';
-import BugReport from './pages/BugReport';
+import Loading from './components/Loading';
 
+// Lazy loading das páginas
+const Landing = lazy(() => import('./pages/Landing'));
+const Quiz = lazy(() => import('./pages/Quiz'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const StatsQuiz = lazy(() => import('./pages/StatsQuiz'));
+const Login = lazy(() => import('./pages/Login'));
+const BugReport = lazy(() => import('./pages/BugReport'));
 
 // Wrapper para aplicar transições
 function PageTransition({ children }) {
@@ -73,14 +75,16 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
       
       <main className="flex-1">
         <PageTransition>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
-            <Route path="/bug-report" element={<BugReport />} />
-          </Routes>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
+              <Route path="/bug-report" element={<BugReport />} />
+            </Routes>
+          </Suspense>
         </PageTransition>
       </main>
 

@@ -2,8 +2,17 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// Big 5 teams (prioridade)
-const BIG_TEAMS = ['Benfica', 'FC Porto', 'Sporting CP', 'Braga', 'Vitória SC'];
+// Big 5 teams por competição
+const BIG_TEAMS_BY_COMPETITION = {
+    'ligaportugal2024': ['Benfica', 'FC Porto', 'Sporting CP', 'Braga', 'Vitória SC'],
+    'brasileirao2024': ['Flamengo', 'Palmeiras', 'Corinthians', 'Sao Paulo', 'Atletico-MG']
+};
+
+// Filtros de mínimos por competição (mais suaves para Brasileirão)
+const MIN_REQUIREMENTS = {
+    'ligaportugal2024': { appearences: 5, minutes: 300 },
+    'brasileirao2024': { appearences: 3, minutes: 150 }
+};
 
 // Stats intuitivas reorganizadas
 const STATS_CONFIG = {
@@ -69,7 +78,6 @@ const STAT_LABELS = {
     }
 };
 
-// Mapa de ajudas contextuais para F3
 const F3_HELP_MAP = {
     age: { type: 'position' },
     height: { type: 'position' },
@@ -79,7 +87,6 @@ const F3_HELP_MAP = {
     cards_yellow: { type: 'position' }
 };
 
-// Escolher stat aleatória
 const randomStat = () => {
     const categories = Object.keys(STATS_CONFIG);
     const category = categories[Math.floor(Math.random() * categories.length)];
@@ -88,7 +95,6 @@ const randomStat = () => {
     return { stat, category, config };
 };
 
-// GET /api/stats-quiz?exclude=1,2,3&competition_id=ligaportugal2024
 router.get('/', async (req, res) => {
     try {
         const { exclude, competition_id } = req.query;
@@ -104,16 +110,18 @@ router.get('/', async (req, res) => {
         }
 
         const tableName = competitions[0].table_name;
+        
+        // Obter Big 5 e mínimos da competição
+        const BIG_TEAMS = BIG_TEAMS_BY_COMPETITION[competitionId] || [];
+        const minReqs = MIN_REQUIREMENTS[competitionId] || { appearences: 5, minutes: 300 };
 
         const excludeIds = exclude
             ? exclude.split(',').map(Number).filter(Boolean)
             : [];
 
-        // F2 (80%) vs F3 (20%)
         const formatRand = Math.random() * 100;
         const format = formatRand < 80 ? 'F2' : 'F3';
 
-        // Distribuição de dificuldade: 40% easy, 35% medium, 25% hard
         const diffRand = Math.random() * 100;
         let difficulty;
         if (diffRand < 40) {
@@ -124,7 +132,7 @@ router.get('/', async (req, res) => {
             difficulty = 'hard';
         }
 
-        const { stat, config } = randomStat();
+        let { stat, config } = randomStat();
         const minimum = config.minimums[stat];
         const positions = config.positions;
 
@@ -133,49 +141,45 @@ router.get('/', async (req, res) => {
         const positionFilter = `AND position IN (${positions.map(p => `'${p}'`).join(',')})`;
         const difficultyFilter = `AND difficulty = '${difficulty}'`;
         
-        // Peso Big 5
-        const bigTeamsOrder = `
+        const bigTeamsOrder = BIG_TEAMS.length > 0 ? `
             CASE 
                 WHEN team_name IN (${BIG_TEAMS.map(() => '?').join(',')}) 
                 THEN 1 
                 ELSE 2 
             END
-        `;
+        ` : '1';
 
-        // Stat column (handle height as VARCHAR)
-        const statColumn = stat;
+        let statColumn = stat;
 
         if (format === 'F2') {
-            // === F2: COMPARAÇÃO ===
+            const baseFilter = `WHERE appearences >= ${minReqs.appearences} AND minutes >= ${minReqs.minutes} ${excludePlaceholder} ${positionFilter} ${difficultyFilter}`;
             
-            const baseFilter = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter} ${difficultyFilter}`;
-            
-            // Query com prioridade Big 5 (pool aumentado)
             let [pool] = await db.execute(`
                 SELECT id, name, photo, team_name, team_logo, position, ${stat}, ${statColumn} as stat_value
                 FROM ${tableName}
                 ${baseFilter}
+                AND ${statColumn} IS NOT NULL
                 AND ${statColumn} >= ?
                 ${excludeList}
                 ORDER BY ${bigTeamsOrder}, RAND()
                 LIMIT 50
-            `, [minimum, ...BIG_TEAMS]);
+            `, [minimum, ...(BIG_TEAMS.length > 0 ? BIG_TEAMS : [])]);
 
-            // Fallback sem difficulty filter
             if (pool.length < 2) {
                 console.log(`[FALLBACK F2] Poucos jogadores com difficulty=${difficulty}, tentando sem filtro de dificuldade...`);
                 
-                const baseFilterNoDiff = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter}`;
+                const baseFilterNoDiff = `WHERE appearences >= ${minReqs.appearences} AND minutes >= ${minReqs.minutes} ${excludePlaceholder} ${positionFilter}`;
                 
                 [pool] = await db.execute(`
                     SELECT id, name, photo, team_name, team_logo, position, ${stat}, ${statColumn} as stat_value
                     FROM ${tableName}
                     ${baseFilterNoDiff}
+                    AND ${statColumn} IS NOT NULL
                     AND ${statColumn} >= ?
                     ${excludeList}
                     ORDER BY ${bigTeamsOrder}, RAND()
                     LIMIT 50
-                `, [minimum, ...BIG_TEAMS]);
+                `, [minimum, ...(BIG_TEAMS.length > 0 ? BIG_TEAMS : [])]);
             }
 
             if (pool.length < 2) {
@@ -183,33 +187,26 @@ router.get('/', async (req, res) => {
                 return res.status(404).json({ error: 'Sem jogadores disponíveis' });
             }
 
-            // Encontrar par plausível com regras ALARGADAS
             let player1 = null, player2 = null;
             outer: for (let i = 0; i < pool.length; i++) {
                 for (let j = i + 1; j < pool.length; j++) {
                     const a = parseFloat(pool[i].stat_value);
                     const b = parseFloat(pool[j].stat_value);
                     
-                    // CRÍTICO: Nunca valores iguais
                     if (a === b) continue;
                     
                     const max = Math.max(a, b);
                     const diff = Math.abs(a - b);
                     
-                    // Regras ALARGADAS por stat
                     let isPlausible = false;
                     
                     if (stat === 'age') {
-                        // Diferença entre 1 e 15 anos (muito alargado)
                         isPlausible = diff <= 15 && diff >= 1;
                     } else if (stat === 'height') {
-                        // Diferença entre 2 e 25cm (muito alargado)
                         isPlausible = diff <= 25 && diff >= 2;
                     } else if (stat === 'rating') {
-                        // Diferença entre 0.01 e 2.0 (muito alargado)
                         isPlausible = diff <= 2.0 && diff >= 0.01;
                     } else {
-                        // Outros: diferença <= 80% do maior (muito alargado)
                         isPlausible = (diff / max) <= 0.8 && diff >= 1;
                     }
                     
@@ -223,13 +220,56 @@ router.get('/', async (req, res) => {
 
             if (!player1 || !player2) {
                 console.error(`[ERRO F2] Sem par plausível disponível para stat=${stat}`);
-                return res.status(404).json({ error: 'Sem par plausível disponível' });
+                
+                // FALLBACK FINAL: Tentar com age (sempre tem dados)
+                if (stat !== 'age') {
+                    console.log('[FALLBACK FINAL] Tentando com stat=age...');
+                    
+                    const ageStat = 'age';
+                    const agePositions = STATS_CONFIG.physical.positions;
+                    const agePositionFilter = `AND position IN (${agePositions.map(p => `'${p}'`).join(',')})`;
+                    
+                    [pool] = await db.execute(`
+                        SELECT id, name, photo, team_name, team_logo, position, age, age as stat_value
+                        FROM ${tableName}
+                        WHERE appearences >= ${minReqs.appearences} 
+                        AND minutes >= ${minReqs.minutes} 
+                        ${excludePlaceholder} 
+                        ${agePositionFilter}
+                        AND age IS NOT NULL
+                        ${excludeList}
+                        ORDER BY ${bigTeamsOrder}, RAND()
+                        LIMIT 50
+                    `, BIG_TEAMS.length > 0 ? BIG_TEAMS : []);
+                    
+                    // Tentar encontrar par com age
+                    outer2: for (let i = 0; i < pool.length; i++) {
+                        for (let j = i + 1; j < pool.length; j++) {
+                            const a = parseFloat(pool[i].stat_value);
+                            const b = parseFloat(pool[j].stat_value);
+                            
+                            if (a === b) continue;
+                            const diff = Math.abs(a - b);
+                            
+                            if (diff <= 15 && diff >= 1) {
+                                player1 = pool[i];
+                                player2 = pool[j];
+                                stat = ageStat;
+                                statColumn = ageStat;
+                                break outer2;
+                            }
+                        }
+                    }
+                }
+                
+                if (!player1 || !player2) {
+                    return res.status(404).json({ error: 'Sem par plausível disponível' });
+                }
             }
 
             const label = STAT_LABELS[stat];
             const correctId = parseFloat(player1.stat_value) > parseFloat(player2.stat_value) ? player1.id : player2.id;
 
-            // Formatar valores para display
             const formatValue = (val) => {
                 const numVal = parseFloat(val);
                 if (stat === 'height') return `${numVal}${label.unit}`;
@@ -237,7 +277,6 @@ router.get('/', async (req, res) => {
                 return Math.round(numVal);
             };
 
-            // HelpData para F2: valores de ambos os jogadores (frontend escolhe qual revelar)
             const helpData = {
                 type: 'reveal',
                 player1_id: player1.id,
@@ -275,36 +314,35 @@ router.get('/', async (req, res) => {
         } else {
             // === F3: VERDADEIRO/FALSO ===
             
-            // 75% Big 5, 25% outras
-            const useBigTeam = Math.random() < 0.75;
+            const useBigTeam = Math.random() < 0.75 && BIG_TEAMS.length > 0;
             const bigTeamFilter = useBigTeam ? `AND team_name IN (${BIG_TEAMS.map(() => '?').join(',')})` : '';
             const bigTeamParams = useBigTeam ? BIG_TEAMS : [];
             
-            const baseFilter = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter} ${difficultyFilter} ${bigTeamFilter}`;
+            const baseFilter = `WHERE appearences >= ${minReqs.appearences} AND minutes >= ${minReqs.minutes} ${excludePlaceholder} ${positionFilter} ${difficultyFilter} ${bigTeamFilter}`;
             
-            // Buscar jogador + dados extras para ajudas
             const helpField = F3_HELP_MAP[stat].type;
             
             let [players] = await db.execute(`
                 SELECT id, name, photo, team_name, team_logo, position, nationality, ${stat}, ${statColumn} as stat_value, ${helpField}
                 FROM ${tableName}
                 ${baseFilter}
+                AND ${statColumn} IS NOT NULL
                 AND ${statColumn} >= ?
                 ${excludeList}
                 ORDER BY RAND()
                 LIMIT 1
             `, [minimum, ...bigTeamParams]);
 
-            // Fallback sem difficulty filter
             if (players.length === 0) {
                 console.log(`[FALLBACK F3] Nenhum jogador com difficulty=${difficulty}, tentando sem filtro de dificuldade...`);
                 
-                const baseFilterNoDiff = `WHERE appearences >= 5 AND minutes >= 300 ${excludePlaceholder} ${positionFilter} ${bigTeamFilter}`;
+                const baseFilterNoDiff = `WHERE appearences >= ${minReqs.appearences} AND minutes >= ${minReqs.minutes} ${excludePlaceholder} ${positionFilter} ${bigTeamFilter}`;
                 
                 [players] = await db.execute(`
                     SELECT id, name, photo, team_name, team_logo, position, nationality, ${stat}, ${statColumn} as stat_value, ${helpField}
                     FROM ${tableName}
                     ${baseFilterNoDiff}
+                    AND ${statColumn} IS NOT NULL
                     AND ${statColumn} >= ?
                     ${excludeList}
                     ORDER BY RAND()
@@ -320,23 +358,18 @@ router.get('/', async (req, res) => {
             const player = players[0];
             const realValue = parseFloat(player.stat_value);
             
-            // Threshold inteligente por stat
             let threshold;
             
             if (stat === 'rating') {
-                // Rating: +/- 0.4 do valor real, sempre 2 casas decimais
                 const variance = (Math.random() * 0.8) - 0.4;
                 threshold = parseFloat((realValue + variance).toFixed(2));
             } else if (stat === 'height') {
-                // Altura: +/- 7cm
                 const variance = Math.floor(Math.random() * 15) - 7;
                 threshold = Math.round(realValue + variance);
             } else if (stat === 'age') {
-                // Idade: +/- 4 anos
                 const variance = Math.floor(Math.random() * 9) - 4;
                 threshold = Math.round(realValue + variance);
             } else {
-                // Outros: +/- 40% do valor real (mínimo +/-1)
                 const variance = Math.max(1, Math.ceil(realValue * 0.4));
                 const change = Math.floor(Math.random() * (variance * 2 + 1)) - variance;
                 threshold = Math.max(1, Math.round(realValue + change));
@@ -345,14 +378,12 @@ router.get('/', async (req, res) => {
             const correctAnswer = realValue >= threshold;
             const label = STAT_LABELS[stat];
 
-            // Preparar dados de ajuda (1 hint apenas)
             const helpData = {
                 type: 'hint',
                 hint_type: helpField,
                 hint_value: player[helpField]
             };
 
-            // Formatar threshold para display
             const displayThreshold = stat === 'rating' ? threshold.toFixed(2) : threshold;
 
             return res.json({

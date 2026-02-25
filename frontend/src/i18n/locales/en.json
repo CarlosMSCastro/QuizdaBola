@@ -12,7 +12,9 @@
     "results": "Results",
     "resultsDesc": "Guess results and goals",
     "comingSoon": "Coming Soon",
-    "competition": "Liga Portugal Betclic 2024"
+    "competition": "Liga Portugal Betclic 2024",
+    "online1v1": "1v1 Online",
+    "online1v1Desc": "Challenge your friends in real-time"
   },
   "quiz": {
     "title": "Quiz",

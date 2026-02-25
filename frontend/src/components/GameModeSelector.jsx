@@ -19,11 +19,11 @@ function ModeCard({ mode, isMobile }) {
             <img
                 src={mode.image}
                 alt={mode.key}
-                className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-transform duration-300 object-contain ${isMobile ? 'w-42 h-42' : 'w-52 h-52'} ${mode.available ? '' : 'grayscale opacity-70'}`}
+                className={`drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-transform duration-300 object-contain ${isMobile ? 'w-42 h-42' : 'w-52 h-52'} ${mode.available ? '' : 'opacity-85'}`}
             />
 
             <div>
-                <h2 className={`font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] ${isMobile ? 'text-2xl' : 'text-3xl'} ${!mode.available ? 'text-primary/50' : 'text-primary'}`}>
+                <h2 className={`font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] ${isMobile ? 'text-2xl' : 'text-3xl'} ${!mode.available ? 'text-primary/80' : 'text-primary'}`}>
                     {t(`landing.${mode.key}`)}
                 </h2>
                 <p className={`drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] text-sm ${!mode.available ? 'text-foreground/60' : 'text-foreground'}`}>
