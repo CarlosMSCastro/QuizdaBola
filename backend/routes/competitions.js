@@ -5,9 +5,17 @@ const db = require('../config/db');
 // GET /api/competitions - Buscar TODAS as competições (ativas e inativas)
 router.get('/', async (req, res) => {
     try {
-        const [competitions] = await db.execute(
-            'SELECT id, name, logo, season, country, active FROM competitions ORDER BY active DESC, created_at DESC'
-        );
+        const [competitions] = await db.execute(`
+            SELECT id, name, logo, season, country, active 
+            FROM competitions 
+            ORDER BY 
+                active DESC,
+                CASE 
+                    WHEN id = 'ligaportugal2024' THEN 1 
+                    ELSE 2 
+                END,
+                name ASC
+        `);
         res.json(competitions);
     } catch (error) {
         console.error(error);

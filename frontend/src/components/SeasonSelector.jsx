@@ -124,13 +124,13 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
                         <SwiperSlide key={competition.id}>
                             <div className={`
                                 relative flex flex-col items-center gap-4 p-6 transition-all duration-300
-                                ${competition.active ? '' : 'opacity-50'}
+                                ${competition.active ? '' : 'opacity-70'}
                             `}>
                                 <img
                                     src={competition.logo}
                                     alt={competition.name}
                                     className={`w-full h-40 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
-                                        !competition.active ? 'grayscale' : ''
+                                        !competition.active ? '' : ''
                                     }`}
                                 />
                                 
