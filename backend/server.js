@@ -11,7 +11,8 @@ app.use('/api/question', require('./routes/question'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/stats-quiz', require('./routes/stats-quiz'));
-app.use('/api/competitions', require('./routes/competitions')); // NOVA ROTA
+app.use('/api/competitions', require('./routes/competitions'));
+app.use('/api/bug-report', require('./routes/bug-report'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

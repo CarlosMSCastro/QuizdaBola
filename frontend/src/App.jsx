@@ -8,6 +8,9 @@ import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import TestAnimations from './pages/TestAnimations';
+import BugReportButton from './components/BugReportButton';
+import BugReport from './pages/BugReport';
+
 
 // Wrapper para aplicar transições
 function PageTransition({ children }) {
@@ -57,6 +60,9 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
       />
       <div className="fixed inset-0 -z-10 pointer-events-none bg-black/10 dark:bg-black/50" />
 
+      {/* Botão flutuante de Bug Report */}
+      <BugReportButton />
+
       {!hideNavAndFooter && (
         <Navbar 
           user={user} 
@@ -75,6 +81,7 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
             <Route path="/test-animations" element={<TestAnimations />} />
+            <Route path="/bug-report" element={<BugReport />} />
           </Routes>
         </PageTransition>
       </main>
@@ -89,6 +96,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');

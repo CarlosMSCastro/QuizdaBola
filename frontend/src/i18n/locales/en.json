@@ -76,5 +76,15 @@
   "common": {
     "loading": "Loading...",
     "error": "Error"
+  },
+  "bugReport": {
+    "title": "Report Bug",
+    "subtitle": "Found a problem? Help us improve!",
+    "label": "Describe the problem",
+    "placeholder": "What happened? Where were you?",
+    "submit": "Submit Report",
+    "thanks": "Thank you!",
+    "successMessage": "Your report was successfully submitted.",
+    "redirecting": "Redirecting..."
   }
 }
