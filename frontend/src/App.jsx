@@ -7,7 +7,6 @@ import StatsQuiz from './pages/StatsQuiz';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import TestAnimations from './pages/TestAnimations';
 import BugReportButton from './components/BugReportButton';
 import BugReport from './pages/BugReport';
 
@@ -80,7 +79,6 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
             <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
-            <Route path="/test-animations" element={<TestAnimations />} />
             <Route path="/bug-report" element={<BugReport />} />
           </Routes>
         </PageTransition>
