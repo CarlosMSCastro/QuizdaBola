@@ -32,10 +32,10 @@ function StatsQuiz({ token }) {
         return saved === 'true';
     });
 
-    const [helpsLeft, setHelpsLeft] = useState(2);
-    const [usedHelps, setUsedHelps] = useState({ hint1: false, hint2: false });
-    // eslint-disable-next-line no-unused-vars
-    const [activeHelp, setActiveHelp] = useState(null);
+    const [helpsLeft, setHelpsLeft] = useState(2); // Total de ajudas no jogo
+    const [helpUsed, setHelpUsed] = useState(false); // Bloqueio por pergunta
+    const [revealedPlayerId, setRevealedPlayerId] = useState(null); // Para F2
+    const [activeHint, setActiveHint] = useState(null); // Para F3
 
     // Audio refs
     const correctSoundRef = useRef(null);
@@ -57,7 +57,6 @@ function StatsQuiz({ token }) {
         urgentSoundRef.current.volume = 0.1;
     }, []);
 
-    // Declare functions BEFORE useEffects that use them
     const stopUrgentSound = () => {
         if (urgentSoundRef.current) {
             urgentSoundRef.current.pause();
@@ -70,7 +69,9 @@ function StatsQuiz({ token }) {
         setLoading(true);
         setSelectedAnswer(null);
         setRevealed(false);
-        setActiveHelp(null);
+        setHelpUsed(false); // Reset bloqueio para nova pergunta
+        setRevealedPlayerId(null);
+        setActiveHint(null);
         setTimeLeft(10);
         setTimerExpired(false);
         try {
@@ -216,19 +217,25 @@ function StatsQuiz({ token }) {
     };
 
     const useHelp = () => {
-        if (helpsLeft === 0) return;
+        if (helpUsed || helpsLeft === 0 || !question || !question.helpData) return;
 
-        const availableHelps = [];
-        if (!usedHelps.hint1) availableHelps.push('hint1');
-        if (!usedHelps.hint2) availableHelps.push('hint2');
+        if (question.format === 'F2' && question.helpData.type === 'reveal') {
+            // F2: Revelar valor de UM jogador aleatoriamente
+            const randomPlayer = Math.random() < 0.5 
+                ? question.helpData.player1_id 
+                : question.helpData.player2_id;
+            
+            setRevealedPlayerId(randomPlayer);
+        } else if (question.format === 'F3' && question.helpData.type === 'hint') {
+            // F3: Mostrar hint contextual
+            setActiveHint({
+                type: question.helpData.hint_type,
+                value: question.helpData.hint_value
+            });
+        }
 
-        if (availableHelps.length === 0) return;
-
-        const randomHelp = availableHelps[Math.floor(Math.random() * availableHelps.length)];
-        
-        setActiveHelp(randomHelp);
-        setUsedHelps({ ...usedHelps, [randomHelp]: true });
-        setHelpsLeft(helpsLeft - 1);
+        setHelpsLeft(helpsLeft - 1); // Decrementa total do jogo
+        setHelpUsed(true); // Bloqueia para esta pergunta
         setTimeLeft(prev => prev + 5);
         
         setShowTimeBonus(true);
@@ -245,9 +252,10 @@ function StatsQuiz({ token }) {
         setSelectedAnswer(null);
         setUsedPlayerIds([]);
         setRevealed(false);
-        setHelpsLeft(2);
-        setUsedHelps({ hint1: false, hint2: false });
-        setActiveHelp(null);
+        setHelpsLeft(2); // Reset total de ajudas
+        setHelpUsed(false);
+        setRevealedPlayerId(null);
+        setActiveHint(null);
         setScoreSaved(null);
     };
 
@@ -265,6 +273,16 @@ function StatsQuiz({ token }) {
         if (percentage > 50) return 'shadow-[0_0_20px_rgba(234,179,8,0.5)]';
         if (percentage > 25) return 'shadow-[0_0_20px_rgba(249,115,22,0.5)]';
         return 'shadow-[0_0_20px_rgba(239,68,68,0.6)]';
+    };
+
+    // Formatador de hints F3
+    const formatHintLabel = (type) => {
+        const labels = {
+            position: lang === 'pt' ? 'Posição' : 'Position',
+            nationality: lang === 'pt' ? 'Nacionalidade' : 'Nationality',
+            team_name: lang === 'pt' ? 'Equipa' : 'Team'
+        };
+        return labels[type] || type;
     };
 
     if (gameOver) {
@@ -293,7 +311,7 @@ function StatsQuiz({ token }) {
     const questionText = lang === 'pt' ? question.question_pt : question.question_en;
 
     return (
-        <div key={`${question.id}-${question.format}`} className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in slide-in-from-top duration-300">
+        <div key={`${question.players[0].id}-${question.format}`} className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in slide-in-from-top duration-300">
             <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
                 
                 <div className="flex items-center justify-between pb-4 border-b border-border">
@@ -320,59 +338,23 @@ function StatsQuiz({ token }) {
                     </p>
                 </div>
 
+                {/* Mostrar hint ativo (F3) */}
+                {activeHint && question.format === 'F3' && (
+                    <div className="px-4 py-2 rounded-xl bg-primary/20 border-2 border-primary/40 text-center animate-in fade-in slide-in-from-top duration-300">
+                        <span className="text-sm md:text-base font-bold text-foreground">
+                            💡 {formatHintLabel(activeHint.type)}: {activeHint.value}
+                        </span>
+                    </div>
+                )}
+
                 <div className="space-y-4">
-                    {question.format === 'F1' && (
-                        <>
-                            <div className="flex flex-col items-center gap-3">
-                                <div className="relative w-40 h-40 rounded-2xl overflow-hidden border-2 border-primary shadow-lg">
-                                    <img
-                                        src={question.players[0].photo}
-                                        alt={question.players[0].name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <img src={question.players[0].team_logo} alt="logo" className="w-6 h-6 object-contain" />
-                                    <p className="font-bold text-base text-foreground">{question.players[0].name}</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                                {question.options.map(option => {
-                                    const isSelected = String(selectedAnswer) === String(option);
-                                    const isCorrect = String(option) === String(question.correctAnswer);
-                                    const showResult = selectedAnswer !== null;
-
-                                    return (
-                                        <button
-                                            key={option}
-                                            onClick={() => handleAnswer(option)}
-                                            disabled={selectedAnswer !== null}
-                                            className={`
-                                                px-5 py-3 rounded-xl font-semibold text-base
-                                                transition-all duration-300
-                                                ${!showResult
-                                                    ? 'dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90'
-                                                    : isSelected
-                                                        ? isCorrect
-                                                            ? 'bg-success text-white scale-[1.02] shadow-lg'
-                                                            : 'bg-destructive text-white scale-[0.98] shadow-lg'
-                                                        : 'bg-card/30 opacity-50 text-foreground/50'
-                                                }
-                                            `}
-                                        >
-                                            {option}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </>
-                    )}
-
                     {question.format === 'F2' && (
                         <div className="grid grid-cols-2 gap-3">
                             {question.players.map(player => {
                                 const isCorrect = String(question.correctAnswer) === String(player.id);
                                 const isSelected = String(selectedAnswer) === String(player.id);
+                                const shouldRevealHelp = revealedPlayerId === player.id && !selectedAnswer;
+                                const shouldRevealFinal = revealed;
                                 
                                 return (
                                     <button
@@ -403,19 +385,23 @@ function StatsQuiz({ token }) {
                                                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent" />
                                             </div>
                                             
-                                            {revealed && (
+                                            {/* Overlay de ajuda (antes de responder) - MENOS OPACO */}
+                                            {shouldRevealHelp && (
+                                                <div className="absolute inset-0 bg-primary/50 flex items-center justify-center animate-in fade-in duration-300">
+                                                    <div className="text-center">
+                                                        <span className="text-white text-4xl font-black drop-shadow-2xl">
+                                                            {player.statValue}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Overlay final (após responder) */}
+                                            {shouldRevealFinal && (
                                                 <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-300">
                                                     <div className="text-center">
                                                         <span className="text-white text-5xl font-black drop-shadow-2xl">
-                                                            {player.statValue 
-                                                                ? (() => {
-                                                                    const numValue = parseFloat(player.statValue);
-                                                                    return !isNaN(numValue) && !Number.isInteger(numValue)
-                                                                        ? numValue.toFixed(2)
-                                                                        : player.statValue;
-                                                                })()
-                                                                : '—'
-                                                            }
+                                                            {player.statValue}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -552,9 +538,9 @@ function StatsQuiz({ token }) {
 
                         <button
                             onClick={useHelp}
-                            disabled={helpsLeft === 0}
+                            disabled={helpUsed || helpsLeft === 0 || !question.helpData}
                             className={`relative transition-all ${
-                                helpsLeft === 0 
+                                helpUsed || helpsLeft === 0 || !question.helpData
                                     ? 'opacity-30 cursor-not-allowed scale-90' 
                                     : 'hover:scale-110 active:scale-95'
                             }`}
