@@ -36,7 +36,15 @@
     "registerPrompt": "to enter the leaderboard",
     "registerLink": "Register",
     "selectSeason": "Choose the Competition: ",
-    "timeUp": "Time's Up!"
+    "timeUp": "Time's Up!",
+    "mute": "Mute sound",
+    "unmute": "Unmute sound",
+    "useHelp": "Use help",
+    "remaining": "remaining",
+    "playerPhoto": "Player photo",
+    "selectAnswer": "Select answer",
+    "livesRemaining": "lives remaining",
+    "selectPlayer": "Select player"
   },
   "gameOver": {
     "title": "Game Over! 💀",
@@ -47,7 +55,9 @@
   "leaderboard": {
     "title": "🏆 Leaderboard",
     "back": "Back",
-    "empty": "No scores yet for this difficulty."
+    "empty": "No scores yet for this difficulty.",
+    "selectLeague": "Select league", 
+    "leagueMenu": "League menu" 
   },
   "auth": {
     "login": "Login",
@@ -77,7 +87,11 @@
   },
   "common": {
     "loading": "Loading...",
-    "error": "Error"
+    "error": "Error",
+    "skipToContent": "Skip to main content",
+    "backToHome": "Back to home",
+    "selected": "selected",
+    "back": "Back"
   },
   "bugReport": {
     "title": "Report Bug / Suggestion",
@@ -89,6 +103,7 @@
     "successMessage": "Your report was successfully submitted.",
     "redirecting": "Redirecting...",
     "foundBug": "Found a bug?",
-    "haveSuggestion": "Have a suggestion?"
+    "haveSuggestion": "Have a suggestion?",
+    "helpText": "Describe the problem or suggestion with at least 10 characters"
   }
 }

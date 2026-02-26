@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 function BugReportButton() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { i18n } = useTranslation();
-    const lang = i18n.language === 'pt' ? 'pt' : 'en';
+    const { t } = useTranslation();
     const [isFlipped, setIsFlipped] = useState(false);
 
     // Só mostrar na Landing (/) e NUNCA na página de bug report
@@ -29,14 +28,15 @@ function BugReportButton() {
         });
     };
 
-    const bugLabel = lang === 'pt' ? 'Encontrou um bug?' : 'Found a bug?';
-    const suggestionLabel = lang === 'pt' ? 'Tem uma sugestão?' : 'Have a suggestion?';
+    const bugLabel = t('bugReport.foundBug');
+    const suggestionLabel = t('bugReport.haveSuggestion');
+    const ariaLabel = isFlipped ? suggestionLabel : bugLabel;
 
     return (
         <button
             onClick={handleClick}
-            className="fixed lg:right-40 top-26 right-4 z-40 hover:scale-105 active:scale-95 transition-all duration-200"
-            title={isFlipped ? suggestionLabel : bugLabel}
+            aria-label={ariaLabel}
+            className="fixed lg:right-40 top-26 right-4 z-40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
         >
             <div className="relative w-24 h-32 preserve-3d" style={{ perspective: '1000px' }}>
                 {/* Container com flip horizontal */}
@@ -46,6 +46,7 @@ function BugReportButton() {
                         transformStyle: 'preserve-3d',
                         transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                     }}
+                    aria-hidden="true"
                 >
                     {/* Face da frente - Bug */}
                     <div 
@@ -54,7 +55,8 @@ function BugReportButton() {
                     >
                         <img 
                             src="/images/bug.png" 
-                            alt="Bug Report" 
+                            alt="" 
+                            aria-hidden="true"
                             className="w-18 md:w-22 drop-shadow-2xl"
                         />
                         <span className="text-[10px] md:text-sm font-bold text-foreground group-hover:text-primary group-hover:drop-shadow-lg transition-all whitespace-nowrap">
@@ -72,7 +74,8 @@ function BugReportButton() {
                     >
                         <img 
                             src="/images/suggestion.png" 
-                            alt="Suggestion" 
+                            alt=""
+                            aria-hidden="true"
                             className="w-18 md:w-22 drop-shadow-2xl"
                         />
                         <span className="text-[10px] md:text-sm font-bold text-foreground group-hover:text-primary group-hover:drop-shadow-lg transition-all whitespace-nowrap">

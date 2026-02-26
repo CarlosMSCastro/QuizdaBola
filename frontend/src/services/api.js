@@ -55,18 +55,26 @@ export const login = async (username, password) => {
 };
 
 // guardar pontuação (requer token)
-export const saveScore = async (score, game_mode, token, difficulty = null, competitionId = 'ligaportugal2024') => {
+export const saveScore = async (score, game_mode, token, competitionId = 'ligaportugal2024') => {
     const res = await axios.post(`${API_URL}/leaderboard`,
-        { score, game_mode, difficulty, competition_id: competitionId },
+        { 
+            score, 
+            game_mode, 
+            competition_id: competitionId 
+        },
         { headers: { Authorization: `Bearer ${token}` } }
     );
     return res.data;
 };
 
 // buscar leaderboard
-export const getLeaderboard = async (game_mode, difficulty = null, competitionId = 'ligaportugal2024') => {
-    const res = await axios.get(`${API_URL}/leaderboard`, {
-        params: { game_mode, difficulty, competition_id: competitionId }
-    });
+export const getLeaderboard = async (game_mode, competitionId = null) => {
+    const params = { game_mode };
+    
+    if (competitionId && competitionId !== 'global') {
+        params.competition_id = competitionId;
+    }
+    
+    const res = await axios.get(`${API_URL}/leaderboard`, { params });
     return res.data;
 };

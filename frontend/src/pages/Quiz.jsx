@@ -123,12 +123,24 @@ function Quiz({ token}) {
 
     useEffect(() => {
         if (gameOver && token && scoreSaved === null && score > 0) {
+            console.log('🎯 Enviando score:', {
+                score,
+                mode: 'classic', // ou 'stats'
+                token: token.substring(0, 20) + '...',
+                competition: selectedSeason
+            });
+            
             saveScore(score, 'classic', token, selectedSeason)
                 .then(res => {
+                    console.log('✅ Resposta:', res);
                     if (res.isNewRecord) setScoreSaved('record');
                     else setScoreSaved('exists');
                 })
-                .catch(() => setScoreSaved('error'));
+                .catch((err) => {
+                    console.error('❌ ERRO completo:', err);
+                    console.error('❌ Resposta do servidor:', err.response?.data);
+                    setScoreSaved('error');
+                });
         }
     }, [gameOver, score, token, scoreSaved, selectedSeason]);
 
@@ -301,7 +313,7 @@ function Quiz({ token}) {
                 <div className="relative mx-auto w-full max-w-[280px] aspect-square border-2 border-primary rounded-3xl">
                     <img 
                         src={question.photo} 
-                        alt="Jogador" 
+                        alt={t('quiz.playerPhoto')}
                         className="w-full h-full object-cover rounded-2xl shadow-lg"
                     />
 
@@ -309,7 +321,8 @@ function Quiz({ token}) {
                         <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
                             <img 
                                 src={`https://flagcdn.com/48x36/${getCountryCode(question.nationality)}.png`}
-                                alt={question.nationality}
+                                alt=""
+                                aria-hidden="true"
                                 className="w-12 h-9 object-contain"
                             />
                         </div>
@@ -319,7 +332,8 @@ function Quiz({ token}) {
                         <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
                             <img 
                                 src={question.team_logo} 
-                                alt="Logo equipa" 
+                                alt=""
+                                aria-hidden="true"
                                 className="w-16 h-16 object-contain"
                             />
                         </div>
@@ -364,10 +378,11 @@ function Quiz({ token}) {
                 )}
 
                 <div className="flex justify-between items-center">
-                    <div className="flex gap-1">
+                    <div className="flex gap-1" role="status" aria-label={`${lives} ${t('quiz.livesRemaining')}`}>
                         {[...Array(3)].map((_, i) => (
                             <span 
-                                key={i} 
+                                key={i}
+                                aria-hidden="true"
                                 className={`text-2xl inline-block transition-all duration-300 ${
                                     i < lives 
                                         ? 'scale-100' 
@@ -382,9 +397,11 @@ function Quiz({ token}) {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setIsMuted(!isMuted)}
-                            className="relative transition-all hover:scale-110 active:scale-95"
+                            aria-label={isMuted ? t('quiz.unmute') : t('quiz.mute')}
+                            aria-pressed={isMuted}
+                            className="relative transition-all hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
                         >
-                            <div className="text-3xl">
+                            <div className="text-3xl" aria-hidden="true">
                                 {isMuted ? '🔇' : '🔊'}
                             </div>
                         </button>
@@ -392,15 +409,17 @@ function Quiz({ token}) {
                         <button
                             onClick={useHelp}
                             disabled={helpsLeft === 0}
-                            className={`relative transition-all ${
+                            aria-label={`${t('quiz.useHelp')} (${helpsLeft} ${t('quiz.remaining')})`}
+                            aria-disabled={helpsLeft === 0}
+                            className={`relative transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded-lg ${
                                 helpsLeft === 0 
                                     ? 'opacity-30 cursor-not-allowed scale-90' 
                                     : 'hover:scale-110 active:scale-95'
                             }`}
                         >
-                            <div className="text-4xl">❓</div>
+                            <div className="text-4xl" aria-hidden="true">❓</div>
                             {helpsLeft > 0 && (
-                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black">
+                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-background flex items-center justify-center text-xs font-black" aria-hidden="true">
                                     {helpsLeft}
                                 </div>
                             )}
@@ -419,9 +438,12 @@ function Quiz({ token}) {
                                 key={option}
                                 onClick={() => handleAnswer(option)}
                                 disabled={selectedAnswer !== null}
+                                aria-label={`${t('quiz.selectAnswer')}: ${option}`}
+                                aria-pressed={isSelected}
                                 className={`
                                     w-full px-5 py-3 rounded-xl font-semibold text-base
                                     transition-all duration-300
+                                    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
                                     ${!showResult
                                         ? 'dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90'
                                         : isSelected
@@ -448,7 +470,8 @@ function Quiz({ token}) {
                 <div className="flex justify-center pt-2">
                     <button
                         onClick={() => { resetGame(); navigate('/'); }}
-                        className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all"
+                        aria-label={t('quiz.abandon')}
+                        className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         {t('quiz.abandon')}
                     </button>

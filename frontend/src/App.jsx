@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BugReportButton from './components/BugReportButton';
@@ -73,7 +74,7 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
         />
       )}
       
-      <main className="flex-1">
+      <main className="flex-1" id="main-content">
         <PageTransition>
           <Suspense fallback={<Loading />}>
             <Routes>
@@ -94,6 +95,7 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
 }
 
 function App() {
+  const { t } = useTranslation();
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -135,6 +137,14 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* Skip link para navegação por teclado */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] rounded-lg"
+      >
+        {t('common.skipToContent')}
+      </a>
+      
       <div className="flex flex-col min-h-screen">
         <AppContent 
           token={token}

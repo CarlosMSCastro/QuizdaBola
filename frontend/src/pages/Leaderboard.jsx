@@ -46,7 +46,6 @@ function Leaderboard() {
         const competitionId = league === 'global' ? null : league;
         const data = await getLeaderboard(
             gameMode,
-            null, // Sempre null agora
             competitionId
         );
         setScores(data);
@@ -90,9 +89,10 @@ function Leaderboard() {
                 <div className="flex items-center gap-3 md:gap-4">
                     <button
                         onClick={() => navigate('/')}
-                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
+                        aria-label={t('common.backToHome')}
+                        className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
-                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                     </button>
@@ -105,19 +105,25 @@ function Leaderboard() {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setLeagueDropdownOpen(!leagueDropdownOpen)}
-                        className="w-full flex items-center justify-between gap-3 px-4 md:px-6 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-lg transition-all bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 text-foreground"
+                        aria-expanded={leagueDropdownOpen}
+                        aria-label={t('leaderboard.selectLeague')}
+                        className="w-full flex items-center justify-between gap-3 px-4 md:px-6 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-lg transition-all bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         <div className="flex items-center gap-3">
                             {selectedLeague?.logo && (
-                                <img src={selectedLeague.logo} alt={selectedLeague.name} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+                                <img src={selectedLeague.logo} alt="" aria-hidden="true" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
                             )}
                             <span>{selectedLeague?.name || 'Global'}</span>
                         </div>
-                        <span className={`text-muted-foreground transition-transform duration-300 ${leagueDropdownOpen ? 'rotate-180' : ''}`}>▾</span>
+                        <span className={`text-muted-foreground transition-transform duration-300 ${leagueDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
                     </button>
 
                     {leagueDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-card/15 dark:bg-card/95 backdrop-blur-xs rounded-2xl shadow-2xl overflow-hidden z-10 border border-border">
+                        <div 
+                            className="absolute top-full left-0 right-0 mt-2 bg-card/15 dark:bg-card/95 backdrop-blur-xs rounded-2xl shadow-2xl overflow-hidden z-10 border border-border"
+                            role="menu"
+                            aria-label={t('leaderboard.leagueMenu')}
+                        >
                             {leagues.map((lg) => {
                                 const isActive = lg.id === 'global' || lg.active;
                                 
@@ -126,8 +132,13 @@ function Leaderboard() {
                                         key={lg.id}
                                         onClick={() => handleLeagueClick(lg)}
                                         disabled={!isActive}
+                                        role="menuitemradio"
+                                        aria-checked={league === lg.id}
+                                        aria-label={lg.name}
+                                        aria-disabled={!isActive}
                                         className={`
                                             relative w-full flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 font-bold text-sm md:text-lg transition-all
+                                            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset
                                             ${!isActive ? 'cursor-not-allowed opacity-50' : ''}
                                             ${league === lg.id
                                                 ? 'bg-primary text-background'
@@ -140,7 +151,8 @@ function Leaderboard() {
                                         {lg.logo && (
                                             <img 
                                                 src={lg.logo} 
-                                                alt={lg.name} 
+                                                alt=""
+                                                aria-hidden="true"
                                                 className={`w-6 h-6 md:w-8 md:h-8 object-contain ${
                                                     !isActive ? 'grayscale' : ''
                                                 }`}
@@ -149,7 +161,7 @@ function Leaderboard() {
                                         <span>{lg.name}</span>
                                         
                                         {!isActive && (
-                                            <span className="ml-auto px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold">
+                                            <span className="ml-auto px-2 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold" aria-hidden="true">
                                                 🔒 {t('landing.comingSoon') || 'Em breve'}
                                             </span>
                                         )}
@@ -167,27 +179,32 @@ function Leaderboard() {
                             setGameMode('classic');
                             localStorage.setItem('leaderboardMode', 'classic');
                         }}
-                        className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all ${
+                        aria-label={`${t('landing.classic')} ${gameMode === 'classic' ? t('common.selected') : ''}`}
+                        aria-pressed={gameMode === 'classic'}
+                        className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
                             gameMode === 'classic'
                                 ? 'bg-primary text-background shadow-xl'
                                 : 'bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 dark:text-foreground text-accent'
                         }`}
                     >
-                        <img src="/images/classic.png" alt="Classic" className="w-8 h-8 md:w-12 md:h-12" />
+                        <img src="/images/classic.png" alt="" aria-hidden="true" className="w-8 h-8 md:w-12 md:h-12" />
                         <span>{t('landing.classic')}</span>
                     </button>
+
                     <button
                         onClick={() => {
                             setGameMode('stats');
                             localStorage.setItem('leaderboardMode', 'stats');
                         }}
-                        className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all ${
+                        aria-label={`Stats Quiz ${gameMode === 'stats' ? t('common.selected') : ''}`}
+                        aria-pressed={gameMode === 'stats'}
+                        className={`flex-1 flex items-center justify-center gap-2 md:gap-3 px-4 md:px-8 py-3 md:py-5 rounded-2xl font-bold text-sm md:text-xl transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
                             gameMode === 'stats'
                                 ? 'bg-primary text-background shadow-xl'
                                 : 'bg-muted/50 hover:bg-muted/70 dark:bg-muted dark:hover:bg-muted/80 dark:text-foreground text-accent'
                         }`}
                     >
-                        <img src="/images/stats.png" alt="Stats" className="w-8 h-8 md:w-12 md:h-12" />
+                        <img src="/images/stats.png" alt="" aria-hidden="true" className="w-8 h-8 md:w-12 md:h-12" />
                         <span>Stats Quiz</span>
                     </button>
                 </div>
@@ -205,7 +222,7 @@ function Leaderboard() {
                         {/* League Header - Desktop only */}
                         {league !== 'global' && selectedLeague?.logo && (
                             <div className="hidden md:flex items-center gap-3 px-8 py-4 dark:bg-muted/60 bg-muted/40 border-b border-border">
-                                <img src={selectedLeague.logo} alt={selectedLeague.name} className="w-8 h-8 object-contain" />
+                                <img src={selectedLeague.logo} alt="" aria-hidden="true" className="w-8 h-8 object-contain" />
                                 <span className="font-black text-lg text-foreground">{selectedLeague.name}</span>
                             </div>
                         )}

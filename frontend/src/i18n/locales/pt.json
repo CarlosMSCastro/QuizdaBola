@@ -36,7 +36,15 @@
     "registerPrompt": "para entrar no leaderboard",
     "registerLink": "Registe-se",
     "selectSeason": "Escolhe a Competição",
-    "timeUp": "Tempo esgotado!"
+    "timeUp": "Tempo esgotado!",
+    "mute": "Silenciar som",
+    "unmute": "Ativar som",
+    "useHelp": "Usar ajuda",
+    "remaining": "restantes",
+    "playerPhoto": "Fotografia do jogador",
+    "selectAnswer": "Selecionar resposta",
+    "livesRemaining": "vidas restantes",
+    "selectPlayer": "Selecionar jogador"
   },
   "gameOver": {
     "title": "Game Over! 💀",
@@ -47,7 +55,9 @@
   "leaderboard": {
     "title": "🏆 Leaderboard",
     "back": "Voltar",
-    "empty": "Ainda não há pontuações nesta dificuldade."
+    "empty": "Ainda não há pontuações nesta dificuldade.",
+    "selectLeague": "Selecionar liga",
+    "leagueMenu": "Menu de ligas"
   },
   "auth": {
     "login": "Login",
@@ -77,7 +87,11 @@
   },
   "common": {
     "loading": "A carregar...",
-    "error": "Erro"
+    "error": "Erro",
+    "skipToContent": "Saltar para conteúdo principal",
+    "backToHome": "Voltar ao início",
+    "selected": "selecionado",
+    "back": "Voltar"
   },
   "bugReport": {
     "title": "Reportar Bug / Sugestão",
@@ -89,6 +103,7 @@
     "successMessage": "O teu report foi enviado com sucesso.",
     "redirecting": "A redirecionar...",
     "foundBug": "Encontrou um bug?",
-    "haveSuggestion": "Tem uma sugestão?"
+    "haveSuggestion": "Tem uma sugestão?",
+    "helpText": "Descreva o problema ou sugestão com pelo menos 10 caracteres"
   }
 }

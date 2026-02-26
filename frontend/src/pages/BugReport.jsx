@@ -50,9 +50,10 @@ function BugReport() {
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors"
+                    aria-label={t('common.back')}
+                    className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
-                    <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </button>
@@ -70,31 +71,42 @@ function BugReport() {
                 {!success ? (
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <label className="block text-sm font-bold text-primary mb-3 uppercase tracking-wide">
+                            <label htmlFor="bug-message" className="block text-sm font-bold text-primary mb-3 uppercase tracking-wide">
                                 {t('bugReport.label')}
                             </label>
                             <textarea
+                                id="bug-message"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="w-full px-5 py-4 rounded-2xl text-foreground bg-foreground/5 border-2 border-primary text-lg font-medium focus:outline-none focus:border-primary focus:bg-foreground/10 transition-all placeholder:text-muted-foreground resize-none"
+                                className="w-full px-5 py-4 rounded-2xl text-foreground bg-foreground/5 border-2 border-primary text-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all placeholder:text-muted-foreground resize-none"
                                 placeholder={t('bugReport.placeholder')}
                                 rows={8}
                                 required
                                 minLength={10}
+                                aria-required="true"
+                                aria-describedby="message-help"
                             />
+                            <p id="message-help" className="sr-only">
+                                {t('bugReport.helpText')}
+                            </p>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-black text-xl uppercase tracking-wide hover:bg-primary/90 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-busy={loading}
+                            className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-black text-xl uppercase tracking-wide hover:bg-primary/90 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
                             {loading ? t('common.loading') : t('bugReport.submit')}
                         </button>
                     </form>
                 ) : (
-                    <div className="text-center py-12 space-y-4 animate-in zoom-in duration-300">
-                        <div className="text-6xl">✅</div>
+                    <div 
+                        className="text-center py-12 space-y-4 animate-in zoom-in duration-300"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        <div className="text-6xl" aria-hidden="true">✅</div>
                         <h2 className="text-3xl font-black text-success">
                             {t('bugReport.thanks')}
                         </h2>

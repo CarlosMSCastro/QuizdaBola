@@ -200,3 +200,63 @@ input:-webkit-autofill:active {
         transform: translateY(0);
     }
 }
+
+
+/* ========================================
+   A11Y - ACESSIBILIDADE
+   ======================================== */
+
+/* Focus visível para navegação por teclado */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remover outline padrão do browser */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen reader only - esconde visualmente mas mantém acessível */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Torna visível quando focado (para skip links) */
+.sr-only:focus,
+.sr-only:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--color-primary);
+  color: var(--color-background);
+  z-index: 9999;
+}
+
+/* Melhorar contraste em botões disabled */
+button:disabled,
+input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Para garantir que cliques não mostram outline */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
