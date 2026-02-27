@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 26-Fev-2026 às 01:37
+-- Tempo de geração: 27-Fev-2026 às 16:20
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -44,7 +44,8 @@ INSERT INTO `bug_reports` (`id`, `message`, `page`, `user_agent`, `username`, `c
 (1, 'teste123asd', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'guest', '2026-02-25 03:58:43'),
 (2, 'Stats ta uma merda', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'CarlosCastro', '2026-02-25 04:05:08'),
 (3, 'teste teste tes', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'CarlosCastro', '2026-02-25 04:05:39'),
-(4, 'teste teste testeste teste tes', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'guest', '2026-02-25 04:05:45');
+(4, 'teste teste testeste teste tes', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'guest', '2026-02-25 04:05:45'),
+(5, 'testestesasdadsa', '/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'guest', '2026-02-27 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -1952,10 +1953,13 @@ CREATE TABLE `scores` (
 --
 
 INSERT INTO `scores` (`id`, `user_id`, `score`, `difficulty`, `created_at`, `game_mode`, `competition_id`) VALUES
-(21, 3, 6, NULL, '2026-02-26 00:18:21', 'classic', 'ligaportugal2024'),
-(22, 3, 2, NULL, '2026-02-26 00:28:08', 'classic', 'brasileirao2024'),
-(23, 3, 4, NULL, '2026-02-26 00:31:08', 'stats', 'ligaportugal2024'),
-(24, 3, 9, NULL, '2026-02-26 00:32:38', 'stats', 'brasileirao2024');
+(21, 3, 1, NULL, '2026-02-26 00:18:21', 'classic', 'ligaportugal2024'),
+(22, 3, 1, NULL, '2026-02-26 00:28:08', 'classic', 'brasileirao2024'),
+(23, 3, 1, NULL, '2026-02-26 00:31:08', 'stats', 'ligaportugal2024'),
+(24, 3, 1, NULL, '2026-02-26 00:32:38', 'stats', 'brasileirao2024'),
+(25, 3, 2, NULL, '2026-02-27 15:18:51', 'classic', 'ligaportugal2024'),
+(26, 3, 9, NULL, '2026-02-27 15:19:42', 'stats', 'ligaportugal2024'),
+(27, 3, 2, NULL, '2026-02-27 15:20:05', 'classic', 'brasileirao2024');
 
 -- --------------------------------------------------------
 
@@ -2034,13 +2038,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `bug_reports`
 --
 ALTER TABLE `bug_reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de tabela `users`

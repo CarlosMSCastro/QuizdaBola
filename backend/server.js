@@ -7,12 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/question', require('./routes/question'));
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/leaderboard', require('./routes/leaderboard'));
-app.use('/api/stats-quiz', require('./routes/stats-quiz'));
-app.use('/api/competitions', require('./routes/competitions'));
-app.use('/api/bug-report', require('./routes/bug-report'));
+app.use('/api/question', require('./features/quiz/question.routes'));
+app.use('/api/auth', require('./features/auth/auth.routes'));
+app.use('/api/leaderboard', require('./features/leaderboard/leaderboard.routes'));
+app.use('/api/stats-quiz', require('./features/stats-quiz/stats-quiz.routes'));
+app.use('/api/competitions', require('./features/competitions/competitions.routes'));
+app.use('/api/bug-report', require('./features/bug-report/bug-report.routes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
