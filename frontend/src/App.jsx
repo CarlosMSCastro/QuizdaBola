@@ -1,24 +1,24 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import BugReportButton from './components/BugReportButton';
-import Loading from './components/Loading';
+import { useState, useEffect, lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import Navbar from "./shared/components/Navbar";
+import Footer from "./shared/components/Footer";
+import BugReportButton from "./features/bug-report/BugReportButton";
+import Loading from "./shared/components/Loading";
 
 // Lazy loading das páginas
-const Landing = lazy(() => import('./pages/Landing'));
-const Quiz = lazy(() => import('./pages/Quiz'));
-const Leaderboard = lazy(() => import('./pages/Leaderboard'));
-const StatsQuiz = lazy(() => import('./pages/StatsQuiz'));
-const Login = lazy(() => import('./pages/Login'));
-const BugReport = lazy(() => import('./pages/BugReport'));
+const Landing = lazy(() => import("./features/landing/Landing"));
+const Quiz = lazy(() => import("./features/quiz/Quiz"));
+const Leaderboard = lazy(() => import("./features/leaderboard/Leaderboard"));
+const StatsQuiz = lazy(() => import("./features/stats-quiz/StatsQuiz"));
+const Login = lazy(() => import("./features/auth/Login"));
+const BugReport = lazy(() => import("./features/bug-report/BugReport"));
 
 // Wrapper para aplicar transições
 function PageTransition({ children }) {
   const location = useLocation();
-  const [prevPath, setPrevPath] = useState('/');
-  
+  const [prevPath, setPrevPath] = useState("/");
+
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setPrevPath(location.pathname);
@@ -30,17 +30,17 @@ function PageTransition({ children }) {
     const prev = prevPath;
 
     // Voltando para Landing (sempre da esquerda)
-    if (current === '/' && prev !== '/') {
-      return 'animate-in fade-in slide-in-from-left duration-500';
+    if (current === "/" && prev !== "/") {
+      return "animate-in fade-in slide-in-from-left duration-500";
     }
 
     // Saindo do Landing (sempre da direita)
-    if (prev === '/' && current !== '/') {
-      return 'animate-in fade-in slide-in-from-right duration-500';
+    if (prev === "/" && current !== "/") {
+      return "animate-in fade-in slide-in-from-right duration-500";
     }
 
     // Entre outras páginas (fade simples)
-    return 'animate-in fade-in duration-500';
+    return "animate-in fade-in duration-500";
   };
 
   return (
@@ -50,9 +50,21 @@ function PageTransition({ children }) {
   );
 }
 
-function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkMode }) {
+function AppContent({
+  token,
+  user,
+  darkMode,
+  handleLogin,
+  handleLogout,
+  setDarkMode,
+}) {
   const location = useLocation();
-  const hideNavAndFooter = location.pathname === '/leaderboard' || location.pathname === '/login' || location.pathname === '/quiz' || location.pathname === '/stats-quiz' || location.pathname === '/bug-report';
+  const hideNavAndFooter =
+    location.pathname === "/leaderboard" ||
+    location.pathname === "/login" ||
+    location.pathname === "/quiz" ||
+    location.pathname === "/stats-quiz" ||
+    location.pathname === "/bug-report";
 
   return (
     <>
@@ -66,23 +78,33 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
       <BugReportButton />
 
       {!hideNavAndFooter && (
-        <Navbar 
-          user={user} 
+        <Navbar
+          user={user}
           onLogout={handleLogout}
           darkMode={darkMode}
-          onToggleDark={() => setDarkMode(prev => !prev)}
+          onToggleDark={() => setDarkMode((prev) => !prev)}
         />
       )}
-      
+
       <main className="flex-1" id="main-content">
         <PageTransition>
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
+              <Route
+                path="/quiz"
+                element={
+                  <Quiz token={token} user={user} onLogin={handleLogin} />
+                }
+              />
               <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
+              <Route
+                path="/stats-quiz"
+                element={
+                  <StatsQuiz token={token} user={user} onLogin={handleLogin} />
+                }
+              />
               <Route path="/bug-report" element={<BugReport />} />
             </Routes>
           </Suspense>
@@ -102,22 +124,24 @@ function App() {
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
     }
-    const savedDark = localStorage.getItem('darkMode');
-    if (savedDark === 'true') setDarkMode(true);
+    const savedDark = localStorage.getItem("darkMode");
+    if (savedDark === "true") setDarkMode(true);
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('darkMode', darkMode);
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("darkMode", darkMode);
 
-    const img = darkMode ? '/images/dark_background.png' : '/images/light_background.png';
-    const bg = document.getElementById('app-background');
+    const img = darkMode
+      ? "/images/dark_background.png"
+      : "/images/light_background.png";
+    const bg = document.getElementById("app-background");
     if (bg) {
       bg.style.backgroundImage = `url('${img}')`;
     }
@@ -129,8 +153,8 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
@@ -138,15 +162,15 @@ function App() {
   return (
     <BrowserRouter>
       {/* Skip link para navegação por teclado */}
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] rounded-lg"
       >
-        {t('common.skipToContent')}
+        {t("common.skipToContent")}
       </a>
-      
+
       <div className="flex flex-col min-h-screen">
-        <AppContent 
+        <AppContent
           token={token}
           user={user}
           darkMode={darkMode}
