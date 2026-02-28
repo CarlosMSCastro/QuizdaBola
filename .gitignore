@@ -1,14 +1,16 @@
-\api.fooball.com.txt
-/api.fooball.com.txt
+# Documentação/Texto
 api.fooball.com.txt
-
 QuizDaBola-25Fev.docx
 
-/python
-python
+# Python scripts
 python/
+
+# Database
 football_quiz.sql
 
+# Environment
 .env
 backend/.env
+
+# Scraping
 backend/scraping
