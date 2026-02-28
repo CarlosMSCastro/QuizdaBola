@@ -51,7 +51,7 @@ function Leaderboard() {
     }
     setLoading(false);
   };
-  /* eslint-disable react-hooks/exhaustive-deps */ //para remover o warning do vscode
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     loadScores();
   }, [gameMode, league]);
@@ -158,17 +158,17 @@ function Leaderboard() {
                     aria-label={lg.name}
                     aria-disabled={!isActive}
                     className={`
-                                            relative w-full flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 font-bold text-sm md:text-lg transition-all
-                                            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset
-                                            ${!isActive ? "cursor-not-allowed opacity-50" : ""}
-                                            ${
-                                              league === lg.id
-                                                ? "bg-primary text-background"
-                                                : isActive
-                                                  ? "hover:bg-muted/50 dark:hover:bg-muted/30 text-foreground"
-                                                  : "text-foreground"
-                                            }
-                                        `}
+                      relative w-full flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 font-bold text-sm md:text-lg transition-all
+                      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset
+                      ${!isActive ? "cursor-not-allowed opacity-50" : ""}
+                      ${
+                        league === lg.id
+                          ? "bg-primary text-background"
+                          : isActive
+                            ? "hover:bg-muted/50 dark:hover:bg-muted/30 text-foreground"
+                            : "text-foreground"
+                      }
+                    `}
                   >
                     {lg.logo && (
                       <img
@@ -301,7 +301,8 @@ function Leaderboard() {
                             : `#${index + 1}`}
                     </span>
                   </div>
-                  <div className="col-span-7 flex items-center">
+                  
+                  <div className="col-span-7 flex flex-col justify-center">
                     <span
                       className={`text-base md:text-2xl font-bold truncate ${
                         index === 0 ? "text-primary" : "text-foreground"
@@ -309,7 +310,25 @@ function Leaderboard() {
                     >
                       {score.username}
                     </span>
+                    
+                    {/* Mostrar competição apenas no modo Global */}
+                    {league === "global" && score.competition_id && (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        {competitions.find(c => c.id === score.competition_id)?.logo && (
+                          <img
+                            src={competitions.find(c => c.id === score.competition_id).logo}
+                            alt=""
+                            aria-hidden="true"
+                            className="w-3 h-3 md:w-4 md:h-4 object-contain"
+                          />
+                        )}
+                        <span className="text-xs md:text-sm text-muted-foreground">
+                          {competitions.find(c => c.id === score.competition_id)?.name || score.competition_id}
+                        </span>
+                      </div>
+                    )}
                   </div>
+                  
                   <div className="col-span-3 flex items-center justify-end">
                     <span
                       className={`text-xl md:text-3xl font-black ${
