@@ -189,7 +189,6 @@ function StatsQuiz({ token }) {
     gameStarted,
     timeLeft,
     timerExpired,
-    isMuted,
   ]);
 
   const handleAnswer = (answer) => {

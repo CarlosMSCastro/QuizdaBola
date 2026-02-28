@@ -188,7 +188,6 @@ function Quiz({ token }) {
     gameStarted,
     timeLeft,
     timerExpired,
-    isMuted,
   ]);
 
   const handleAnswer = (answer) => {

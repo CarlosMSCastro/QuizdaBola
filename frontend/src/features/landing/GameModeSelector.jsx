@@ -1,6 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useTranslation } from "react-i18next";
 import { modes } from "../../shared/constants/gameModes";
+import { useRef } from "react";
 import "swiper/css";
 
 function ModeCard({ mode, isMobile }) {
@@ -46,10 +47,36 @@ function GameModeSelector({
 }) {
   const { t } = useTranslation();
   const activeMode = modes[activeIndex];
+  const swiperDesktopRef = useRef(null);
+  const swiperMobileRef = useRef(null);
 
   const handleSlideChange = (swiper) => {
     const newIndex = swiper.activeIndex;
     onModeChange(newIndex, modes[newIndex].path);
+  };
+
+  const handlePrevClickDesktop = () => {
+    if (swiperDesktopRef.current && activeIndex > 0) {
+      swiperDesktopRef.current.slidePrev();
+    }
+  };
+
+  const handleNextClickDesktop = () => {
+    if (swiperDesktopRef.current && activeIndex < modes.length - 1) {
+      swiperDesktopRef.current.slideNext();
+    }
+  };
+
+  const handlePrevClickMobile = () => {
+    if (swiperMobileRef.current && activeIndex > 0) {
+      swiperMobileRef.current.slidePrev();
+    }
+  };
+
+  const handleNextClickMobile = () => {
+    if (swiperMobileRef.current && activeIndex < modes.length - 1) {
+      swiperMobileRef.current.slideNext();
+    }
   };
 
   return (
@@ -93,40 +120,178 @@ function GameModeSelector({
         </div>
       )}
 
-      {/* Desktop - Swiper */}
+      {/* Desktop - Swiper com Setas */}
       <div className="hidden lg:block w-full max-w-4xl">
-        <Swiper
-          spaceBetween={30}
-          slidesPerView={1}
-          centeredSlides={true}
-          onSlideChange={handleSlideChange}
-          initialSlide={activeIndex}
-          className="w-full"
-        >
-          {modes.map((mode) => (
-            <SwiperSlide key={mode.key}>
-              <ModeCard mode={mode} isMobile={false} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="relative">
+          {/* Botão Anterior - Desktop */}
+          <button
+            onClick={handlePrevClickDesktop}
+            disabled={activeIndex === 0}
+            aria-label={t("common.previous") || "Anterior"}
+            className={`
+              absolute left-0 top-1/2 -translate-y-1/2 z-10
+              w-12 h-12 rounded-full
+              bg-primary/20 backdrop-blur-sm
+              flex items-center justify-center
+              transition-all duration-200
+              ${
+                activeIndex === 0
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+              }
+            `}
+          >
+            <svg
+              className="w-6 h-6 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <Swiper
+            spaceBetween={30}
+            slidesPerView={1}
+            centeredSlides={true}
+            onSlideChange={handleSlideChange}
+            onSwiper={(swiper) => (swiperDesktopRef.current = swiper)}
+            initialSlide={activeIndex}
+            className="w-full"
+          >
+            {modes.map((mode) => (
+              <SwiperSlide key={mode.key}>
+                <ModeCard mode={mode} isMobile={false} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Botão Próximo - Desktop */}
+          <button
+            onClick={handleNextClickDesktop}
+            disabled={activeIndex === modes.length - 1}
+            aria-label={t("common.next") || "Próximo"}
+            className={`
+              absolute right-0 top-1/2 -translate-y-1/2 z-10
+              w-12 h-12 rounded-full
+              bg-primary/20 backdrop-blur-sm
+              flex items-center justify-center
+              transition-all duration-200
+              ${
+                activeIndex === modes.length - 1
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+              }
+            `}
+          >
+            <svg
+              className="w-6 h-6 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile - Swiper */}
+      {/* Mobile - Swiper com Setas Mini */}
       <div className="lg:hidden w-full max-w-sm mx-auto">
-        <Swiper
-          spaceBetween={20}
-          slidesPerView={1}
-          centeredSlides={true}
-          onSlideChange={handleSlideChange}
-          initialSlide={activeIndex}
-          className="w-full"
-        >
-          {modes.map((mode) => (
-            <SwiperSlide key={mode.key}>
-              <ModeCard mode={mode} isMobile={true} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="relative">
+          {/* Botão Anterior - Mobile Mini */}
+          <button
+            onClick={handlePrevClickMobile}
+            disabled={activeIndex === 0}
+            aria-label={t("common.previous") || "Anterior"}
+            className={`
+              absolute left-2 top-1/2 -translate-y-1/2 z-10
+              w-8 h-8 rounded-full
+              bg-primary/20 backdrop-blur-sm
+              flex items-center justify-center
+              transition-all duration-200
+              ${
+                activeIndex === 0
+                  ? "opacity-20 cursor-not-allowed"
+                  : "hover:bg-primary/40 active:scale-90"
+              }
+            `}
+          >
+            <svg
+              className="w-4 h-4 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <Swiper
+            spaceBetween={20}
+            slidesPerView={1}
+            centeredSlides={true}
+            onSlideChange={handleSlideChange}
+            onSwiper={(swiper) => (swiperMobileRef.current = swiper)}
+            initialSlide={activeIndex}
+            className="w-full"
+          >
+            {modes.map((mode) => (
+              <SwiperSlide key={mode.key}>
+                <ModeCard mode={mode} isMobile={true} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Botão Próximo - Mobile Mini */}
+          <button
+            onClick={handleNextClickMobile}
+            disabled={activeIndex === modes.length - 1}
+            aria-label={t("common.next") || "Próximo"}
+            className={`
+              absolute right-2 top-1/2 -translate-y-1/2 z-10
+              w-8 h-8 rounded-full
+              bg-primary/20 backdrop-blur-sm
+              flex items-center justify-center
+              transition-all duration-200
+              ${
+                activeIndex === modes.length - 1
+                  ? "opacity-20 cursor-not-allowed"
+                  : "hover:bg-primary/40 active:scale-90"
+              }
+            `}
+          >
+            <svg
+              className="w-4 h-4 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Indicadores de navegação */}
