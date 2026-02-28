@@ -9,7 +9,7 @@ import { Card } from "@/shared/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import countries from "i18n-iso-countries";
 import en from "i18n-iso-countries/langs/en.json";
-import EndGame from "./EndGame";
+import EndGame from "../../shared/components/EndGame";
 countries.registerLocale(en);
 
 function Quiz({ token }) {
@@ -50,6 +50,12 @@ function Quiz({ token }) {
 
   useEffect(() => {
     localStorage.setItem("quizMuted", isMuted);
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (isMuted) {
+      stopUrgentSound();
+    }
   }, [isMuted]);
 
   useEffect(() => {
@@ -181,14 +187,7 @@ function Quiz({ token }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [
-    gameOver,
-    selectedAnswer,
-    question,
-    gameStarted,
-    timeLeft,
-    timerExpired,
-  ]);
+  }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired]);
 
   const handleAnswer = (answer) => {
     stopUrgentSound();

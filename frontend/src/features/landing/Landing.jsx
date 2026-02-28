@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import SeasonSelector from "../../shared/components/ui/SeasonSelector";
+import SeasonSelector from "./SeasonSelector";
 import GameModeSelector from "./GameModeSelector";
 import { modes } from "../../shared/constants/gameModes";
 import { getCompetition } from "../../shared/services/api";

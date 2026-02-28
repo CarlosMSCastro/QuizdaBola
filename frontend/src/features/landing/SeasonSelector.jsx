@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useState, useRef, useEffect } from "react";
-import { getCompetitions } from "../../services/api";
+import { getCompetitions } from "../../shared/services/api";
 import "swiper/css";
 
 function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {

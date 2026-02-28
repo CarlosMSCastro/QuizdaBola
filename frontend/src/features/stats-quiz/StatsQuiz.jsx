@@ -7,7 +7,7 @@ import {
 } from "../../shared/services/api";
 import { Card } from "@/shared/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import EndGame from "../quiz/EndGame";
+import EndGame from "../../shared/components/EndGame";
 
 function StatsQuiz({ token }) {
   const navigate = useNavigate();
@@ -48,6 +48,12 @@ function StatsQuiz({ token }) {
 
   useEffect(() => {
     localStorage.setItem("statsQuizMuted", isMuted);
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (isMuted) {
+      stopUrgentSound();
+    }
   }, [isMuted]);
 
   useEffect(() => {
@@ -182,14 +188,7 @@ function StatsQuiz({ token }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [
-    gameOver,
-    selectedAnswer,
-    question,
-    gameStarted,
-    timeLeft,
-    timerExpired,
-  ]);
+  }, [gameOver, selectedAnswer, question, gameStarted, timeLeft, timerExpired]);
 
   const handleAnswer = (answer) => {
     if (selectedAnswer !== null) return;
