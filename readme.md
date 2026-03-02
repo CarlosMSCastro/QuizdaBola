@@ -1,6 +1,8 @@
 # QuizDaBola ⚽
 
-Plataforma de quiz interativo sobre futebol português e brasileiro — identifica jogadores e testa conhecimento de estatísticas.
+Plataforma de quiz interativo sobre Futebol — identifica jogadores e testa conhecimento de estatísticas.
+
+**🌐 Live:** [quizdabola.vercel.app](https://quizdabola.vercel.app)
 
 ---
 
@@ -8,7 +10,8 @@ Plataforma de quiz interativo sobre futebol português e brasileiro — identifi
 
 **Frontend:** React 19 · Vite · Tailwind v4 · React Router · i18next  
 **Backend:** Node.js · Express · MySQL · JWT  
-**Arquitetura:** Feature-First (MVC Pattern)
+**Deploy:** Vercel · Render · Filess.io  
+**Arquitetura:** Feature-First (MVC)
 
 ---
 
@@ -16,28 +19,27 @@ Plataforma de quiz interativo sobre futebol português e brasileiro — identifi
 
 ### ⚽ Classic Quiz
 Identifica jogadores por foto entre 4 opções.
-- 10s por pergunta | 3 vidas | 2 ajudas (+5s cada)
-- Sistema de dificuldade adaptativo
-- Áudio dinâmico com mute persistente
+- 10s por pergunta | 3 vidas | 2 ajudas (+5s)
+- Áudio dinâmico
 
 ### 📊 Stats Battle
 Comparações baseadas em estatísticas reais.
 - **F2 (80%):** Comparar 2 jogadores (altura, golos, idade...)
-- **F3 (20%):** Verdadeiro/Falso sobre stats de 1 jogador
+- **F3 (20%):** Verdadeiro/Falso sobre stats
 - Priorização automática de equipas top
 
 ---
 
 ## 🌍 Competições
 
-### 🇵🇹 Liga Portugal Betclic 2024/25
-**788 jogadores** · Big 5: Benfica, Porto, Sporting, Braga, Guimarães
+### 🇵🇹 Liga Portugal 2024/25
+**788 jogadores** 
 
-### 🇧🇷 Brasileirão Série A 2024
-**914 jogadores** · Big 5: Flamengo, Palmeiras, Corinthians, São Paulo, Atlético-MG
+### 🇧🇷 Brasileirão 2024
+**914 jogadores** 
 
-### 🔒 Premier League, Champions League
-Coming Soon
+### 🔒 Em Breve
+Premier League · Champions League
 
 ---
 
@@ -45,14 +47,14 @@ Coming Soon
 
 ✅ Multi-competição com seleção dinâmica  
 ✅ Bilingue (PT/EN)  
-✅ Dark/Light mode persistente  
-✅ Leaderboards por modo e competição  
-✅ Autenticação JWT  
+✅ Dark/Light mode  
+✅ Leaderboards globais e por liga  
+✅ Autenticação JWT + bcrypt  
 ✅ Bug Reports integrado  
 ✅ Lazy Loading (~70% redução bundle)  
-✅ A11y WCAG 2.1 AA (navegação teclado, ARIA, skip links)  
-✅ 100% Responsivo (mobile-first)  
-✅ Glassmorphism + animações suaves
+✅ A11y  
+✅ 100% Responsivo mobile-first 
+✅ Zero cold starts (UptimeRobot)
 
 ---
 
@@ -61,43 +63,37 @@ Coming Soon
 ### Frontend (Feature-First)
 ```
 src/
-├── features/           # Quiz, Stats, Landing, Leaderboard, Auth, Bug Report
-├── shared/             # Componentes, serviços, constants
+├── features/      # Quiz, Stats, Leaderboard, Auth, Bug Report
+├── shared/        # Componentes, services, constants
 └── App.jsx
 ```
 
-### Backend (MVC + Feature-First)
+### Backend (MVC)
 ```
 backend/
-├── features/           # Routes → Controllers → Services
-│   ├── quiz/
-│   ├── stats-quiz/
-│   ├── leaderboard/
-│   └── ...
-├── shared/             # Config, middleware
+├── features/      # Routes → Controllers → Services
+├── shared/        # Config, middleware
 └── server.js
 ```
 
 ---
 
-## 🗄️ Base de Dados
+## 🗄️ Database
 
 **1702 jogadores** (Liga Portugal + Brasileirão)
 
-**Tabelas:** `players_ligaportugal2024`, `players_brasileirao2024`, `competitions`, `users`, `scores`, `bug_reports`
+**Tabelas:** `players_*`, `competitions`, `users`, `scores`, `bug_reports`
 
-**Sistema:**
-- Dificuldade adaptativa (easy/medium/hard)
-- Priorização de equipas top
-- Fallbacks automáticos de stats
+**Sistema:**  Priorização equipas top · Fallbacks automáticos
 
 ---
 
 ## 📦 Deploy
 
-**Frontend:** Vercel  
-**Backend:** Fly.io  
-**Database:** PlanetScale (MySQL)
+**Frontend:** Vercel (auto-deploy)  
+**Backend:** Render.com (750h/mês grátis)  
+**Database:** Filess.io MySQL (10MB)  
+**Uptime:** UptimeRobot (ping 5min)
 
 ---
 
@@ -108,3 +104,5 @@ backend/
 **Social:** Sistema de amigos, partilha social  
 **Gamificação:** Achievements, XP, badges  
 **Técnico:** PWA, SEO, caching, analytics
+
+---
