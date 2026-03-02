@@ -4,19 +4,14 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS configurado ANTES de todas as rotas
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://quizdabola.vercel.app',
-    /\.vercel\.app$/
-  ],
+// CORS - Aceitar todas as origens (para desenvolvimento e deploy)
+app.use(cors({
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-};
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check endpoint
