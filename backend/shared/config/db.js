@@ -4,14 +4,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const dbConfig = isProduction 
   ? {
-      // PRODUÇÃO - Filess.io MySQL
-      host: process.env.DB_HOST || 'd7dq4k.h.filess.io',
-      port: process.env.DB_PORT || 61001,
-      user: process.env.DB_USER || 'football_quiz_missingtip',
-      password: process.env.DB_PASSWORD || '5555456f6ffe759fc97ff34222fe3229439a36ff',
-      database: process.env.DB_NAME || 'football_quiz_missingtip',
+      // PRODUÇÃO - Filess.io MySQL (TODAS as credenciais vêm de ENV)
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,  // ← SEM FALLBACK!
+      database: process.env.DB_NAME,
       waitForConnections: true,
-      connectionLimit: 3,  // ← MUDADO: Filess free só permite 5, deixamos 3 para segurança
+      connectionLimit: 3,
       queueLimit: 0,
       connectTimeout: 10000
     }
