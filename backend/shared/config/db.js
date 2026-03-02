@@ -11,8 +11,9 @@ const dbConfig = isProduction
       password: process.env.DB_PASSWORD || '5555456f6ffe759fc97ff34222fe3229439a36ff',
       database: process.env.DB_NAME || 'football_quiz_missingtip',
       waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
+      connectionLimit: 3,  // ← MUDADO: Filess free só permite 5, deixamos 3 para segurança
+      queueLimit: 0,
+      connectTimeout: 10000
     }
   : {
       // LOCAL - XAMPP MySQL
