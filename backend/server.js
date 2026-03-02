@@ -1,14 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-
 const app = express();
-const statsRoutes = require('./features/stats/stats.routes');
 
-app.use('/api/stats', statsRoutes);
-
-
-// CORS - Aceitar todas as origens (para desenvolvimento e deploy)
+// ✅ CORS PRIMEIRO (ANTES DAS ROTAS)
 app.use(cors({
   origin: true,
   credentials: true,
@@ -23,13 +18,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API Routes
+// ✅ ROTAS DEPOIS DO CORS
 app.use('/api/question', require('./features/quiz/question.routes'));
 app.use('/api/auth', require('./features/auth/auth.routes'));
 app.use('/api/leaderboard', require('./features/leaderboard/leaderboard.routes'));
 app.use('/api/stats-quiz', require('./features/stats-quiz/stats-quiz.routes'));
 app.use('/api/competitions', require('./features/competitions/competitions.routes'));
 app.use('/api/bug-report', require('./features/bug-report/bug-report.routes'));
+app.use('/api/stats', require('./features/stats/stats.routes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
