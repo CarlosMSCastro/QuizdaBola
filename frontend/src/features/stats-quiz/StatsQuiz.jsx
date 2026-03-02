@@ -47,13 +47,6 @@ function StatsQuiz({ token }) {
   const urgentSoundRef = useRef(null);
 
   useEffect(() => {
-    const navigationType = performance.getEntriesByType('navigation')[0]?.type;
-    if (navigationType === 'reload') {
-      navigate('/');
-    }
-  }, [navigate]);
-
-  useEffect(() => {
     localStorage.setItem("statsQuizMuted", isMuted);
   }, [isMuted]);
 

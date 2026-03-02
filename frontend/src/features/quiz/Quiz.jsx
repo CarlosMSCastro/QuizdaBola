@@ -48,12 +48,6 @@ function Quiz({ token }) {
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
 
-  useEffect(() => {
-    const navigationType = performance.getEntriesByType('navigation')[0]?.type;
-    if (navigationType === 'reload') {
-      navigate('/');
-    }
-  }, [navigate]);
 
   useEffect(() => {
     localStorage.setItem("quizMuted", isMuted);
