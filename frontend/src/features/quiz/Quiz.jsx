@@ -49,6 +49,12 @@ function Quiz({ token }) {
   const urgentSoundRef = useRef(null);
 
   useEffect(() => {
+    if (performance.navigation.type === 1) {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     localStorage.setItem("quizMuted", isMuted);
   }, [isMuted]);
 

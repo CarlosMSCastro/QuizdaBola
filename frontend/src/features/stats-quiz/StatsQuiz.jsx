@@ -47,6 +47,12 @@ function StatsQuiz({ token }) {
   const urgentSoundRef = useRef(null);
 
   useEffect(() => {
+    if (performance.navigation.type === 1) {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     localStorage.setItem("statsQuizMuted", isMuted);
   }, [isMuted]);
 
