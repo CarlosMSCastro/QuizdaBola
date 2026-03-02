@@ -4,10 +4,22 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+// CORS configurado ANTES de todas as rotas
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://quizdabola.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Health check endpoint (para UptimeRobot manter app acordado)
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
