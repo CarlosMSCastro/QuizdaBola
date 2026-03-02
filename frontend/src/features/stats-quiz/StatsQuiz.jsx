@@ -636,6 +636,7 @@ function StatsQuiz({ token }) {
 
         <button
           onClick={() => {
+            stopUrgentSound();
             resetGame();
             navigate("/");
           }}

@@ -503,6 +503,7 @@ function Quiz({ token }) {
         <div className="flex justify-center pt-2">
           <button
             onClick={() => {
+              stopUrgentSound();
               resetGame();
               navigate("/");
             }}
