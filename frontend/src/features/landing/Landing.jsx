@@ -8,9 +8,7 @@ import { getCompetition } from "../../shared/services/api";
 function Landing() {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState(() => {
-    return parseInt(localStorage.getItem("landingStep")) || 1;
-  });
+  const [step, setStep] = useState(1);
 
   const [selectedSeason, setSelectedSeason] = useState(() => {
     return localStorage.getItem("selectedSeason") || "ligaportugal2024";
