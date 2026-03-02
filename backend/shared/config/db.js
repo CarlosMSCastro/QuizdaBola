@@ -16,8 +16,7 @@ const dbConfig = isProduction
       connectTimeout: 10000,
       enableKeepAlive: true, 
       keepAliveInitialDelay: 0,
-      acquireTimeout: 10000,        // ✅ ADICIONA ESTA
-      timeout: 10000                 // ✅ ADICIONA ESTA
+      acquireTimeout: 10000
     }
   : {
       // LOCAL - XAMPP MySQL
