@@ -1,22 +1,22 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // buscar competições
 export const getCompetitions = async () => {
-    const res = await axios.get(`${API_URL}/competitions`);
+    const res = await axios.get(`${API_URL}/api/competitions`);
     return res.data;
 };
 
 // buscar competição específica
 export const getCompetition = async (competitionId) => {
-    const res = await axios.get(`${API_URL}/competitions/${competitionId}`);
+    const res = await axios.get(`${API_URL}/api/competitions/${competitionId}`);
     return res.data;
 };
 
 // buscar pergunta para o jogo de stats
 export const getStatsQuestion = async (excludeIds = [], competitionId = 'ligaportugal2024') => {
-    const res = await axios.get(`${API_URL}/stats-quiz`, {
+    const res = await axios.get(`${API_URL}/api/stats-quiz`, {
         params: { 
             exclude: excludeIds.join(','),
             competition_id: competitionId
@@ -27,7 +27,7 @@ export const getStatsQuestion = async (excludeIds = [], competitionId = 'ligapor
 
 // buscar pergunta aleatória (com exclusão de IDs)
 export const getQuestion = async (excludeIds = [], competitionId = 'ligaportugal2024') => {
-    const response = await axios.get(`${API_URL}/question`, {
+    const response = await axios.get(`${API_URL}/api/question`, {
         params: { 
             exclude: excludeIds.join(','),
             competition_id: competitionId
@@ -38,7 +38,7 @@ export const getQuestion = async (excludeIds = [], competitionId = 'ligaportugal
 
 // registar utilizador
 export const register = async (username, password) => {
-    const response = await axios.post(`${API_URL}/auth/register`, {
+    const response = await axios.post(`${API_URL}/api/auth/register`, {
         username,
         password
     });
@@ -47,7 +47,7 @@ export const register = async (username, password) => {
 
 // login
 export const login = async (username, password) => {
-    const response = await axios.post(`${API_URL}/auth/login`, {
+    const response = await axios.post(`${API_URL}/api/auth/login`, {
         username,
         password
     });
@@ -56,7 +56,7 @@ export const login = async (username, password) => {
 
 // guardar pontuação (requer token)
 export const saveScore = async (score, game_mode, token, competitionId = 'ligaportugal2024') => {
-    const res = await axios.post(`${API_URL}/leaderboard`,
+    const res = await axios.post(`${API_URL}/api/leaderboard`,
         { 
             score, 
             game_mode, 
@@ -75,6 +75,17 @@ export const getLeaderboard = async (game_mode, competitionId = null) => {
         params.competition_id = competitionId;
     }
     
-    const res = await axios.get(`${API_URL}/leaderboard`, { params });
+    const res = await axios.get(`${API_URL}/api/leaderboard`, { params });
+    return res.data;
+};
+
+// enviar bug report
+export const sendBugReport = async (message, page, userAgent, username = 'guest') => {
+    const res = await axios.post(`${API_URL}/api/bug-report`, {
+        message,
+        page,
+        user_agent: userAgent,
+        username
+    });
     return res.data;
 };
