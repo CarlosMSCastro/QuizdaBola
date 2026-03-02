@@ -5,8 +5,8 @@ QuizDaBola-25Fev.docx
 # Python scripts
 python/
 
-# Database
-football_quiz.sql
+# Database Backup 02/03
+bd.sql
 
 # Environment
 .env

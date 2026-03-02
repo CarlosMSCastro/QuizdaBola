@@ -4,7 +4,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const dbConfig = isProduction 
   ? {
-      // PRODUÇÃO - Filess.io MySQL (TODAS as credenciais vêm de ENV)
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
@@ -12,13 +11,15 @@ const dbConfig = isProduction
       database: process.env.DB_NAME,
       waitForConnections: true,
       connectionLimit: 3,
-      queueLimit: 0,
+      queueLimit: 15,
       connectTimeout: 10000,
       enableKeepAlive: true, 
-      keepAliveInitialDelay: 0
+      keepAliveInitialDelay: 0,
+      idleTimeout: 20000,
+      maxIdle: 1,
+      acquireTimeout: 15000
     }
   : {
-      // LOCAL - XAMPP MySQL
       host: 'localhost',
       user: 'root',
       password: '',
@@ -30,7 +31,6 @@ const dbConfig = isProduction
 
 const pool = mysql.createPool(dbConfig);
 
-// Testar conexão
 pool.getConnection()
   .then(connection => {
     console.log(`✅ MySQL Connected: ${isProduction ? 'PRODUCTION (Filess.io)' : 'LOCAL (XAMPP)'}`);
