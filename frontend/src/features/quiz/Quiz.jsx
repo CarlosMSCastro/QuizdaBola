@@ -49,7 +49,8 @@ function Quiz({ token }) {
   const urgentSoundRef = useRef(null);
 
   useEffect(() => {
-    if (performance.navigation.type === 1) {
+    const navigationType = performance.getEntriesByType('navigation')[0]?.type;
+    if (navigationType === 'reload') {
       navigate('/');
     }
   }, [navigate]);
