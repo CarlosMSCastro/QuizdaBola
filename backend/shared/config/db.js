@@ -15,8 +15,7 @@ const dbConfig = isProduction
       queueLimit: 0,
       connectTimeout: 10000,
       enableKeepAlive: true, 
-      keepAliveInitialDelay: 0,
-      acquireTimeout: 10000
+      keepAliveInitialDelay: 0
     }
   : {
       // LOCAL - XAMPP MySQL
