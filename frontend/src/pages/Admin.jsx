@@ -9,17 +9,25 @@ function Admin({ token }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔍 Admin useEffect - token:', token ? 'EXISTS' : 'MISSING');
+    
     if (!token) {
+      console.log('❌ No token, redirecting to /');
       navigate('/');
       return;
     }
 
+    console.log('✅ Token exists, fetching stats...');
+
     const fetchStats = async () => {
       try {
+        console.log('📡 Calling getStats with token:', token.substring(0, 20) + '...');
         const data = await getStats(token);
+        console.log('✅ Stats received:', data);
         setStats(data);
       } catch (error) {
-        console.error('Erro ao carregar stats:', error);
+        console.error('❌ Error fetching stats:', error);
+        console.error('❌ Error details:', error.response?.data);
       } finally {
         setLoading(false);
       }
@@ -36,7 +44,13 @@ function Admin({ token }) {
     );
   }
 
-  if (!stats) return null;
+  if (!stats) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl text-red-500">Erro ao carregar dados. Verifica a consola.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-8">
@@ -68,7 +82,7 @@ function Admin({ token }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <Card className="p-6">
             <h2 className="text-2xl font-bold mb-4">Jogos por Modo</h2>
-            {stats.gamesByMode.map(mode => (
+            {stats.gamesByMode && stats.gamesByMode.map(mode => (
               <div key={mode.game_mode} className="flex justify-between py-2 border-b">
                 <span className="capitalize">{mode.game_mode}</span>
                 <span className="font-bold">{mode.total}</span>
@@ -99,7 +113,7 @@ function Admin({ token }) {
                 </tr>
               </thead>
               <tbody>
-                {stats.topScores.map((score, idx) => (
+                {stats.topScores && stats.topScores.map((score, idx) => (
                   <tr key={idx} className="border-b">
                     <td className="py-2">#{idx + 1}</td>
                     <td className="py-2 font-semibold">{score.username}</td>
