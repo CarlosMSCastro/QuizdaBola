@@ -442,7 +442,7 @@ function Quiz({ token }) {
               aria-disabled={helpsLeft === 0}
               className={`relative transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded-lg ${
                 helpsLeft === 0
-                  ? "opacity-30 cursor-not-allowed scale-90"
+                  ? "opacity-30 cursor-not-allowed scale-90 grayscale"
                   : "hover:scale-110 active:scale-95"
               }`}
             >

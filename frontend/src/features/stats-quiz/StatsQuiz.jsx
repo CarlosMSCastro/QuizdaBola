@@ -615,7 +615,7 @@ function StatsQuiz({ token }) {
               aria-disabled={helpUsed || helpsLeft === 0 || !question.helpData}
               className={`relative transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded-lg ${
                 helpUsed || helpsLeft === 0 || !question.helpData
-                  ? "opacity-30 cursor-not-allowed scale-90"
+                  ? "opacity-30 cursor-not-allowed scale-90 grayscale"
                   : "hover:scale-110 active:scale-95"
               }`}
             >
