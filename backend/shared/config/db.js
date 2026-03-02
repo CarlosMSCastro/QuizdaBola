@@ -8,12 +8,16 @@ const dbConfig = isProduction
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,  // ← SEM FALLBACK!
+      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       waitForConnections: true,
       connectionLimit: 3,
       queueLimit: 0,
-      connectTimeout: 10000
+      connectTimeout: 10000,
+      enableKeepAlive: true, 
+      keepAliveInitialDelay: 0,
+      acquireTimeout: 10000,        // ✅ ADICIONA ESTA
+      timeout: 10000                 // ✅ ADICIONA ESTA
     }
   : {
       // LOCAL - XAMPP MySQL
