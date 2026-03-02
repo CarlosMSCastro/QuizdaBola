@@ -89,3 +89,10 @@ export const sendBugReport = async (message, page, userAgent, username = 'guest'
     });
     return res.data;
 };
+
+export const getStats = async (token) => {
+    const response = await axios.get(`${API_URL}/api/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+};

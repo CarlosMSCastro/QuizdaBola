@@ -3,6 +3,10 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const statsRoutes = require('./features/stats/stats.routes');
+
+app.use('/api/stats', statsRoutes);
+
 
 // CORS - Aceitar todas as origens (para desenvolvimento e deploy)
 app.use(cors({

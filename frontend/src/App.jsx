@@ -5,6 +5,7 @@ import Navbar from "./shared/components/Navbar";
 import Footer from "./shared/components/Footer";
 import BugReportButton from "./features/bug-report/BugReportButton";
 import Loading from "./shared/components/Loading";
+import Admin from './pages/Admin';
 
 // Lazy loading das páginas
 const Landing = lazy(() => import("./features/landing/Landing"));
@@ -106,6 +107,7 @@ function AppContent({
                 }
               />
               <Route path="/bug-report" element={<BugReport />} />
+              <Route path="/admin" element={<Admin token={token} />} />
             </Routes>
           </Suspense>
         </PageTransition>
