@@ -7,7 +7,6 @@ import BugReportButton from "./features/bug-report/BugReportButton";
 import Loading from "./shared/components/Loading";
 import Admin from './pages/Admin';
 
-// Lazy loading das páginas
 const Landing = lazy(() => import("./features/landing/Landing"));
 const Quiz = lazy(() => import("./features/quiz/Quiz"));
 const Leaderboard = lazy(() => import("./features/leaderboard/Leaderboard"));
@@ -15,7 +14,6 @@ const StatsQuiz = lazy(() => import("./features/stats-quiz/StatsQuiz"));
 const Login = lazy(() => import("./features/auth/Login"));
 const BugReport = lazy(() => import("./features/bug-report/BugReport"));
 
-// Wrapper para aplicar transições
 function PageTransition({ children }) {
   const location = useLocation();
   const [prevPath, setPrevPath] = useState("/");
@@ -25,22 +23,18 @@ function PageTransition({ children }) {
     setPrevPath(location.pathname);
   }, [location.pathname]);
 
-  // Determina a direção da transição
   const getTransitionClass = () => {
     const current = location.pathname;
     const prev = prevPath;
 
-    // Voltando para Landing (sempre da esquerda)
     if (current === "/" && prev !== "/") {
       return "animate-in fade-in slide-in-from-left duration-500";
     }
 
-    // Saindo do Landing (sempre da direita)
     if (prev === "/" && current !== "/") {
       return "animate-in fade-in slide-in-from-right duration-500";
     }
 
-    // Entre outras páginas (fade simples)
     return "animate-in fade-in duration-500";
   };
 
@@ -51,14 +45,7 @@ function PageTransition({ children }) {
   );
 }
 
-function AppContent({
-  token,
-  user,
-  darkMode,
-  handleLogin,
-  handleLogout,
-  setDarkMode,
-}) {
+function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkMode }) {
   const location = useLocation();
   const hideNavAndFooter =
     location.pathname === "/leaderboard" ||
@@ -69,50 +56,27 @@ function AppContent({
 
   return (
     <>
-      <div
-        id="app-background"
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat blur-[3px] scale-110 -z-10"
-      />
+      <div id="app-background" className="fixed inset-0 bg-cover bg-center bg-no-repeat blur-[3px] scale-110 -z-10" />
       <div className="fixed inset-0 -z-10 pointer-events-none bg-black/10 dark:bg-black/50" />
-
-      {/* Botão flutuante de Bug Report */}
       <BugReportButton />
-
       {!hideNavAndFooter && (
-        <Navbar
-          user={user}
-          onLogout={handleLogout}
-          darkMode={darkMode}
-          onToggleDark={() => setDarkMode((prev) => !prev)}
-        />
+        <Navbar user={user} onLogout={handleLogout} darkMode={darkMode} onToggleDark={() => setDarkMode((prev) => !prev)} />
       )}
-
       <main className="flex-1" id="main-content">
         <PageTransition>
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route
-                path="/quiz"
-                element={
-                  <Quiz token={token} user={user} onLogin={handleLogin} />
-                }
-              />
+              <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route
-                path="/stats-quiz"
-                element={
-                  <StatsQuiz token={token} user={user} onLogin={handleLogin} />
-                }
-              />
+              <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
               <Route path="/bug-report" element={<BugReport />} />
               <Route path="/admin" element={<Admin token={token} />} />
             </Routes>
           </Suspense>
         </PageTransition>
       </main>
-
       {!hideNavAndFooter && <Footer />}
     </>
   );
@@ -120,29 +84,27 @@ function AppContent({
 
 function App() {
   const { t } = useTranslation();
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
+  const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-    const savedDark = localStorage.getItem("darkMode");
-    if (savedDark === "true") setDarkMode(true);
-  }, []);
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
+
+  useEffect(() => {
+    console.log('APP MOUNTED');
+    console.log('Token:', token ? 'EXISTS' : 'NULL');
+    console.log('User:', user ? user.username : 'NULL');
+  }, [token, user]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("darkMode", darkMode);
-
-    const img = darkMode
-      ? "/images/dark_background.png"
-      : "/images/light_background.png";
+    const img = darkMode ? "/images/dark_background.png" : "/images/light_background.png";
     const bg = document.getElementById("app-background");
     if (bg) {
       bg.style.backgroundImage = `url('${img}')`;
@@ -150,8 +112,11 @@ function App() {
   }, [darkMode]);
 
   const handleLogin = (newToken, newUser) => {
+    console.log('LOGIN:', newUser.username);
     setToken(newToken);
     setUser(newUser);
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(newUser));
   };
 
   const handleLogout = () => {
@@ -163,23 +128,11 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* Skip link para navegação por teclado */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] rounded-lg"
-      >
+      <a href="#main-content" className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] rounded-lg">
         {t("common.skipToContent")}
       </a>
-
       <div className="flex flex-col min-h-screen">
-        <AppContent
-          token={token}
-          user={user}
-          darkMode={darkMode}
-          handleLogin={handleLogin}
-          handleLogout={handleLogout}
-          setDarkMode={setDarkMode}
-        />
+        <AppContent token={token} user={user} darkMode={darkMode} handleLogin={handleLogin} handleLogout={handleLogout} setDarkMode={setDarkMode} />
       </div>
     </BrowserRouter>
   );
