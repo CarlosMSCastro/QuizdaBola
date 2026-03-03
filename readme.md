@@ -1,55 +1,35 @@
 <div align="center">
 
-# ⚽ QuizDaBola
-
-![Logo](/frontend/public/images/logo.png)
+<img src="/frontend/public/images/logo.png" width="200" alt="QuizDaBola Logo">
 
 **Teste os teus conhecimentos de futebol!**  
 Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 
-[![Live Demo](https://img.shields.io/badge/🌐_Demo-quizdabola.vercel.app-4285F4?style=for-the-badge)](https://quizdabola.vercel.app)
+[![QuizDaBola](https://img.shields.io/badge/🌐_quizdabola.fun-4285F4?style=for-the-badge)](https://quizdabola.fun)
 
 </div>
-
 ---
-
 ## 🛠️ Tech Stack
 
 <div align="center">
 
-### Frontend
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=json-web-tokens&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white)
 
-### Backend
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
+</div>
+## 📸 Screenshots
 
-### Deploy
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
-![Filess.io](https://img.shields.io/badge/Filess.io-FF6B6B?style=for-the-badge)
+<div align="center">
+
+| <img src="/frontend/public/readme/landing.gif" width="400" alt="Landing"> | <img src="/frontend/public/readme/quiz.png" width="400" alt="Quiz"> |
 
 </div>
 
----
-
-## 📸 Screenshots
-
-### 🏠 Landing Page
-![Landing Page](/frontend/public/readme/landing.gif)
-
-### 📱 Quiz Mobile
-<img src="/frontend/public/readme/quiz.png" width="300" alt="Quiz Mobile">
-
----
-
-## 📖 Descrição
-
-**QuizDaBola** é uma aplicação web interativa que desafia os utilizadores a testarem os seus conhecimentos sobre futebol através de diferentes modos de jogo.
-
-### ✨ Funcionalidades Principais
 
 - 🏆 **3 Competições Disponíveis**
   - Liga Portugal 2024 (855 jogadores)
@@ -88,8 +68,6 @@ Projeto portfolio full-stack desenvolvido para demonstrar competências em:
 ---
 
 <div align="center">
-
-**Desenvolvido por [Carlos Castro](https://linkedin.com/in/cmscastro)**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/cmscastro)
 
