@@ -65,12 +65,12 @@ function Landing() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-16rem)] flex flex-col items-center justify-center p-4 gap-8 pt-16">
+    <div className="min-h-[calc(100vh-16rem)] flex flex-col items-center justify-center p-3 gap-4 pt-5">
       {/* STEP 1: Escolher Liga */}
       {step === 1 && (
         <div
           key="step1"
-          className="animate-in fade-in slide-in-from-left duration-500 w-full flex flex-col items-center gap-8"
+          className="animate-in fade-in slide-in-from-left duration-500 w-full flex flex-col items-center gap-5"
         >
           <SeasonSelector
             selectedSeason={selectedSeason}
