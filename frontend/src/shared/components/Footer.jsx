@@ -36,13 +36,12 @@ function Footer() {
                         />
                     </div>
 
-
                     <div className="flex items-center gap-3">
-                        {/* Bug/Suggestion Button */}
+                        {/* Bug/Suggestion Button - SÓ MOBILE */}
                         <button
                             onClick={handleBugClick}
                             aria-label={isFlipped ? suggestionLabel : bugLabel}
-                            className="group transition-all p-2 md:p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+                            className="md:hidden group transition-all p-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
                         >
                             <div className="relative w-12 h-12" style={{ perspective: '1000px' }}>
                                 <div 
