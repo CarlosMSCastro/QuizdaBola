@@ -124,7 +124,6 @@ function Quiz({ token }) {
     }
   }, [selectedSeason]);
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (currentCompetition && !gameStarted && !gameOver) {
       setGameStarted(true);
@@ -322,36 +321,34 @@ function Quiz({ token }) {
   return (
     <div
       key={question.id}
-      className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in slide-in-from-top duration-300"
+      className="min-h-screen flex items-center justify-center p-3 md:p-4 page-transition animate-in fade-in slide-in-from-top duration-300"
     >
-      <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
-        <div className="flex items-center justify-between pb-4 border-b border-border">
-          <div className="flex items-center gap-3">
+      <Card className="w-full max-w-lg p-4 md:p-6 space-y-3 md:space-y-4 dark:bg-card/40 bg-card/12 border-0">
+        <div className="flex items-center justify-between pb-2 md:pb-3 border-b border-border">
+          <div className="flex items-center gap-2">
             {currentCompetition && (
               <>
                 <img
                   src={currentCompetition.logo}
                   alt={currentCompetition.name}
-                  className="w-8 h-8 object-contain"
+                  className="w-6 h-6 md:w-8 md:h-8 object-contain"
                 />
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">
-                    {currentCompetition.name}
-                  </h3>
-                </div>
+                <h3 className="text-xs md:text-sm font-bold text-foreground">
+                  {currentCompetition.name}
+                </h3>
               </>
             )}
           </div>
 
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
-            <span className="text-sm font-semibold dark:text-muted-foreground text-foreground">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary/10">
+            <span className="text-xs md:text-sm font-semibold dark:text-muted-foreground text-foreground">
               {t("quiz.score") || "Pontuação"}
             </span>
-            <span className="text-xl font-black text-primary">{score}</span>
+            <span className="text-lg md:text-xl font-black text-primary">{score}</span>
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[280px] aspect-square border-2 border-primary rounded-3xl">
+        <div className="relative mx-auto w-full max-w-[240px] md:max-w-[280px] aspect-square border-2 border-primary rounded-3xl">
           <img
             src={question.photo}
             alt={t("quiz.playerPhoto")}
@@ -359,23 +356,23 @@ function Quiz({ token }) {
           />
 
           {activeHelp === "nationality" && (
-            <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
+            <div className="absolute top-2 right-2 md:top-3 md:right-3 rounded-xl animate-in fade-in zoom-in duration-300">
               <img
                 src={`https://flagcdn.com/48x36/${getCountryCode(question.nationality)}.png`}
                 alt=""
                 aria-hidden="true"
-                className="w-12 h-9 object-contain"
+                className="w-10 h-8 md:w-12 md:h-9 object-contain"
               />
             </div>
           )}
 
           {activeHelp === "team" && question.team_logo && (
-            <div className="absolute top-3 right-3 rounded-xl animate-in fade-in zoom-in duration-300">
+            <div className="absolute top-2 right-2 md:top-3 md:right-3 rounded-xl animate-in fade-in zoom-in duration-300">
               <img
                 src={question.team_logo}
                 alt=""
                 aria-hidden="true"
-                className="w-16 h-16 object-contain"
+                className="w-14 h-14 md:w-16 md:h-16 object-contain"
               />
             </div>
           )}
@@ -383,15 +380,15 @@ function Quiz({ token }) {
 
         {!timerExpired ? (
           showTimeBonus ? (
-            <div className="relative w-full h-8 bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-green-500/60 flex items-center justify-center">
+            <div className="relative w-full h-7 md:h-8 bg-gradient-to-r from-green-600/40 to-emerald-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-green-500/60 flex items-center justify-center">
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-emerald-500/30 animate-pulse" />
               <div className="absolute inset-0 animate-ping bg-green-500/20 rounded-2xl" />
-              <span className="relative z-10 text-base md:text-lg font-black text-green-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
+              <span className="relative z-10 text-sm md:text-base font-black text-green-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
                 ⏱️ +5s
               </span>
             </div>
           ) : (
-            <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
+            <div className="relative w-full h-6 md:h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner">
               <div
                 className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
                 style={{
@@ -409,10 +406,10 @@ function Quiz({ token }) {
             </div>
           )
         ) : (
-          <div className="relative w-full h-8 bg-gradient-to-r from-orange-600/40 to-red-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/60 flex items-center justify-center">
+          <div className="relative w-full h-7 md:h-8 bg-gradient-to-r from-orange-600/40 to-red-600/40 rounded-2xl overflow-hidden shadow-2xl border-2 border-orange-500/60 flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 to-red-500/30 animate-pulse" />
             <div className="absolute inset-0 animate-ping bg-red-500/20 rounded-2xl" />
-            <span className="relative z-10 text-base md:text-lg font-black text-orange-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
+            <span className="relative z-10 text-sm md:text-base font-black text-orange-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-wide animate-bounce">
               ⏰ {t("quiz.timeUp") || "TEMPO ESGOTADO!"}
             </span>
           </div>
@@ -428,7 +425,7 @@ function Quiz({ token }) {
               <span
                 key={i}
                 aria-hidden="true"
-                className={`text-2xl inline-block transition-all duration-300 ${
+                className={`text-xl md:text-2xl inline-block transition-all duration-300 ${
                   i < lives ? "scale-100" : "scale-75 opacity-30 grayscale"
                 }`}
               >
@@ -437,14 +434,14 @@ function Quiz({ token }) {
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2">
             <button
               onClick={() => setIsMuted(!isMuted)}
               aria-label={isMuted ? t("quiz.unmute") : t("quiz.mute")}
               aria-pressed={isMuted}
               className="relative transition-all hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
             >
-              <div className="text-3xl" aria-hidden="true">
+              <div className="text-2xl md:text-3xl" aria-hidden="true">
                 {isMuted ? "🔇" : "🔊"}
               </div>
             </button>
@@ -460,7 +457,7 @@ function Quiz({ token }) {
                   : "hover:scale-110 active:scale-95"
               }`}
             >
-              <div className="text-4xl" aria-hidden="true">
+              <div className="text-3xl md:text-4xl" aria-hidden="true">
                 ❓
               </div>
               {helpsLeft > 0 && (
@@ -475,7 +472,7 @@ function Quiz({ token }) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5 md:space-y-2">
           {question.options.map((option) => {
             const isSelected = selectedAnswer === option;
             const isCorrect = option === question.correctAnswer;
@@ -489,16 +486,16 @@ function Quiz({ token }) {
                 aria-label={`${t("quiz.selectAnswer")}: ${option}`}
                 aria-pressed={isSelected}
                 className={`
-                  w-full px-5 py-3 rounded-xl font-semibold text-base
+                  w-full px-4 py-2.5 md:px-5 md:py-3 rounded-xl font-semibold text-sm md:text-base
                   transition-all duration-300
                   focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
                   ${
                     !showResult
-                      ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
+                      ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.02] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
                       : isSelected
                         ? isCorrect
-                          ? "bg-success text-white scale-[1.02] shadow-lg"
-                          : "bg-destructive text-white scale-[0.98] shadow-lg"
+                          ? "bg-success text-white scale-[1.01] shadow-lg"
+                          : "bg-destructive text-white scale-[0.99] shadow-lg"
                         : "bg-card/30 opacity-50 text-foreground/50"
                   }
                 `}
@@ -506,7 +503,7 @@ function Quiz({ token }) {
                 <span className="flex items-center justify-between">
                   <span>{option}</span>
                   {showResult && isSelected && (
-                    <span className="text-xl">{isCorrect ? "✓" : "✗"}</span>
+                    <span className="text-lg md:text-xl">{isCorrect ? "✓" : "✗"}</span>
                   )}
                 </span>
               </button>
@@ -514,7 +511,7 @@ function Quiz({ token }) {
           })}
         </div>
 
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center">
           <button
             onClick={() => {
               stopUrgentSound();
@@ -522,7 +519,7 @@ function Quiz({ token }) {
               navigate("/");
             }}
             aria-label={t("quiz.abandon")}
-            className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="px-4 py-1.5 md:px-5 md:py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-xs md:text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             {t("quiz.abandon")}
           </button>
