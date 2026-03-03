@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Navbar from "./shared/components/Navbar";
 import Footer from "./shared/components/Footer";
-import BugReportButton from "./features/bug-report/BugReportButton";
 import Loading from "./shared/components/Loading";
 import Admin from './pages/Admin';
 
@@ -58,7 +57,6 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
     <>
       <div id="app-background" className="fixed inset-0 bg-cover bg-center bg-no-repeat blur-[3px] scale-110 -z-10" />
       <div className="fixed inset-0 -z-10 pointer-events-none bg-black/10 dark:bg-black/50" />
-      <BugReportButton />
       {!hideNavAndFooter && (
         <Navbar user={user} onLogout={handleLogout} darkMode={darkMode} onToggleDark={() => setDarkMode((prev) => !prev)} />
       )}
