@@ -1,12 +1,13 @@
 <div align="center">
 
-<img src="/frontend/public/images/logo.png" width="200" alt="QuizDaBola Logo">
+<img src="/frontend/public/images/logo.png" width="300" alt="QuizDaBola Logo">
 
 **Teste os teus conhecimentos de futebol!**  
 Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 
 [![QuizDaBola](https://img.shields.io/badge/🌐_quizdabola.fun-4285F4?style=for-the-badge)](https://quizdabola.fun)
 
+---
 </div>
 
 <div align="center">
@@ -23,7 +24,7 @@ Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 
 <div align="center">
 
-| <img src="/frontend/public/readme/landing.gif" width="400" alt="Landing"> | <img src="/frontend/public/readme/quiz.png" width="400" alt="Quiz"> |
+  <img src="/frontend/public/readme/landing.gif" width="400" alt="Landing">  <img src="/frontend/public/readme/quiz.png" width="400" alt="Quiz"> 
 
 </div>
 
@@ -63,9 +64,3 @@ Projeto portfolio full-stack desenvolvido para demonstrar competências em:
 - UI/UX design e acessibilidade
 
 ---
-
-<div align="center">
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/cmscastro)
-
-</div>
