@@ -10,11 +10,11 @@ function ModeCard({ mode, isMobile }) {
   return (
     <div
       className={`
-                relative text-center
-                flex flex-col items-center justify-center
-                transition-all duration-300
-                ${isMobile ? "p-4 gap-4" : "p-5 py-6 gap-6"}
-            `}
+        relative text-center
+        flex flex-col items-center justify-center
+        transition-all duration-300
+        ${isMobile ? "p-4 gap-4" : "p-5 py-6 gap-6"}
+      `}
     >
       <img
         src={mode.image}
@@ -82,13 +82,13 @@ function GameModeSelector({
   return (
     <div
       key="step2"
-      className="animate-in fade-in slide-in-from-right duration-500 w-full flex flex-col items-center gap-8"
+      className="animate-in fade-in slide-in-from-right duration-500 w-full flex flex-col items-center gap-6"
     >
-      {/* Botão Voltar */}
-      <div className="w-full max-w-4xl">
+      {/* Botão Voltar + Label da Liga - MESMA LINHA */}
+      <div className="w-full max-w-4xl flex items-center justify-between px-4">
         <button
           onClick={onBack}
-          className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-all duration-200"
+          className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-all duration-200 flex-shrink-0"
         >
           <svg
             className="w-5 h-5 md:w-6 md:h-6 text-foreground"
@@ -104,21 +104,20 @@ function GameModeSelector({
             />
           </svg>
         </button>
-      </div>
 
-      {/* Label da Liga Escolhida */}
-      {selectedSeasonData && (
-        <div className="flex items-center gap-4">
-          <img
-            src={selectedSeasonData.logo}
-            alt={selectedSeasonData.name}
-            className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
-          />
-          <span className="text-2xl md:text-3xl font-bold text-primary drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-            {selectedSeasonData.name}
-          </span>
-        </div>
-      )}
+        {selectedSeasonData && (
+          <div className="flex items-center gap-3">
+            <img
+              src={selectedSeasonData.logo}
+              alt={selectedSeasonData.name}
+              className="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+            />
+            <span className="text-xl md:text-2xl font-bold text-primary drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+              {selectedSeasonData.name}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Desktop - Swiper com Setas */}
       <div className="hidden lg:block w-full max-w-4xl">
@@ -130,19 +129,19 @@ function GameModeSelector({
             aria-label={t("common.previous") || "Anterior"}
             className={`
               absolute left-0 top-1/2 -translate-y-1/2 z-10
-              w-12 h-12 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-14 h-14 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === 0
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+                  : "hover:bg-primary/60 hover:scale-110 active:scale-95"
               }
             `}
           >
             <svg
-              className="w-6 h-6 text-primary"
+              className="w-7 h-7 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -179,19 +178,19 @@ function GameModeSelector({
             aria-label={t("common.next") || "Próximo"}
             className={`
               absolute right-0 top-1/2 -translate-y-1/2 z-10
-              w-12 h-12 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-14 h-14 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === modes.length - 1
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+                  : "hover:bg-primary/60 hover:scale-110 active:scale-95"
               }
             `}
           >
             <svg
-              className="w-6 h-6 text-primary"
+              className="w-7 h-7 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -207,29 +206,29 @@ function GameModeSelector({
         </div>
       </div>
 
-      {/* Mobile - Swiper com Setas Mini */}
+      {/* Mobile - Swiper com Setas */}
       <div className="lg:hidden w-full max-w-sm mx-auto">
         <div className="relative">
-          {/* Botão Anterior - Mobile Mini */}
+          {/* Botão Anterior - Mobile */}
           <button
             onClick={handlePrevClickMobile}
             disabled={activeIndex === 0}
             aria-label={t("common.previous") || "Anterior"}
             className={`
               absolute left-2 top-1/2 -translate-y-1/2 z-10
-              w-8 h-8 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-10 h-10 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === 0
-                  ? "opacity-20 cursor-not-allowed"
-                  : "hover:bg-primary/40 active:scale-90"
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/60 active:scale-90"
               }
             `}
           >
             <svg
-              className="w-4 h-4 text-primary"
+              className="w-5 h-5 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -259,26 +258,26 @@ function GameModeSelector({
             ))}
           </Swiper>
 
-          {/* Botão Próximo - Mobile Mini */}
+          {/* Botão Próximo - Mobile */}
           <button
             onClick={handleNextClickMobile}
             disabled={activeIndex === modes.length - 1}
             aria-label={t("common.next") || "Próximo"}
             className={`
               absolute right-2 top-1/2 -translate-y-1/2 z-10
-              w-8 h-8 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-10 h-10 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === modes.length - 1
-                  ? "opacity-20 cursor-not-allowed"
-                  : "hover:bg-primary/40 active:scale-90"
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/60 active:scale-90"
               }
             `}
           >
             <svg
-              className="w-4 h-4 text-primary"
+              className="w-5 h-5 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
