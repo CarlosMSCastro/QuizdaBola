@@ -9,7 +9,9 @@ exports.getAllCompetitions = async () => {
             active DESC,
             CASE 
                 WHEN id = 'ligaportugal2024' THEN 1 
-                ELSE 2 
+                WHEN id = 'championsleague2024' THEN 2
+                WHEN id = 'brasileirao2024' THEN 3
+                ELSE 4 
             END,
             name ASC
     `);

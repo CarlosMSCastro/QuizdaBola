@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const mysql = require('mysql2/promise');
 
 const isProduction = process.env.NODE_ENV === 'production';
