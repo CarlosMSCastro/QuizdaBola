@@ -25,7 +25,7 @@ function Navbar({ user, onLogout, darkMode, onToggleDark }) {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 px-4 pt-4 pb-2" role="navigation" aria-label="Main navigation">
+        <nav className="px-4 pt-4 pb-2" role="navigation" aria-label="Main navigation">
             <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
 
                 {/* Logo - Hidden below 560px */}
@@ -158,7 +158,7 @@ function Navbar({ user, onLogout, darkMode, onToggleDark }) {
 
                     {mobileMenuOpen && (
                         <div 
-                            className="absolute top-full left-0 border-x-3 border-b-3 border-foreground/30 right-0 max-[550px]:mx-auto min-[551px]:right-0 min-[551px]:left-auto w-64 bg-card/5 backdrop-blur-sm rounded-b-2xl shadow-2xl overflow-hidden"
+                            className="absolute top-full left-0 border-x-3 border-b-3 border-foreground/30 right-0 max-[550px]:mx-auto min-[551px]:right-0 min-[551px]:left-auto w-64 bg-card/5 backdrop-blur-sm rounded-b-2xl shadow-2xl overflow-hidden z-50"
                             role="menu"
                             aria-label="Menu de navegação"
                         >
