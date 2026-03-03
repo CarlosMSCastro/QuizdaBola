@@ -12,6 +12,60 @@ import en from "i18n-iso-countries/langs/en.json";
 import EndGame from "../../shared/components/EndGame";
 countries.registerLocale(en);
 
+function QuizSkeleton() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-3 md:p-4 page-transition animate-in fade-in duration-500">
+      <Card className="w-full max-w-lg p-4 md:p-6 space-y-3 md:space-y-4 dark:bg-card/40 bg-card/12 border-0">
+        {/* Header Skeleton */}
+        <div className="flex items-center justify-between pb-2 md:pb-3 border-b border-border">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 md:w-8 md:h-8 bg-muted-foreground/20 rounded animate-pulse"></div>
+            <div className="h-3 md:h-4 w-24 md:w-32 bg-muted-foreground/20 rounded animate-pulse"></div>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary/10">
+            <div className="h-3 md:h-4 w-16 bg-muted-foreground/20 rounded animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Photo Skeleton */}
+        <div className="relative mx-auto w-full max-w-[240px] md:max-w-[280px] aspect-square border-2 border-primary rounded-3xl bg-muted-foreground/10 animate-pulse"></div>
+
+        {/* Timer Skeleton */}
+        <div className="relative w-full h-6 md:h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden animate-pulse"></div>
+
+        {/* Controls Skeleton */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="w-5 h-5 md:w-6 md:h-6 bg-muted-foreground/20 rounded-full animate-pulse"></div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-muted-foreground/20 rounded-lg animate-pulse"></div>
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-muted-foreground/20 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Options Skeleton */}
+        <div className="space-y-1.5 md:space-y-2">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="w-full h-12 md:h-14 bg-muted-foreground/20 rounded-xl animate-pulse"
+              style={{ animationDelay: `${i * 100}ms` }}
+            ></div>
+          ))}
+        </div>
+
+        {/* Abandon Button Skeleton */}
+        <div className="flex justify-center">
+          <div className="w-32 h-8 md:w-40 md:h-10 bg-muted-foreground/20 rounded-full animate-pulse"></div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 function Quiz({ token }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -306,16 +360,7 @@ function Quiz({ token }) {
   }
 
   if (loading || !question) {
-    return (
-      <div className="min-h-screen flex items-center justify-center page-transition">
-        <div className="text-center space-y-4">
-          <div className="text-6xl animate-bounce">⚽</div>
-          <p className="text-xl font-bold text-foreground">
-            {t("common.loading")}
-          </p>
-        </div>
-      </div>
-    );
+    return <QuizSkeleton />;
   }
 
   return (
@@ -511,7 +556,7 @@ function Quiz({ token }) {
           })}
         </div>
 
-        <div className="flex justify-center">
+        <div className="w-full flex justify-center">
           <button
             onClick={() => {
               stopUrgentSound();
