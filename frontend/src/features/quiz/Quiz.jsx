@@ -28,7 +28,7 @@ function QuizSkeleton() {
         </div>
 
         {/* Photo Skeleton */}
-        <div className="relative mx-auto w-full max-w-[240px] md:max-w-[280px] aspect-square border-2 border-primary rounded-3xl bg-muted-foreground/10 animate-pulse"></div>
+        <div className="relative mx-auto w-full max-w-[240px] md:max-w-[280px] aspect-square rounded-3xl bg-muted-foreground/10 animate-pulse"></div>
 
         {/* Timer Skeleton */}
         <div className="relative w-full h-6 md:h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden animate-pulse"></div>

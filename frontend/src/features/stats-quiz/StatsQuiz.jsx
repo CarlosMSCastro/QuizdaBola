@@ -9,6 +9,69 @@ import { Card } from "@/shared/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import EndGame from "../../shared/components/EndGame";
 
+function StatsQuizSkeleton() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in duration-500">
+      <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
+        {/* Header Skeleton */}
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-muted-foreground/20 rounded animate-pulse"></div>
+            <div className="h-4 w-32 bg-muted-foreground/20 rounded animate-pulse"></div>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
+            <div className="h-4 w-20 bg-muted-foreground/20 rounded animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Question Text Skeleton */}
+        <div className="text-center py-2">
+          <div className="h-6 md:h-7 w-3/4 mx-auto bg-muted-foreground/20 rounded animate-pulse"></div>
+        </div>
+
+        {/* Players/Options Skeleton (formato genérico) */}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[...Array(2)].map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl overflow-hidden bg-muted-foreground/10 animate-pulse"
+                style={{ animationDelay: `${i * 150}ms` }}
+              >
+                <div className="w-full h-48 bg-muted-foreground/20"></div>
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-muted-foreground/20 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Timer Skeleton */}
+        <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden animate-pulse"></div>
+
+        {/* Controls Skeleton */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="w-6 h-6 bg-muted-foreground/20 rounded-full animate-pulse"></div>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-muted-foreground/20 rounded-lg animate-pulse"></div>
+            <div className="w-12 h-12 bg-muted-foreground/20 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Abandon Button Skeleton */}
+        <div className="w-full flex justify-center">
+          <div className="w-40 h-10 bg-muted-foreground/20 rounded-full animate-pulse"></div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 function StatsQuiz({ token }) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -337,16 +400,7 @@ function StatsQuiz({ token }) {
   }
 
   if (loading || !question) {
-    return (
-      <div className="min-h-screen flex items-center justify-center page-transition">
-        <div className="text-center space-y-4">
-          <div className="text-6xl animate-bounce">⚽</div>
-          <p className="text-xl font-bold text-foreground">
-            {t("common.loading")}
-          </p>
-        </div>
-      </div>
-    );
+    return <StatsQuizSkeleton />;
   }
 
   const questionText =
