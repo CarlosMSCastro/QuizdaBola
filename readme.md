@@ -1,108 +1,96 @@
-# QuizDaBola ⚽
+<div align="center">
 
-Plataforma de quiz interativo sobre Futebol — identifica jogadores e testa conhecimento de estatísticas.
+# ⚽ QuizDaBola
 
-**🌐 Live:** [quizdabola.vercel.app](https://quizdabola.vercel.app)
+![Logo](/frontend/public/images/logo.png)
 
----
+**Teste os teus conhecimentos de futebol!**  
+Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 
-## 🚀 Stack
+[![Live Demo](https://img.shields.io/badge/🌐_Demo-quizdabola.vercel.app-4285F4?style=for-the-badge)](https://quizdabola.vercel.app)
 
-**Frontend:** React 19 · Vite · Tailwind v4 · React Router · i18next  
-**Backend:** Node.js · Express · MySQL · JWT  
-**Deploy:** Vercel · Render · Filess.io  
-**Arquitetura:** Feature-First (MVC)
+</div>
 
 ---
 
-## 🎮 Modos de Jogo
+## 🛠️ Tech Stack
 
-### ⚽ Classic Quiz
-Identifica jogadores por foto entre 4 opções.
-- 10s por pergunta | 3 vidas | 2 ajudas (+5s)
-- Áudio dinâmico
+<div align="center">
 
-### 📊 Stats Battle
-Comparações baseadas em estatísticas reais.
-- **F2 (80%):** Comparar 2 jogadores (altura, golos, idade...)
-- **F3 (20%):** Verdadeiro/Falso sobre stats
-- Priorização automática de equipas top
+### Frontend
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
----
+### Backend
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
 
-## 🌍 Competições
+### Deploy
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
+![Filess.io](https://img.shields.io/badge/Filess.io-FF6B6B?style=for-the-badge)
 
-### 🇵🇹 Liga Portugal 2024/25
-**788 jogadores** 
-
-### 🇧🇷 Brasileirão 2024
-**914 jogadores** 
-
-### 🔒 Em Breve
-Premier League · Champions League
+</div>
 
 ---
 
-## ✨ Features
+## 📸 Screenshots
 
-✅ Multi-competição com seleção dinâmica  
-✅ Bilingue (PT/EN)  
-✅ Dark/Light mode  
-✅ Leaderboards globais e por liga  
-✅ Autenticação JWT + bcrypt  
-✅ Bug Reports integrado  
-✅ Lazy Loading (~70% redução bundle)  
-✅ A11y  
-✅ 100% Responsivo mobile-first 
-✅ Zero cold starts (UptimeRobot)
+### 🏠 Landing Page
+![Landing Page](/frontend/public/readme/landing.gif)
+
+### 📱 Quiz Mobile
+<img src="/frontend/public/readme/quiz.png" width="300" alt="Quiz Mobile">
 
 ---
 
-## 🏗️ Arquitetura
+## 📖 Descrição
 
-### Frontend (Feature-First)
-```
-src/
-├── features/      # Quiz, Stats, Leaderboard, Auth, Bug Report
-├── shared/        # Componentes, services, constants
-└── App.jsx
-```
+**QuizDaBola** é uma aplicação web interativa que desafia os utilizadores a testarem os seus conhecimentos sobre futebol através de diferentes modos de jogo.
 
-### Backend (MVC)
-```
-backend/
-├── features/      # Routes → Controllers → Services
-├── shared/        # Config, middleware
-└── server.js
-```
+### ✨ Funcionalidades Principais
 
----
+- 🏆 **3 Competições Disponíveis**
+  - Liga Portugal 2024 (855 jogadores)
+  - Brasileirão Série A 2024 (970 jogadores)
+  - UEFA Champions League 2024 (1125 jogadores)
 
-## 🗄️ Database
+- 🎮 **2 Modos de Jogo**
+  - **Clássico:** Identifica jogadores pela fotografia
+  - **Stats Quiz:** Descobre quem tem melhores estatísticas
 
-**1702 jogadores** (Liga Portugal + Brasileirão)
+- ⚡ **Mecânicas de Jogo**
+  - ⏱️ Timer de 10 segundos com som de urgência
+  - ❤️ Sistema de 3 vidas
+  - 🆘 2 ajudas por jogo (nacionalidade/equipa)
+  - 🎯 Dificuldade dinâmica baseada em clubes e aparições
 
-**Tabelas:** `players_*`, `competitions`, `users`, `scores`, `bug_reports`
+- 🌐 **Experiência Completa**
+  - 📊 Leaderboard global por competição e modo
+  - 🌍 Interface bilíngue (PT/EN)
+  - 📱 Design responsive mobile-first
+  - 🔐 Sistema de autenticação JWT
+  - 🐛 Sistema de reporte de bugs/sugestões
+  - 🎨 Dark/Light mode
+  - ♿ Acessibilidade WCAG 2.1 AA
 
-**Sistema:**  Priorização equipas top · Fallbacks automáticos
+### 🎯 Objetivo do Projeto
 
----
-
-## 📦 Deploy
-
-**Frontend:** Vercel (auto-deploy)  
-**Backend:** Render.com (750h/mês grátis)  
-**Database:** Filess.io MySQL (10MB)  
-**Uptime:** UptimeRobot (ping 5min)
-
----
-
-## 🚀 Roadmap
-
-**Conteúdo:** Premier League, La Liga, Champions League  
-**Modos:** 1v1 Online, Daily Challenge, Career Mode  
-**Social:** Sistema de amigos, partilha social  
-**Gamificação:** Achievements, XP, badges  
-**Técnico:** PWA, SEO, caching, analytics
+Projeto portfolio full-stack desenvolvido para demonstrar competências em:
+- Arquitetura MVC e separação de responsabilidades
+- Integração com APIs externas (API-Football)
+- Gestão de estado e routing no frontend
+- Autenticação e autorização
+- Deploy e gestão de ambientes (dev/prod)
+- UI/UX design e acessibilidade
 
 ---
+
+<div align="center">
+
+**Desenvolvido por [Carlos Castro](https://linkedin.com/in/cmscastro)**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/cmscastro)
+
+</div>
