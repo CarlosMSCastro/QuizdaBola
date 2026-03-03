@@ -36,30 +36,21 @@ function StatsQuiz({ token }) {
     return saved === "true";
   });
 
-  const [helpsLeft, setHelpsLeft] = useState(2); // Total de ajudas no jogo
-  const [helpUsed, setHelpUsed] = useState(false); // Bloqueio por pergunta
-  const [revealedPlayerId, setRevealedPlayerId] = useState(null); // Para F2
-  const [activeHint, setActiveHint] = useState(null); // Para F3
+  const [helpsLeft, setHelpsLeft] = useState(2);
+  const [helpUsed, setHelpUsed] = useState(false);
+  const [revealedPlayerId, setRevealedPlayerId] = useState(null);
+  const [activeHint, setActiveHint] = useState(null);
 
-  // Audio refs
   const correctSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
 
-
-  useEffect(() => {
-    const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
-    
-    if (!hasNavigatedFromHome) {
-      navigate('/');
-      return;
+  const stopUrgentSound = () => {
+    if (urgentSoundRef.current) {
+      urgentSoundRef.current.pause();
+      urgentSoundRef.current.currentTime = 0;
     }
-    
-    return () => {
-      sessionStorage.removeItem('quiz-navigation');
-    };
-  }, [navigate]);
-
+  };
 
   useEffect(() => {
     localStorage.setItem("statsQuizMuted", isMuted);
@@ -82,19 +73,12 @@ function StatsQuiz({ token }) {
     urgentSoundRef.current.volume = 0.1;
   }, []);
 
-  const stopUrgentSound = () => {
-    if (urgentSoundRef.current) {
-      urgentSoundRef.current.pause();
-      urgentSoundRef.current.currentTime = 0;
-    }
-  };
-
   const loadQuestion = async () => {
     stopUrgentSound();
     setLoading(true);
     setSelectedAnswer(null);
     setRevealed(false);
-    setHelpUsed(false); // Reset bloqueio para nova pergunta
+    setHelpUsed(false);
     setRevealedPlayerId(null);
     setActiveHint(null);
     setTimeLeft(10);
@@ -175,6 +159,19 @@ function StatsQuiz({ token }) {
       loadQuestion();
     }
   }, [gameStarted]);
+
+  useEffect(() => {
+    const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
+    
+    if (!hasNavigatedFromHome && gameStarted) {
+      navigate('/');
+      return;
+    }
+    
+    if (gameStarted) {
+      sessionStorage.removeItem('quiz-navigation');
+    }
+  }, [gameStarted, navigate]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -262,7 +259,6 @@ function StatsQuiz({ token }) {
     if (helpUsed || helpsLeft === 0 || !question || !question.helpData) return;
 
     if (question.format === "F2" && question.helpData.type === "reveal") {
-      // F2: Revelar valor de UM jogador aleatoriamente
       const randomPlayer =
         Math.random() < 0.5
           ? question.helpData.player1_id
@@ -270,15 +266,14 @@ function StatsQuiz({ token }) {
 
       setRevealedPlayerId(randomPlayer);
     } else if (question.format === "F3" && question.helpData.type === "hint") {
-      // F3: Mostrar hint contextual
       setActiveHint({
         type: question.helpData.hint_type,
         value: question.helpData.hint_value,
       });
     }
 
-    setHelpsLeft(helpsLeft - 1); // Decrementa total do jogo
-    setHelpUsed(true); // Bloqueia para esta pergunta
+    setHelpsLeft(helpsLeft - 1);
+    setHelpUsed(true);
     setTimeLeft((prev) => prev + 5);
 
     setShowTimeBonus(true);
@@ -295,7 +290,7 @@ function StatsQuiz({ token }) {
     setSelectedAnswer(null);
     setUsedPlayerIds([]);
     setRevealed(false);
-    setHelpsLeft(2); // Reset total de ajudas
+    setHelpsLeft(2);
     setHelpUsed(false);
     setRevealedPlayerId(null);
     setActiveHint(null);
@@ -318,7 +313,6 @@ function StatsQuiz({ token }) {
     return "shadow-[0_0_20px_rgba(239,68,68,0.6)]";
   };
 
-  // Formatador de hints F3
   const formatHintLabel = (type) => {
     const labels = {
       position: lang === "pt" ? "Posição" : "Position",
@@ -396,7 +390,6 @@ function StatsQuiz({ token }) {
           </p>
         </div>
 
-        {/* Mostrar hint ativo (F3) */}
         {activeHint && question.format === "F3" && (
           <div className="px-4 py-2 rounded-xl bg-primary/20 border-2 border-primary/40 text-center animate-in fade-in slide-in-from-top duration-300">
             <span className="text-sm md:text-base font-bold text-foreground">
@@ -424,20 +417,20 @@ function StatsQuiz({ token }) {
                     aria-label={`${t("quiz.selectPlayer")}: ${player.name}`}
                     aria-pressed={String(selectedAnswer) === String(player.id)}
                     className={`
-                                            group rounded-2xl overflow-hidden transition-all duration-300 shadow-lg
-                                            focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                                            ${
-                                              !selectedAnswer
-                                                ? "hover:scale-105 active:scale-100 dark:bg-card/60 bg-card/50 border-2 border-primary/30 hover:border-primary"
-                                                : isSelected
-                                                  ? isCorrect
-                                                    ? "scale-105 ring-4 ring-success border-2 border-success"
-                                                    : "scale-95 ring-4 ring-destructive border-2 border-destructive"
-                                                  : isCorrect
-                                                    ? "ring-4 ring-success/50 border-2 border-success/50"
-                                                    : "opacity-50"
-                                            }
-                                        `}
+                      group rounded-2xl overflow-hidden transition-all duration-300 shadow-lg
+                      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                      ${
+                        !selectedAnswer
+                          ? "hover:scale-105 active:scale-100 dark:bg-card/60 bg-card/50 border-2 border-primary/30 hover:border-primary"
+                          : isSelected
+                            ? isCorrect
+                              ? "scale-105 ring-4 ring-success border-2 border-success"
+                              : "scale-95 ring-4 ring-destructive border-2 border-destructive"
+                            : isCorrect
+                              ? "ring-4 ring-success/50 border-2 border-success/50"
+                              : "opacity-50"
+                      }
+                    `}
                   >
                     <div className="relative">
                       <div className="relative w-full h-48 overflow-hidden bg-gradient-to-b from-muted/50 to-muted">
@@ -450,7 +443,6 @@ function StatsQuiz({ token }) {
                         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent" />
                       </div>
 
-                      {/* Overlay de ajuda (antes de responder) - MENOS OPACO */}
                       {shouldRevealHelp && (
                         <div className="absolute inset-0 bg-primary/50 flex items-center justify-center animate-in fade-in duration-300">
                           <div className="text-center">
@@ -461,7 +453,6 @@ function StatsQuiz({ token }) {
                         </div>
                       )}
 
-                      {/* Overlay final (após responder) */}
                       {shouldRevealFinal && (
                         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-300">
                           <div className="text-center">
@@ -532,19 +523,19 @@ function StatsQuiz({ token }) {
                       aria-label={`${t("quiz.selectAnswer")}: ${opt.label}`}
                       aria-pressed={selectedAnswer === opt.value}
                       className={`
-                                                px-5 py-3 rounded-xl font-semibold text-base
-                                                transition-all duration-300
-                                                focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                                                ${
-                                                  !showResult
-                                                    ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
-                                                    : isSelected
-                                                      ? isCorrect
-                                                        ? "bg-success text-white scale-[1.02] shadow-lg"
-                                                        : "bg-destructive text-white scale-[0.98] shadow-lg"
-                                                      : "bg-card/30 opacity-50 text-foreground/50"
-                                                }
-                                            `}
+                        px-5 py-3 rounded-xl font-semibold text-base
+                        transition-all duration-300
+                        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                        ${
+                          !showResult
+                            ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
+                            : isSelected
+                              ? isCorrect
+                                ? "bg-success text-white scale-[1.02] shadow-lg"
+                                : "bg-destructive text-white scale-[0.98] shadow-lg"
+                              : "bg-card/30 opacity-50 text-foreground/50"
+                        }
+                      `}
                     >
                       {opt.label}
                     </button>
@@ -630,7 +621,7 @@ function StatsQuiz({ token }) {
               aria-disabled={helpUsed || helpsLeft === 0 || !question.helpData}
               className={`relative transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded-lg ${
                 helpUsed || helpsLeft === 0 || !question.helpData
-                  ? "opacity-30 cursor-not-allowed scale-90 grayscale"
+                  ? "opacity-50 cursor-not-allowed scale-90 grayscale"
                   : "hover:scale-110 active:scale-95"
               }`}
             >

@@ -43,25 +43,17 @@ function Quiz({ token }) {
   });
   const [activeHelp, setActiveHelp] = useState(null);
 
-  // Audio refs
   const correctSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
 
-  useEffect(() => {
-    const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
-    
-    if (!hasNavigatedFromHome) {
-      navigate('/');
-      return;
+  const stopUrgentSound = () => {
+    if (urgentSoundRef.current) {
+      urgentSoundRef.current.pause();
+      urgentSoundRef.current.currentTime = 0;
     }
-    
-    return () => {
-      sessionStorage.removeItem('quiz-navigation');
-    };
-  }, [navigate]);
+  };
 
-  
   useEffect(() => {
     localStorage.setItem("quizMuted", isMuted);
   }, [isMuted]);
@@ -82,13 +74,6 @@ function Quiz({ token }) {
     urgentSoundRef.current = new Audio("/sounds/urgent.mp3");
     urgentSoundRef.current.volume = 0.1;
   }, []);
-
-  const stopUrgentSound = () => {
-    if (urgentSoundRef.current) {
-      urgentSoundRef.current.pause();
-      urgentSoundRef.current.currentTime = 0;
-    }
-  };
 
   const loadQuestion = async () => {
     stopUrgentSound();
@@ -139,6 +124,7 @@ function Quiz({ token }) {
     }
   }, [selectedSeason]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (currentCompetition && !gameStarted && !gameOver) {
       setGameStarted(true);
@@ -149,7 +135,7 @@ function Quiz({ token }) {
     if (gameOver && token && scoreSaved === null && score > 0) {
       console.log("🎯 Enviando score:", {
         score,
-        mode: "classic", // ou 'stats'
+        mode: "classic",
         token: token.substring(0, 20) + "...",
         competition: selectedSeason,
       });
@@ -175,6 +161,20 @@ function Quiz({ token }) {
     }
   }, [gameStarted]);
 
+  useEffect(() => {
+    const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
+    
+    if (!hasNavigatedFromHome && gameStarted) {
+      navigate('/');
+      return;
+    }
+    
+    if (gameStarted) {
+      sessionStorage.removeItem('quiz-navigation');
+    }
+  }, [gameStarted, navigate]);
+
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (
       gameOver ||
@@ -456,7 +456,7 @@ function Quiz({ token }) {
               aria-disabled={helpsLeft === 0}
               className={`relative transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded-lg ${
                 helpsLeft === 0
-                  ? "opacity-30 cursor-not-allowed scale-90 grayscale"
+                  ? "opacity-50 cursor-not-allowed scale-90 grayscale"
                   : "hover:scale-110 active:scale-95"
               }`}
             >
@@ -489,19 +489,19 @@ function Quiz({ token }) {
                 aria-label={`${t("quiz.selectAnswer")}: ${option}`}
                 aria-pressed={isSelected}
                 className={`
-                                    w-full px-5 py-3 rounded-xl font-semibold text-base
-                                    transition-all duration-300
-                                    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-                                    ${
-                                      !showResult
-                                        ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
-                                        : isSelected
-                                          ? isCorrect
-                                            ? "bg-success text-white scale-[1.02] shadow-lg"
-                                            : "bg-destructive text-white scale-[0.98] shadow-lg"
-                                          : "bg-card/30 opacity-50 text-foreground/50"
-                                    }
-                                `}
+                  w-full px-5 py-3 rounded-xl font-semibold text-base
+                  transition-all duration-300
+                  focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                  ${
+                    !showResult
+                      ? "dark:bg-card bg-card/45 border-primary border-1 hover:bg-primary hover:scale-[1.05] active:scale-[0.99] shadow dark:text-foreground text-primary-foreground/90"
+                      : isSelected
+                        ? isCorrect
+                          ? "bg-success text-white scale-[1.02] shadow-lg"
+                          : "bg-destructive text-white scale-[0.98] shadow-lg"
+                        : "bg-card/30 opacity-50 text-foreground/50"
+                  }
+                `}
               >
                 <span className="flex items-center justify-between">
                   <span>{option}</span>
