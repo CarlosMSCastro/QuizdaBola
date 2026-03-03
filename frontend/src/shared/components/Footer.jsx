@@ -25,8 +25,8 @@ function Footer() {
 
     return (
         <footer className="mt-auto">
-            <div className="max-w-4xl mx-auto px-4 py-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="max-w-4xl mx-auto px-4 py-3">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                     {/* Logo - só em mobile */}
                     <div className="md:hidden">
                         <img
@@ -37,7 +37,7 @@ function Footer() {
                     </div>
 
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
                         {/* Bug/Suggestion Button */}
                         <button
                             onClick={handleBugClick}
