@@ -96,7 +96,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
   const activeCompetition = competitions[activeIndex];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-4">
       <h2 className="text-2xl md:text-3xl font-bold text-primary text-center">
         {t("quiz.selectSeason") || "Escolhe a Competição"}
       </h2>
@@ -111,19 +111,19 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
             aria-label={t("common.previous") || "Anterior"}
             className={`
               absolute left-0 top-1/2 -translate-y-1/2 z-10
-              w-12 h-12 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-14 h-14 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === 0
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+                  : "hover:bg-primary/60 hover:scale-110 active:scale-95"
               }
             `}
           >
             <svg
-              className="w-6 h-6 text-primary"
+              className="w-7 h-7 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -150,7 +150,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
               <SwiperSlide key={competition.id}>
                 <div
                   className={`
-                    relative flex flex-col items-center gap-4 p-8 transition-all duration-300
+                    relative flex flex-col items-center gap-3 p-6 transition-all duration-300
                     ${competition.active ? "" : "opacity-50"}
                   `}
                 >
@@ -181,19 +181,19 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
             aria-label={t("common.next") || "Próximo"}
             className={`
               absolute right-0 top-1/2 -translate-y-1/2 z-10
-              w-12 h-12 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-14 h-14 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === competitions.length - 1
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-primary/40 hover:scale-110 active:scale-95"
+                  : "hover:bg-primary/60 hover:scale-110 active:scale-95"
               }
             `}
           >
             <svg
-              className="w-6 h-6 text-primary"
+              className="w-7 h-7 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -212,26 +212,26 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
       {/* Mobile - Swiper com Setas Mini */}
       <div className="md:hidden w-full">
         <div className="relative max-w-sm mx-auto">
-          {/* Botão Anterior - Mobile Mini */}
+          {/* Botão Anterior - Mobile */}
           <button
             onClick={handlePrevClickMobile}
             disabled={activeIndex === 0}
             aria-label={t("common.previous") || "Anterior"}
             className={`
               absolute left-2 top-1/2 -translate-y-1/2 z-10
-              w-8 h-8 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-10 h-10 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === 0
-                  ? "opacity-20 cursor-not-allowed"
-                  : "hover:bg-primary/40 active:scale-90"
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/60 active:scale-90"
               }
             `}
           >
             <svg
-              className="w-4 h-4 text-primary"
+              className="w-5 h-5 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -258,7 +258,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
               <SwiperSlide key={competition.id}>
                 <div
                   className={`
-                    relative flex flex-col items-center gap-4 p-6 transition-all duration-300
+                    relative flex flex-col items-center gap-2 p-4 transition-all duration-300
                     ${competition.active ? "" : "opacity-70"}
                   `}
                 >
@@ -282,26 +282,26 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
             ))}
           </Swiper>
 
-          {/* Botão Próximo - Mobile Mini */}
+          {/* Botão Próximo - Mobile */}
           <button
             onClick={handleNextClickMobile}
             disabled={activeIndex === competitions.length - 1}
             aria-label={t("common.next") || "Próximo"}
             className={`
               absolute right-2 top-1/2 -translate-y-1/2 z-10
-              w-8 h-8 rounded-full
-              bg-primary/20 backdrop-blur-sm
+              w-10 h-10 rounded-full
+              bg-primary/40 backdrop-blur-sm
               flex items-center justify-center
               transition-all duration-200
               ${
                 activeIndex === competitions.length - 1
-                  ? "opacity-20 cursor-not-allowed"
-                  : "hover:bg-primary/40 active:scale-90"
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-primary/60 active:scale-90"
               }
             `}
           >
             <svg
-              className="w-4 h-4 text-primary"
+              className="w-5 h-5 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -318,7 +318,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
       </div>
 
       {/* Indicators */}
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 pt-2">
         {competitions.map((_, i) => (
           <div
             key={i}
@@ -332,7 +332,7 @@ function SeasonSelector({ selectedSeason, onSeasonChange, onConfirm }) {
       </div>
 
       {/* Botão JOGAR AGORA */}
-      <div className="w-full max-w-sm mx-auto flex justify-center">
+      <div className="w-full max-w-sm mx-auto flex justify-center pt-2">
         {activeCompetition && activeCompetition.active ? (
           <button
             onClick={handleConfirm}
