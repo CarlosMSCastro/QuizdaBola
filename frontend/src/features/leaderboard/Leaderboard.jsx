@@ -5,12 +5,12 @@ import { getLeaderboard, getCompetitions } from "../../shared/services/api";
 
 function LeaderboardSkeleton() {
   return (
-    <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl animate-pulse">
+    <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl">
       {/* Table Header */}
       <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-6 dark:bg-muted/80 bg-muted/50">
-        <div className="col-span-2 h-4 bg-muted-foreground/20 rounded"></div>
-        <div className="col-span-7 h-4 bg-muted-foreground/20 rounded"></div>
-        <div className="col-span-3 h-4 bg-muted-foreground/20 rounded ml-auto w-16"></div>
+        <div className="col-span-2 h-4 bg-muted-foreground/20 rounded animate-pulse"></div>
+        <div className="col-span-7 h-4 bg-muted-foreground/20 rounded animate-pulse" style={{ animationDelay: '150ms' }}></div>
+        <div className="col-span-3 h-4 bg-muted-foreground/20 rounded ml-auto w-16 animate-pulse" style={{ animationDelay: '300ms' }}></div>
       </div>
 
       {/* Skeleton Rows */}
@@ -18,7 +18,8 @@ function LeaderboardSkeleton() {
         {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className="grid grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-4 md:py-6 dark:bg-muted/10 bg-muted-50"
+            className="grid grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-4 md:py-6 dark:bg-muted/10 bg-muted-50 animate-pulse"
+            style={{ animationDelay: `${i * 100}ms` }}
           >
             <div className="col-span-2 flex items-center">
               <div className="w-8 h-8 md:w-10 md:h-10 bg-muted-foreground/20 rounded-full"></div>
@@ -273,15 +274,17 @@ function Leaderboard() {
 
         {/* Leaderboard */}
         {loading ? (
-          <LeaderboardSkeleton />
+          <div className="animate-in fade-in duration-300">
+            <LeaderboardSkeleton />
+          </div>
         ) : scores.length === 0 ? (
-          <div className="text-center py-16 md:py-24 dark:bg-muted/80  bg-muted/50 rounded-3xl">
+          <div className="text-center py-16 md:py-24 dark:bg-muted/80 bg-muted/50 rounded-3xl animate-in fade-in duration-500">
             <p className="text-lg md:text-2xl dark:text-foreground text-accent font-bold">
               {t("leaderboard.empty")}
             </p>
           </div>
         ) : (
-          <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl">
+          <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl animate-in fade-in duration-500">
             {league !== "global" && selectedLeague?.logo && (
               <div className="hidden md:flex items-center gap-3 px-8 py-4 dark:bg-muted/60 bg-muted/40 border-b border-border">
                 <img
