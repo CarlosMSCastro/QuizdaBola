@@ -8,8 +8,6 @@ Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 [![QuizDaBola](https://img.shields.io/badge/🌐_quizdabola.fun-4285F4?style=for-the-badge)](https://quizdabola.fun)
 
 </div>
----
-## 🛠️ Tech Stack
 
 <div align="center">
 
@@ -22,7 +20,6 @@ Identifica jogadores da Liga Portugal, Brasileirão e UEFA Champions League.
 ![Render](https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white)
 
 </div>
-## 📸 Screenshots
 
 <div align="center">
 
