@@ -54,6 +54,7 @@ function Landing() {
     if (activeMode.available) {
       localStorage.setItem("selectedSeason", selectedSeason);
       localStorage.setItem("lastMode", activeMode.path);
+      sessionStorage.setItem('quiz-navigation', 'true');
       navigate(activeMode.path);
     }
   };

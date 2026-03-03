@@ -48,7 +48,20 @@ function Quiz({ token }) {
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
 
+  useEffect(() => {
+    const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
+    
+    if (!hasNavigatedFromHome) {
+      navigate('/');
+      return;
+    }
+    
+    return () => {
+      sessionStorage.removeItem('quiz-navigation');
+    };
+  }, [navigate]);
 
+  
   useEffect(() => {
     localStorage.setItem("quizMuted", isMuted);
   }, [isMuted]);
