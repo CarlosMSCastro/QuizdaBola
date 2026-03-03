@@ -3,6 +3,42 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getLeaderboard, getCompetitions } from "../../shared/services/api";
 
+function LeaderboardSkeleton() {
+  return (
+    <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl animate-pulse">
+      {/* Table Header */}
+      <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-6 dark:bg-muted/80 bg-muted/50">
+        <div className="col-span-2 h-4 bg-muted-foreground/20 rounded"></div>
+        <div className="col-span-7 h-4 bg-muted-foreground/20 rounded"></div>
+        <div className="col-span-3 h-4 bg-muted-foreground/20 rounded ml-auto w-16"></div>
+      </div>
+
+      {/* Skeleton Rows */}
+      <div className="divide-y divide-border">
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-4 md:py-6 dark:bg-muted/10 bg-muted-50"
+          >
+            <div className="col-span-2 flex items-center">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-muted-foreground/20 rounded-full"></div>
+            </div>
+            
+            <div className="col-span-7 flex flex-col justify-center gap-2">
+              <div className="h-5 md:h-6 bg-muted-foreground/20 rounded w-3/4"></div>
+              <div className="h-3 md:h-4 bg-muted-foreground/10 rounded w-1/2"></div>
+            </div>
+            
+            <div className="col-span-3 flex items-center justify-end">
+              <div className="h-6 md:h-8 bg-muted-foreground/20 rounded w-12 md:w-16"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Leaderboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -18,7 +54,6 @@ function Leaderboard() {
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
 
-  // Opção "Global" + competições da API
   const leagues = [
     { id: "global", name: "Global", logo: null, active: true },
     ...competitions,
@@ -27,7 +62,6 @@ function Leaderboard() {
   const selectedLeague = leagues.find((l) => l.id === league);
 
   useEffect(() => {
-    // Buscar competições da API
     const fetchCompetitions = async () => {
       try {
         const data = await getCompetitions();
@@ -51,6 +85,7 @@ function Leaderboard() {
     }
     setLoading(false);
   };
+
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     loadScores();
@@ -67,20 +102,12 @@ function Leaderboard() {
   }, []);
 
   const handleLeagueClick = (lg) => {
-    // Só permite selecionar se for Global ou se a competição estiver ativa
     if (lg.id === "global" || lg.active) {
       setLeague(lg.id);
       localStorage.setItem("leaderboardLeague", lg.id);
       setLeagueDropdownOpen(false);
     }
   };
-
-  if (loading)
-    return (
-      <div className="p-8 text-center text-foreground">
-        {t("common.loading")}
-      </div>
-    );
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -245,7 +272,9 @@ function Leaderboard() {
         </div>
 
         {/* Leaderboard */}
-        {scores.length === 0 ? (
+        {loading ? (
+          <LeaderboardSkeleton />
+        ) : scores.length === 0 ? (
           <div className="text-center py-16 md:py-24 dark:bg-muted/80  bg-muted/50 rounded-3xl">
             <p className="text-lg md:text-2xl dark:text-foreground text-accent font-bold">
               {t("leaderboard.empty")}
@@ -253,7 +282,6 @@ function Leaderboard() {
           </div>
         ) : (
           <div className="dark:bg-card/80 bg-card/25 rounded-3xl overflow-hidden shadow-xl">
-            {/* League Header - Desktop only */}
             {league !== "global" && selectedLeague?.logo && (
               <div className="hidden md:flex items-center gap-3 px-8 py-4 dark:bg-muted/60 bg-muted/40 border-b border-border">
                 <img
@@ -268,7 +296,6 @@ function Leaderboard() {
               </div>
             )}
 
-            {/* Table Header - Desktop only */}
             <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-6 dark:bg-muted/80 bg-muted/50">
               <div className="col-span-2 font-black text-base uppercase tracking-wider text-foreground">
                 Rank
@@ -281,7 +308,6 @@ function Leaderboard() {
               </div>
             </div>
 
-            {/* Scores */}
             <div className="divide-y divide-border">
               {scores.map((score, index) => (
                 <div
@@ -311,7 +337,6 @@ function Leaderboard() {
                       {score.username}
                     </span>
                     
-                    {/* Mostrar competição apenas no modo Global */}
                     {league === "global" && score.competition_id && (
                       <div className="flex items-center gap-1.5 mt-1">
                         {competitions.find(c => c.id === score.competition_id)?.logo && (
