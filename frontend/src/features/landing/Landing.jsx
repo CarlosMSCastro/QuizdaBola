@@ -88,7 +88,7 @@ function Landing() {
       <button
         onClick={handleBugClick}
         aria-label={isFlipped ? suggestionLabel : bugLabel}
-        className="hidden md:block absolute top-12 right-8 lg:right-16 xl:right-24 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+        className="hidden md:block absolute top-12 right-8 lg:right-16 xl:right-44 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
       >
         <div className="relative w-32 h-36" style={{ perspective: '1000px' }}>
           <div 
