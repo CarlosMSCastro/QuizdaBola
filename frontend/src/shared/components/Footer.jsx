@@ -45,9 +45,9 @@ function Footer() {
                         <button
                             onClick={handleBugClick}
                             aria-label={isFlipped ? suggestionLabel : bugLabel}
-                            className="hover:brightness-0 hover:invert transition-all p-2 md:p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg opacity-60 hover:opacity-100"
+                            className="group transition-all p-2 md:p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
                         >
-                            <div className="relative w-10 h-10" style={{ perspective: '1000px' }}>
+                            <div className="relative w-12 h-12" style={{ perspective: '1000px' }}>
                                 <div 
                                     className="relative w-full h-full transition-transform duration-700"
                                     style={{ 
@@ -63,7 +63,7 @@ function Footer() {
                                         <img 
                                             src="/images/bug.png" 
                                             alt="" 
-                                            className="w-10 h-10 object-contain"
+                                            className="w-12 h-12 object-contain opacity-40 group-hover:opacity-100 transition-opacity"
                                         />
                                     </div>
 
@@ -78,7 +78,7 @@ function Footer() {
                                         <img 
                                             src="/images/suggestion.png" 
                                             alt=""
-                                            className="w-10 h-10 object-contain"
+                                            className="w-12 h-12 object-contain opacity-40 group-hover:opacity-100 transition-opacity"
                                         />
                                     </div>
                                 </div>
