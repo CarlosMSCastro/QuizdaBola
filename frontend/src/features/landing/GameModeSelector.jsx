@@ -85,7 +85,7 @@ function GameModeSelector({
       className="animate-in fade-in slide-in-from-right duration-500 w-full flex flex-col items-center gap-6"
     >
       {/* Botão Voltar + Label da Liga - MESMA LINHA */}
-      <div className="w-full max-w-4xl flex items-center justify-between px-4">
+      <div className="w-full max-w-4xl flex items-center justify-between gap-4 px-4">
         <button
           onClick={onBack}
           className="p-2 md:p-3 rounded-xl bg-primary hover:scale-105 transition-all duration-200 flex-shrink-0"
@@ -106,13 +106,13 @@ function GameModeSelector({
         </button>
 
         {selectedSeasonData && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-1 justify-center">
             <img
               src={selectedSeasonData.logo}
               alt={selectedSeasonData.name}
-              className="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+              className="w-10 h-10 md:w-14 md:h-14 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex-shrink-0"
             />
-            <span className="text-xl md:text-2xl font-bold text-primary drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+            <span className="text-base md:text-xl font-bold text-primary drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] text-center leading-tight">
               {selectedSeasonData.name}
             </span>
           </div>
