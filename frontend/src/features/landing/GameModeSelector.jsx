@@ -120,8 +120,8 @@ function GameModeSelector({
       </div>
 
       {/* Desktop - Swiper com Setas */}
-      <div className="hidden lg:block w-full max-w-4xl">
-        <div className="relative">
+      <div className="hidden lg:block w-full">
+        <div className="relative max-w-2xl mx-auto">
           {/* Botão Anterior - Desktop */}
           <button
             onClick={handlePrevClickDesktop}
