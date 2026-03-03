@@ -88,9 +88,9 @@ function Landing() {
       <button
         onClick={handleBugClick}
         aria-label={isFlipped ? suggestionLabel : bugLabel}
-        className="hidden md:block absolute top-4 right-4 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+        className="hidden md:block absolute top-12 right-12 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
       >
-        <div className="relative w-20 h-24" style={{ perspective: '1000px' }}>
+        <div className="relative w-32 h-36" style={{ perspective: '1000px' }}>
           <div 
             className="relative w-full h-full transition-transform duration-700"
             style={{ 
@@ -106,7 +106,7 @@ function Landing() {
               <img 
                 src="/images/bug.png" 
                 alt="" 
-                className="w-14 drop-shadow-xl"
+                className="w-18 drop-shadow-xl opacity-80 group-hover:opacity-100 transition-opacity"
               />
               <span className="text-[9px] font-bold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                 {bugLabel}
@@ -124,9 +124,9 @@ function Landing() {
               <img 
                 src="/images/suggestion.png" 
                 alt=""
-                className="w-14 drop-shadow-xl"
+                className="w-18 drop-shadow-xl opacity-80 group-hover:opacity-100 transition-opacity"
               />
-              <span className="text-[9px] font-bold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap">
+              <span className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                 {suggestionLabel}
               </span>
             </div>
