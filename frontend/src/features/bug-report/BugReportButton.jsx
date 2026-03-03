@@ -8,10 +8,8 @@ function BugReportButton() {
     const { t } = useTranslation();
     const [isFlipped, setIsFlipped] = useState(false);
 
-    // Só mostrar na Landing (/) e NUNCA na página de bug report
     const shouldShow = location.pathname === '/' && location.pathname !== '/bug-report';
 
-    // Flip automático a cada 3 segundos
     useEffect(() => {
         const interval = setInterval(() => {
             setIsFlipped(prev => !prev);
@@ -36,10 +34,9 @@ function BugReportButton() {
         <button
             onClick={handleClick}
             aria-label={ariaLabel}
-            className="fixed lg:right-40 top-26 right-4 z-40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+            className="absolute top-4 right-4 z-40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
         >
             <div className="relative w-24 h-32 preserve-3d" style={{ perspective: '1000px' }}>
-                {/* Container com flip horizontal */}
                 <div 
                     className="relative w-full h-full transition-transform duration-700"
                     style={{ 
@@ -48,7 +45,6 @@ function BugReportButton() {
                     }}
                     aria-hidden="true"
                 >
-                    {/* Face da frente - Bug */}
                     <div 
                         className="absolute inset-0 flex flex-col items-center gap-2 group"
                         style={{ backfaceVisibility: 'hidden' }}
@@ -64,7 +60,6 @@ function BugReportButton() {
                         </span>
                     </div>
 
-                    {/* Face de trás - Suggestion */}
                     <div 
                         className="absolute inset-0 flex flex-col items-center gap-1 group"
                         style={{ 
