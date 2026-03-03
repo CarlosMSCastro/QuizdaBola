@@ -640,17 +640,19 @@ function StatsQuiz({ token }) {
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            stopUrgentSound();
-            resetGame();
-            navigate("/");
-          }}
-          aria-label={t("quiz.abandon")}
-          className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-        >
-          {t("quiz.abandon")}
-        </button>
+        <div className="w-full flex justify-center">
+          <button
+            onClick={() => {
+              stopUrgentSound();
+              resetGame();
+              navigate("/");
+            }}
+            aria-label={t("quiz.abandon")}
+            className="px-5 py-2 rounded-full border-primary bg-primary/80 text-primary-foreground hover:text-destructive text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            {t("quiz.abandon")}
+          </button>
+        </div>
       </Card>
     </div>
   );
