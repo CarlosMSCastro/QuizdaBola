@@ -17,7 +17,17 @@ function Admin({ token }) {
       return;
     }
 
-    console.log('✅ Token exists, fetching stats...');
+    // ✅ VERIFICAR SE É ADMIN
+    const userStr = localStorage.getItem('user');
+    const userData = userStr ? JSON.parse(userStr) : null;
+    
+    if (userData?.username !== 'CarlosCastro') {
+      console.log('❌ Not admin user:', userData?.username);
+      navigate('/');
+      return;
+    }
+
+    console.log('✅ Admin verified, fetching stats...');
 
     const fetchStats = async () => {
       try {
