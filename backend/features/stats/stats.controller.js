@@ -12,14 +12,6 @@ exports.getStats = async (req, res) => {
     
     const [avgScore] = await db.execute('SELECT AVG(score) as avg FROM scores');
     
-    const [topScores] = await db.execute(`
-      SELECT u.username, s.score, s.game_mode, s.competition_id, s.created_at
-      FROM scores s
-      JOIN users u ON s.user_id = u.id
-      ORDER BY s.score DESC
-      LIMIT 10
-    `);
-    
     const [gamesByMode] = await db.execute(`
       SELECT game_mode, COUNT(*) as total
       FROM scores
@@ -32,14 +24,30 @@ exports.getStats = async (req, res) => {
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     `);
 
+    // ✅ ADICIONAR: Lista de todos os users
+    const [allUsers] = await db.execute(`
+      SELECT id, username, created_at 
+      FROM users 
+      ORDER BY created_at DESC
+    `);
+
+    // ✅ ADICIONAR: Bug reports
+    const [bugReports] = await db.execute(`
+      SELECT br.*, u.username 
+      FROM bug_reports br 
+      LEFT JOIN users u ON br.user_id = u.id 
+      ORDER BY br.created_at DESC
+    `);
+
     res.json({
       totalUsers: totalUsers[0].total,
       totalGames: totalGames[0].total,
       gamesToday: gamesToday[0].total,
       avgScore: avgScore[0].avg ? Math.round(avgScore[0].avg) : 0,
-      topScores,
       gamesByMode,
-      activeUsers7d: recentUsers[0].total
+      activeUsers7d: recentUsers[0].total,
+      allUsers,        // ✅ NOVO
+      bugReports       // ✅ NOVO
     });
   } catch (error) {
     console.error('Erro ao buscar stats:', error);
