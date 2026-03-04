@@ -6,7 +6,7 @@ exports.saveScore = async (req, res) => {
         // Validar dados
         service.validateScoreData(req.body);
         
-        // Salvar score
+        // Guardar score
         const result = await service.saveScore(req.body, req.user.id);
         
         if (result.isNewRecord) {

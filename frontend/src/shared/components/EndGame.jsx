@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function EndGame({ 
     score, 
-    mode,           // 'classic' ou 'stats'
+    mode,
     token, 
     scoreSaved, 
     isMuted,

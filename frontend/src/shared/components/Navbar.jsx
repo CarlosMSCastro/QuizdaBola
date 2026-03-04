@@ -28,7 +28,7 @@ function Navbar({ user, onLogout, darkMode, onToggleDark }) {
         <nav className="px-4 pt-4 pb-2" role="navigation" aria-label="Main navigation">
             <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
 
-                {/* Logo - Hidden below 560px */}
+                {/* Logo - Hidden abaixo de 560px */}
                 <img
                     src="/images/logo.png"
                     alt="QuizDaBola - Voltar ao início"

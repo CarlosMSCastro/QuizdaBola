@@ -2,19 +2,19 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-// buscar competições
+// Procurar competições
 export const getCompetitions = async () => {
     const res = await axios.get(`${API_URL}/api/competitions`);
     return res.data;
 };
 
-// buscar competição específica
+// Procurar competição específica
 export const getCompetition = async (competitionId) => {
     const res = await axios.get(`${API_URL}/api/competitions/${competitionId}`);
     return res.data;
 };
 
-// buscar pergunta para o jogo de stats
+// Procurar pergunta para o jogo de stats
 export const getStatsQuestion = async (excludeIds = [], competitionId = 'ligaportugal2024') => {
     const res = await axios.get(`${API_URL}/api/stats-quiz`, {
         params: { 
@@ -25,7 +25,7 @@ export const getStatsQuestion = async (excludeIds = [], competitionId = 'ligapor
     return res.data;
 };
 
-// buscar pergunta aleatória (com exclusão de IDs)
+// procurar pergunta aleatória (com exclusão de IDs)
 export const getQuestion = async (excludeIds = [], competitionId = 'ligaportugal2024') => {
     const response = await axios.get(`${API_URL}/api/question`, {
         params: { 
@@ -67,7 +67,7 @@ export const saveScore = async (score, game_mode, token, competitionId = 'ligapo
     return res.data;
 };
 
-// buscar leaderboard
+// Procurar leaderboard
 export const getLeaderboard = async (game_mode, competitionId = null) => {
     const params = { game_mode };
     

@@ -115,7 +115,7 @@ exports.randomStat = () => {
 exports.getStatLabels = () => STAT_LABELS;
 exports.getF3HelpMap = () => F3_HELP_MAP;
 
-// Funções F2
+// Funções "F2" (tipo de pergunta que apresenta 2 jogadores)
 exports.getF2PlayerPool = async (tableName, stat, statColumn, minimum, positions, difficulty, excludeList, bigTeamsOrder, BIG_TEAMS, minReqs) => {
     const positionFilter = `AND position IN (${positions.map(p => `'${p}'`).join(',')})`;
     const difficultyFilter = `AND difficulty = '${difficulty}'`;
@@ -224,7 +224,7 @@ exports.formatStatValue = (stat, val) => {
     return Math.round(numVal);
 };
 
-// Funções F3
+// Funções "F3" (tipo de pergunta que apresenta 1 jogador e 2 respostas)
 exports.getF3Player = async (tableName, stat, statColumn, minimum, positions, difficulty, excludeList, bigTeamFilter, bigTeamParams, minReqs, helpField) => {
     const positionFilter = `AND position IN (${positions.map(p => `'${p}'`).join(',')})`;
     const difficultyFilter = `AND difficulty = '${difficulty}'`;

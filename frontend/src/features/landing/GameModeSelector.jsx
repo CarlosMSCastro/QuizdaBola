@@ -84,7 +84,7 @@ function GameModeSelector({
       key="step2"
       className="animate-in fade-in slide-in-from-right duration-500 w-full flex flex-col items-center gap-6"
     >
-      {/* Botão Voltar + Label da Liga - MESMA LINHA */}
+      {/* Botão Voltar + Label da Liga */}
       <div className="w-full max-w-4xl flex items-center justify-between gap-4 px-4">
         <button
           onClick={onBack}

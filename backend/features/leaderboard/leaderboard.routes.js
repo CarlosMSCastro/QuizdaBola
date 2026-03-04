@@ -6,7 +6,7 @@ const { protect } = require('../../shared/middleware/auth');
 // POST /api/leaderboard - Guardar score
 router.post('/', protect, controller.saveScore);
 
-// GET /api/leaderboard - Buscar leaderboard
+// GET /api/leaderboard - Guardar leaderboard
 router.get('/', controller.getLeaderboard);
 
 module.exports = router;

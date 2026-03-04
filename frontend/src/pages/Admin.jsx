@@ -17,7 +17,7 @@ function Admin({ token }) {
       return;
     }
 
-    // ✅ VERIFICAR SE É ADMIN
+    // VERIFICAR SE É ADMIN
     const userStr = localStorage.getItem('user');
     const userData = userStr ? JSON.parse(userStr) : null;
     

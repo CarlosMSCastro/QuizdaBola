@@ -1,6 +1,6 @@
 const db = require('../../shared/config/db');
 
-// Salvar bug report
+// Guardar bug report
 exports.saveBugReport = async (data) => {
     const { message, page, user_agent, username } = data;
     

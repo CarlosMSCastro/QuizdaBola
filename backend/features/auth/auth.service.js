@@ -2,7 +2,7 @@ const db = require('../../shared/config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Validar dados de registro
+// Validar dados de registo
 exports.validateRegisterData = (data) => {
     const { username, password } = data;
     
@@ -34,7 +34,7 @@ exports.checkUsernameExists = async (username) => {
     return existing.length > 0;
 };
 
-// Criar novo usuário
+// Criar novo user
 exports.createUser = async (username, password) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     
@@ -46,7 +46,7 @@ exports.createUser = async (username, password) => {
     return { id: result.insertId, username };
 };
 
-// Buscar usuário por username
+// Procurar user por username
 exports.findUserByUsername = async (username) => {
     const [users] = await db.execute(
         'SELECT * FROM users WHERE username = ?',

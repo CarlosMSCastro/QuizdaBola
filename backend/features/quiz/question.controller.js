@@ -5,20 +5,20 @@ exports.getQuestion = async (req, res) => {
     try {
         const { exclude, competition_id } = req.query;
         
-        // Validar e buscar competição
+        // Validar e Procurar competição
         const competitionId = competition_id || 'ligaportugal2024';
         const tableName = await service.getActiveCompetition(competitionId);
         
-        // Determinar dificuldade
+        // Escolher dificuldade
         const difficulty = service.determineDifficulty();
         
         // Preparar exclusão de IDs
         const excludeIds = exclude ? exclude.split(',').map(id => parseInt(id)) : [];
         
-        // Buscar jogador aleatório
+        // Procurar jogador aleatório
         const correctPlayer = await service.getRandomPlayer(tableName, difficulty, excludeIds);
         
-        // Buscar 3 opções erradas
+        // Procurar e escolher 3 opções erradas
         const wrongOptions = await service.getWrongOptions(
             tableName, 
             correctPlayer.id, 
@@ -26,7 +26,7 @@ exports.getQuestion = async (req, res) => {
             excludeIds
         );
         
-        // Embaralhar opções
+        // Baralhar opções
         const options = service.shuffleOptions(correctPlayer.name, wrongOptions);
         
         res.json({

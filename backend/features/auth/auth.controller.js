@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
             return res.status(409).json({ error: 'Username já existe' });
         }
         
-        // Criar usuário
+        // Criar user
         const user = await service.createUser(username, password);
         
         // Gerar token
@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
         // Validar dados
         service.validateLoginData(req.body);
         
-        // Buscar usuário
+        // Procurar User
         const user = await service.findUserByUsername(username);
         if (!user) {
             return res.status(401).json({ error: 'Username ou password incorretos' });

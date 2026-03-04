@@ -1,6 +1,6 @@
 const db = require('../../shared/config/db');
 
-// Buscar todas as competições
+// Procurar todas as competições
 exports.getAllCompetitions = async () => {
     const [competitions] = await db.execute(`
         SELECT id, name, logo, season, country, active 
@@ -19,7 +19,7 @@ exports.getAllCompetitions = async () => {
     return competitions;
 };
 
-// Buscar competição por ID
+// Procurar competição por ID
 exports.getCompetitionById = async (id) => {
     const [competitions] = await db.execute(
         'SELECT * FROM competitions WHERE id = ?',

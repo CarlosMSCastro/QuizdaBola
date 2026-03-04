@@ -12,8 +12,8 @@ export const modes = [
         available: true
     },
     {
-        key: 'online1v1',  // ← Substituiu 'results'
-        image: '/images/online1v1.png',  // ← Nova imagem
+        key: 'online1v1', 
+        image: '/images/online1v1.png', 
         path: '/1v1',
         available: false
     }

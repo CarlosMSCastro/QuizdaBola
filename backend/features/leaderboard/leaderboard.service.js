@@ -14,7 +14,7 @@ exports.validateScoreData = (data) => {
     }
 };
 
-// Salvar score
+// Guardar score
 exports.saveScore = async (data, userId) => {
     const { score, game_mode, competition_id } = data;
     const compId = competition_id || 'ligaportugal2024';
@@ -39,7 +39,7 @@ exports.saveScore = async (data, userId) => {
 };
 
 
-// Buscar leaderboard
+// Guardar leaderboard
 exports.getLeaderboard = async (query) => {
     const { game_mode, competition_id } = query;
 
