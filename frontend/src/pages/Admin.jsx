@@ -175,11 +175,11 @@ function Admin({ token }) {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          report.type === 'bug' 
+                          report.page === 'bug' 
                             ? 'bg-destructive/20 text-destructive' 
                             : 'bg-primary/20 text-primary'
                         }`}>
-                          {report.type === 'bug' ? '🐛 Bug' : '💡 Sugestão'}
+                          {report.page === 'bug' ? '🐛 Bug' : '💡 Sugestão'}
                         </span>
                         <span className="text-sm text-muted-foreground">
                           por <span className="font-semibold text-foreground">{report.username}</span>
@@ -189,7 +189,7 @@ function Admin({ token }) {
                         {new Date(report.created_at).toLocaleDateString('pt-PT')}
                       </span>
                     </div>
-                    <p className="text-foreground">{report.description}</p>
+                    <p className="text-foreground">{report.message}</p>
                   </div>
                 ))
               ) : (
