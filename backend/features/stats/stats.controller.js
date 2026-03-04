@@ -24,19 +24,19 @@ exports.getStats = async (req, res) => {
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     `);
 
-    // ✅ ADICIONAR: Lista de todos os users
+    // Lista de todos os users
     const [allUsers] = await db.execute(`
       SELECT id, username, created_at 
       FROM users 
       ORDER BY created_at DESC
     `);
 
-    // ✅ ADICIONAR: Bug reports
+    // Bug reports
     const [bugReports] = await db.execute(`
-      SELECT br.*, u.username 
-      FROM bug_reports br 
-      LEFT JOIN users u ON br.user_id = u.id 
-      ORDER BY br.created_at DESC
+      SELECT * 
+      FROM bug_reports 
+      ORDER BY created_at DESC
+      LIMIT 100
     `);
 
     res.json({
@@ -46,8 +46,8 @@ exports.getStats = async (req, res) => {
       avgScore: avgScore[0].avg ? Math.round(avgScore[0].avg) : 0,
       gamesByMode,
       activeUsers7d: recentUsers[0].total,
-      allUsers,        // ✅ NOVO
-      bugReports       // ✅ NOVO
+      allUsers,      
+      bugReports     
     });
   } catch (error) {
     console.error('Erro ao buscar stats:', error);
