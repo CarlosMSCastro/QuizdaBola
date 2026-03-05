@@ -61,7 +61,7 @@
   },
   "auth": {
     "login": "Login",
-    "register": "Register",
+    "register": "Create Account",
     "loginSubtitle": "Sign in to save your scores",
     "registerSubtitle": "Create an account to compete on the leaderboard",
     "username": "Username",

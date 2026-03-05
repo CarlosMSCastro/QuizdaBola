@@ -61,7 +61,7 @@
   },
   "auth": {
     "login": "Login",
-    "register": "Registo",
+    "register": "Criar Conta",
     "loginSubtitle": "Entre para guardar as suas pontuações",
     "registerSubtitle": "Crie uma conta para competir no leaderboard",
     "username": "Username",
