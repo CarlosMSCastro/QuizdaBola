@@ -543,7 +543,7 @@ function StatsQuiz({ token }) {
                 <div className={`relative w-40 h-40 rounded-2xl overflow-hidden border-3 shadow-lg
                   ${selectedAnswer === null
                     ? "border-primary"
-                    : question.correctAnswer
+                    : String(selectedAnswer) === String(question.correctAnswer)
                       ? "border-green-500"
                       : "border-red-500"
                   }`}>

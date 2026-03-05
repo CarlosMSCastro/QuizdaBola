@@ -542,7 +542,7 @@ function Quiz({ token }) {
                           ? "bg-success text-white scale-[1.01] shadow-lg"
                           : "bg-destructive text-white scale-[0.99] shadow-lg"
                         : isCorrect && showResult
-                          ? "bg-success/40 text-white"
+                          ? "bg-success/25 text-white"
                           : "bg-card/30 opacity-50 text-foreground/50"
                   }
                 `}
