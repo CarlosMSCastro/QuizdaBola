@@ -134,7 +134,7 @@ function Login({ onLogin }) {
               ? t("common.loading")
               : isLogin
                 ? t("auth.login")
-                : t("📄auth.register")}
+                : t("auth.register")}
           </button>
         </form>
 
