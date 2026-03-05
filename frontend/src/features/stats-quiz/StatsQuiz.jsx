@@ -540,7 +540,7 @@ function StatsQuiz({ token }) {
           {question.format === "F3" && (
             <>
               <div className="flex flex-col items-center gap-3">
-                <div className={`relative w-40 h-40 rounded-2xl overflow-hidden border-2 shadow-lg
+                <div className={`relative w-40 h-40 rounded-2xl overflow-hidden border-3 shadow-lg
                   ${selectedAnswer === null
                     ? "border-primary"
                     : question.correctAnswer

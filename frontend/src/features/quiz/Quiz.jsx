@@ -541,7 +541,9 @@ function Quiz({ token }) {
                         ? isCorrect
                           ? "bg-success text-white scale-[1.01] shadow-lg"
                           : "bg-destructive text-white scale-[0.99] shadow-lg"
-                        : "bg-card/30 opacity-50 text-foreground/50"
+                        : isCorrect && showResult
+                          ? "bg-success/70 text-white"
+                          : "bg-card/30 opacity-50 text-foreground/50"
                   }
                 `}
               >
