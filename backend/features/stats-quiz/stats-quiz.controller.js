@@ -244,6 +244,7 @@ async function handleF3(
         name: player.name,
         photo: player.photo,
         team_logo: player.team_logo,
+        statValue: service.formatStatValue(stat, player.stat_value),
       },
     ],
     stat,

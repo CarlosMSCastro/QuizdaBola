@@ -547,6 +547,13 @@ function StatsQuiz({ token }) {
                     aria-hidden="true"
                     className="w-full h-full object-cover"
                   />
+                  {selectedAnswer !== null && (
+                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center animate-in fade-in duration-300">
+                      <span className="text-white text-5xl font-black drop-shadow-2xl">
+                        {question.players[0].statValue}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <img
