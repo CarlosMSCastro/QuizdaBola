@@ -13,7 +13,6 @@ function StatsQuizSkeleton() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 page-transition animate-in fade-in duration-500">
       <Card className="w-full max-w-lg p-6 md:p-8 space-y-5 dark:bg-card/40 bg-card/12 border-0">
-        {/* Header Skeleton */}
         <div className="flex items-center justify-between pb-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-muted-foreground/20 rounded animate-pulse"></div>
@@ -24,12 +23,10 @@ function StatsQuizSkeleton() {
           </div>
         </div>
 
-        {/* Question Text Skeleton */}
         <div className="text-center py-2">
           <div className="h-6 md:h-7 w-3/4 mx-auto bg-muted-foreground/20 rounded animate-pulse"></div>
         </div>
 
-        {/* Players/Options Skeleton (formato genérico) */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             {[...Array(2)].map((_, i) => (
@@ -47,10 +44,8 @@ function StatsQuizSkeleton() {
           </div>
         </div>
 
-        {/* Timer Skeleton */}
         <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden animate-pulse"></div>
 
-        {/* Controls Skeleton */}
         <div className="flex justify-between items-center">
           <div className="flex gap-1">
             {[...Array(3)].map((_, i) => (
@@ -63,7 +58,6 @@ function StatsQuizSkeleton() {
           </div>
         </div>
 
-        {/* Abandon Button Skeleton */}
         <div className="w-full flex justify-center">
           <div className="w-40 h-10 bg-muted-foreground/20 rounded-full animate-pulse"></div>
         </div>
@@ -92,7 +86,6 @@ function StatsQuiz({ token }) {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [usedPlayerIds, setUsedPlayerIds] = useState([]);
   const [scoreSaved, setScoreSaved] = useState(null);
   const [isMuted, setIsMuted] = useState(() => {
     const saved = localStorage.getItem("statsQuizMuted");
@@ -107,6 +100,7 @@ function StatsQuiz({ token }) {
   const correctSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
+  const usedPlayerIdsRef = useRef([]);
 
   const stopUrgentSound = () => {
     if (urgentSoundRef.current) {
@@ -147,10 +141,10 @@ function StatsQuiz({ token }) {
     setTimeLeft(10);
     setTimerExpired(false);
     try {
-      const data = await getStatsQuestion(usedPlayerIds, selectedSeason);
+      const data = await getStatsQuestion(usedPlayerIdsRef.current, selectedSeason);
       setQuestion(data);
       const ids = data.players.map((p) => p.id);
-      setUsedPlayerIds([...usedPlayerIds, ...ids]);
+      usedPlayerIdsRef.current = [...usedPlayerIdsRef.current, ...ids];
     } catch (error) {
       console.error("Erro ao carregar pergunta:", error);
     }
@@ -197,22 +191,12 @@ function StatsQuiz({ token }) {
 
   useEffect(() => {
     if (gameOver && token && scoreSaved === null && score > 0) {
-      console.log("🎯 A guardar score:", {
-        score,
-        mode: "stats",
-        competition: selectedSeason,
-      });
-
       saveScore(score, "stats", token, selectedSeason)
         .then((res) => {
-          console.log("✅ Resposta do servidor:", res);
           if (res.isNewRecord) setScoreSaved("record");
           else setScoreSaved("exists");
         })
-        .catch((err) => {
-          console.error("❌ Erro:", err);
-          setScoreSaved("error");
-        });
+        .catch(() => setScoreSaved("error"));
     }
   }, [gameOver, score, token, scoreSaved, selectedSeason]);
 
@@ -326,7 +310,6 @@ function StatsQuiz({ token }) {
         Math.random() < 0.5
           ? question.helpData.player1_id
           : question.helpData.player2_id;
-
       setRevealedPlayerId(randomPlayer);
     } else if (question.format === "F3" && question.helpData.type === "hint") {
       setActiveHint({
@@ -338,12 +321,12 @@ function StatsQuiz({ token }) {
     setHelpsLeft(helpsLeft - 1);
     setHelpUsed(true);
     setTimeLeft((prev) => prev + 5);
-
     setShowTimeBonus(true);
     setTimeout(() => setShowTimeBonus(false), 2000);
   };
 
   const resetGame = () => {
+    usedPlayerIdsRef.current = [];
     setScore(0);
     setLives(3);
     setTimeLeft(10);
@@ -352,7 +335,6 @@ function StatsQuiz({ token }) {
     setGameStarted(false);
     setCurrentCompetition(null);
     setSelectedAnswer(null);
-    setUsedPlayerIds([]);
     setRevealed(false);
     setHelpsLeft(2);
     setHelpUsed(false);
@@ -626,7 +608,7 @@ function StatsQuiz({ token }) {
               </span>
             </div>
           ) : (
-            <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner ">
+            <div className="relative w-full h-7 bg-gradient-to-r from-border/20 to-border/40 rounded-full overflow-hidden shadow-inner">
               <div
                 className={`h-full relative bg-gradient-to-r ${getTimerColor()} ${getTimerGlow()}`}
                 style={{
