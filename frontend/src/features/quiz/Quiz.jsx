@@ -306,7 +306,7 @@ function Quiz({ token }) {
 
   const resetGame = () => {
     usedPlayerIdsRef.current = [];
-    console.log("🔄 resetGame - ref limpa:", usedPlayerIdsRef.current);
+    setQuestion(null);
     setScore(0);
     setLives(3);
     setTimeLeft(10);
