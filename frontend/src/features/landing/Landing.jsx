@@ -101,7 +101,7 @@ function Landing({ user }) {
       {/* Welcome Modal */}
       {showWelcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border-2 border-primary p-8 space-y-5 animate-in fade-in zoom-in duration-300">
+          <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border-2 border-primary p-5 md:p-8 space-y-4 animate-in fade-in zoom-in duration-300">
 
             {/* Logo */}
             <div className="flex justify-center">
@@ -109,7 +109,7 @@ function Landing({ user }) {
             </div>
 
             <div className="text-center space-y-2">
-              <h2 className="text-3xl font-black text-primary tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-black text-primary tracking-tight">
                 {t("welcome.title")}
               </h2>
               <p className="text-muted-foreground text-base">
