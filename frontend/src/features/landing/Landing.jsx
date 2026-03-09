@@ -105,7 +105,7 @@ function Landing({ user }) {
 
             {/* Logo */}
             <div className="flex justify-center">
-              <img src="/images/logo.png" alt="QuizDaBola" className="h-16 object-contain" />
+              <img src="/images/logo.png" alt="QuizDaBola" className="h-16 object-contain dark:border-2 dark:border-primary dark:rounded-lg" />
             </div>
 
             <div className="text-center space-y-2">
@@ -117,11 +117,11 @@ function Landing({ user }) {
               </p>
             </div>
 
-            <p className="text-foreground text-sm leading-relaxed">
+            <p className="text-zinc-700 text-sm leading-relaxed">
               {t("welcome.body")}
             </p>
 
-            <p className="text-sm text-foreground leading-relaxed">
+            <p className="text-sm text-zinc-700 leading-relaxed">
               {t("welcome.bugIntro")}{" "}
               <button
                 onClick={() => { setShowWelcomeModal(false); navigate('/bug-report'); }}
@@ -133,7 +133,7 @@ function Landing({ user }) {
             </p>
 
             {!user && (
-              <p className="text-sm text-foreground leading-relaxed">
+              <p className="text-sm text-zinc-700 leading-relaxed">
                 {t("welcome.registerIntro")}{" "}
                 <button
                   onClick={() => { setShowWelcomeModal(false); navigate('/login?mode=register'); }}
