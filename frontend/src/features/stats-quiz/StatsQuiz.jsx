@@ -218,10 +218,10 @@ function StatsQuiz({ token }) {
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-      if (!gameOver && gameStarted && usedPlayerIds.length === 0) {
-          loadQuestion();
-      }
-  }, [gameStarted, usedPlayerIds]);
+    if (!gameOver && gameStarted) {
+      loadQuestion();
+    }
+  }, [gameStarted]);
 
   useEffect(() => {
     const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
@@ -349,7 +349,7 @@ function StatsQuiz({ token }) {
     setTimeLeft(10);
     setTimerExpired(false);
     setGameOver(false);
-    setGameStarted(false)
+    setGameStarted(false);
     setCurrentCompetition(null);
     setSelectedAnswer(null);
     setUsedPlayerIds([]);

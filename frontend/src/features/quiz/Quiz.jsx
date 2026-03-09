@@ -209,10 +209,10 @@ function Quiz({ token }) {
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-      if (!gameOver && gameStarted && usedPlayerIds.length === 0) {
+      if (!gameOver && gameStarted) {
           loadQuestion();
       }
-  }, [gameStarted, usedPlayerIds]);
+  }, [gameStarted]);
 
   useEffect(() => {
     const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
