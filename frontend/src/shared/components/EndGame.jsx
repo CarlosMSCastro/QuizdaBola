@@ -133,7 +133,7 @@ function EndGame({
                                     onClick={() => navigate('/leaderboard')}
                                     className="text-xs font-bold px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-background transition-all duration-200"
                                 >
-                                    {t('leaderboard.title') || 'Leaderboard'}
+                                    {t('leaderboard.goTo') || 'Leaderboard'}
                                 </button>
                             </div>
                         </div>

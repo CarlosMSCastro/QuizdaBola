@@ -57,7 +57,8 @@
     "back": "Back",
     "empty": "No scores yet for this difficulty.",
     "selectLeague": "Select league", 
-    "leagueMenu": "League menu" 
+    "leagueMenu": "League menu",
+    "goTo": "Go To Leaderboard" 
   },
   "auth": {
     "login": "Login",

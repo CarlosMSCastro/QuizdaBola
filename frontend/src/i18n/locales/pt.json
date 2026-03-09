@@ -57,7 +57,8 @@
     "back": "Voltar",
     "empty": "Ainda não há pontuações nesta dificuldade.",
     "selectLeague": "Selecionar liga",
-    "leagueMenu": "Menu de ligas"
+    "leagueMenu": "Menu de ligas",
+    "goTo": "Ir para Leaderboard" 
   },
   "auth": {
     "login": "Login",
