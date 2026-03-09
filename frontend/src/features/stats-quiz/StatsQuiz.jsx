@@ -349,7 +349,8 @@ function StatsQuiz({ token }) {
     setTimeLeft(10);
     setTimerExpired(false);
     setGameOver(false);
-    setGameStarted(false);
+    setGameStarted(false)
+    setCurrentCompetition(null);
     setSelectedAnswer(null);
     setUsedPlayerIds([]);
     setRevealed(false);

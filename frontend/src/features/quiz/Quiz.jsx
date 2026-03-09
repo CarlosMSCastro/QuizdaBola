@@ -310,6 +310,7 @@ function Quiz({ token }) {
     setTimerExpired(false);
     setGameOver(false);
     setGameStarted(false);
+    setCurrentCompetition(null);
     setSelectedAnswer(null);
     setUsedPlayerIds([]);
     setHelpsLeft(2);
