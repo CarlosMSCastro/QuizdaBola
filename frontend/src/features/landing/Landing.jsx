@@ -102,6 +102,12 @@ function Landing({ user }) {
       {showWelcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="w-full max-w-md bg-background rounded-2xl border-2 border-primary p-8 space-y-5 animate-in fade-in zoom-in duration-300">
+
+            {/* Logo */}
+            <div className="flex justify-center">
+              <img src="/images/logo.png" alt="QuizDaBola" className="h-16 object-contain" />
+            </div>
+
             <div className="text-center space-y-2">
               <h2 className="text-3xl font-black text-primary tracking-tight">
                 {t("welcome.title")}
