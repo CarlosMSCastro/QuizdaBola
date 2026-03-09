@@ -53,7 +53,7 @@
     "backHome": "← Back to Home"
   },
   "leaderboard": {
-    "title": "🏆 Leaderboard",
+    "title": "Leaderboard",
     "back": "Back",
     "empty": "No scores yet for this difficulty.",
     "selectLeague": "Select league", 
