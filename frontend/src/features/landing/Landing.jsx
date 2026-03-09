@@ -6,11 +6,12 @@ import GameModeSelector from "./GameModeSelector";
 import { modes } from "../../shared/constants/gameModes";
 import { getCompetition } from "../../shared/services/api";
 
-function Landing() {
+function Landing({ user }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   const [selectedSeason, setSelectedSeason] = useState(() => {
     return localStorage.getItem("selectedSeason") || "ligaportugal2024";
@@ -46,6 +47,18 @@ function Landing() {
     }, 3000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  // Modal de boas-vindas — uma vez por sessão
+  useEffect(() => {
+    const seen = sessionStorage.getItem("welcomeModalSeen");
+    if (!seen) {
+      const timer = setTimeout(() => {
+        setShowWelcomeModal(true);
+        sessionStorage.setItem("welcomeModalSeen", "true");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const handleSeasonConfirm = (seasonId, seasonData) => {
@@ -84,6 +97,58 @@ function Landing() {
 
   return (
     <div className="min-h-[calc(100vh-16rem)] flex flex-col items-center justify-center p-3 gap-4 pt-5 relative">
+
+      {/* Welcome Modal */}
+      {showWelcomeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-md bg-background rounded-2xl border-2 border-primary p-8 space-y-5 animate-in fade-in zoom-in duration-300">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-black text-primary tracking-tight">
+                {t("welcome.title")}
+              </h2>
+              <p className="text-muted-foreground text-base">
+                {t("welcome.subtitle")}
+              </p>
+            </div>
+
+            <p className="text-foreground text-sm leading-relaxed">
+              {t("welcome.body")}
+            </p>
+
+            <p className="text-sm text-foreground leading-relaxed">
+              {t("welcome.bugIntro")}{" "}
+              <button
+                onClick={() => { setShowWelcomeModal(false); navigate('/bug-report'); }}
+                className="text-primary font-bold underline underline-offset-4 hover:opacity-80 transition-opacity"
+              >
+                {t("welcome.bugLink")}
+              </button>
+              .
+            </p>
+
+            {!user && (
+              <p className="text-sm text-foreground leading-relaxed">
+                {t("welcome.registerIntro")}{" "}
+                <button
+                  onClick={() => { setShowWelcomeModal(false); navigate('/login?mode=register'); }}
+                  className="text-primary font-bold underline underline-offset-4 hover:opacity-80 transition-opacity"
+                >
+                  {t("welcome.registerLink")}
+                </button>
+                {" "}{t("welcome.registerOutro")}
+              </p>
+            )}
+
+            <button
+              onClick={() => setShowWelcomeModal(false)}
+              className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-black text-lg uppercase tracking-wide hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200"
+            >
+              {t("welcome.close")}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Bug/Suggestion Button - SÓ DESKTOP, CANTO SUPERIOR DIREITO */}
       <button
         onClick={handleBugClick}
@@ -91,21 +156,21 @@ function Landing() {
         className="hidden md:block absolute top-12 right-8 lg:right-16 xl:right-44 2xl:right-96 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
       >
         <div className="relative w-36 h-40" style={{ perspective: '1000px' }}>
-          <div 
+          <div
             className="relative w-full h-full transition-transform duration-700"
-            style={{ 
+            style={{
               transformStyle: 'preserve-3d',
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
             }}
           >
             {/* Bug Face */}
-            <div 
+            <div
               className="absolute inset-0 flex flex-col items-center gap-1 group"
               style={{ backfaceVisibility: 'hidden' }}
             >
-              <img 
-                src="/images/bug.png" 
-                alt="" 
+              <img
+                src="/images/bug.png"
+                alt=""
                 className="w-20 drop-shadow-xl opacity-90 transition-opacity"
               />
               <span className="text-[10px] font-bold text-primary transition-colors whitespace-nowrap">
@@ -114,15 +179,15 @@ function Landing() {
             </div>
 
             {/* Suggestion Face */}
-            <div 
+            <div
               className="absolute inset-0 flex flex-col items-center gap-1 group"
-              style={{ 
+              style={{
                 backfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)'
               }}
             >
-              <img 
-                src="/images/suggestion.png" 
+              <img
+                src="/images/suggestion.png"
                 alt=""
                 className="w-20 drop-shadow-xl opacity-90 transition-opacity"
               />

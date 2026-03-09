@@ -108,5 +108,16 @@
     "foundBug": "Encontrou um bug?",
     "haveSuggestion": "Tem uma sugestão?",
     "helpText": "Descreva o problema ou sugestão com pelo menos 10 caracteres"
+  },
+    "welcome": {
+    "title": "Projeto em Desenvolvimento 🚧",
+    "subtitle": "Obrigado por visitares o QuizDaBola!",
+    "body": "Esta aplicação está em desenvolvimento ativo. Podes encontrar bugs ou funcionalidades incompletas.",
+    "bugIntro": "Se encontrares algum problema ou tiveres sugestões, usa a página de",
+    "bugLink": "reporte de bugs",
+    "registerIntro": "Cria uma",
+    "registerLink": "conta gratuita",
+    "registerOutro": "para guardares os teus scores e competires no leaderboard.",
+    "close": "Entendido!"
   }
 }

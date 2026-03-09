@@ -71,6 +71,7 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
               <Route path="/stats-quiz" element={<StatsQuiz token={token} user={user} onLogin={handleLogin} />} />
               <Route path="/bug-report" element={<BugReport />} />
               <Route path="/admin" element={<Admin token={token} />} />
+              <Route path="/" element={<Landing user={user} />} />
             </Routes>
           </Suspense>
         </PageTransition>

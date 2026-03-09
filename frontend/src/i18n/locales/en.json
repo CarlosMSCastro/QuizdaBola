@@ -108,5 +108,16 @@
     "foundBug": "Found a bug?",
     "haveSuggestion": "Have a suggestion?",
     "helpText": "Describe the problem or suggestion with at least 10 characters"
+  },
+    "welcome": {
+    "title": "Work in Progress 🚧",
+    "subtitle": "Thanks for visiting QuizDaBola!",
+    "body": "This app is actively being developed. You may encounter bugs or incomplete features.",
+    "bugIntro": "If you find any issues or have suggestions, use the",
+    "bugLink": "bug report page",
+    "registerIntro": "Create a",
+    "registerLink": "free account",
+    "registerOutro": "to save your scores and compete on the leaderboard.",
+    "close": "Got it!"
   }
 }
