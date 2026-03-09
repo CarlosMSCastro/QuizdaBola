@@ -130,6 +130,7 @@ function Quiz({ token }) {
   }, []);
 
   const loadQuestion = async () => {
+    console.log("🔍 usedPlayerIdsRef:", usedPlayerIdsRef.current);
     stopUrgentSound();
     setLoading(true);
     setSelectedAnswer(null);
@@ -305,6 +306,7 @@ function Quiz({ token }) {
 
   const resetGame = () => {
     usedPlayerIdsRef.current = [];
+    console.log("🔄 resetGame - ref limpa:", usedPlayerIdsRef.current);
     setScore(0);
     setLives(3);
     setTimeLeft(10);
