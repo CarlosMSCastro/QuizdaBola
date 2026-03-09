@@ -13,11 +13,18 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    if (!isLogin && password !== confirmPassword) {
+      setError(t("auth.passwordMismatch"));
+      setLoading(false);
+      return;
+    };
 
     try {
       const response = isLogin
@@ -45,6 +52,7 @@ function Login({ onLogin }) {
     setError("");
     setUsername("");
     setPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -118,7 +126,22 @@ function Login({ onLogin }) {
               minLength={6}
             />
           </div>
-
+          {!isLogin && (
+            <div>
+              <label className="block text-sm font-bold text-primary mb-3 uppercase tracking-wide">
+                {t("auth.confirmPassword")}
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-5 py-4 rounded-2xl bg-foreground/5 text-foreground border-2 border-primary text-lg font-medium focus:outline-none focus:border-primary focus:bg-foreground/10 transition-all placeholder:text-muted-foreground"
+                placeholder={t("auth.confirmPasswordPlaceholder")}
+                required={!isLogin}
+                minLength={6}
+              />
+            </div>
+          )}
           {error && (
             <div className="bg-destructive/10 border-2 border-destructive/30 text-destructive px-5 py-4 rounded-2xl text-sm font-semibold">
               {error}

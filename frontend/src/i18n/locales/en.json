@@ -75,7 +75,10 @@
     "noAccount": "Don't have an account? Register here",
     "hasAccount": "Already have an account? Sign in here",
     "error": "Invalid credentials",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "passwordMismatch": "Passwords do not match"
   },
   "navbar": {
     "darkMode": "Dark mode",

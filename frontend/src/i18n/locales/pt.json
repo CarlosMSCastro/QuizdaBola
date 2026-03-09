@@ -75,7 +75,10 @@
     "noAccount": "Ainda não tem conta? Registe-se aqui",
     "hasAccount": "Já tem conta? Entre aqui",
     "error": "Credenciais inválidas",
-    "processing": "A processar..."
+    "processing": "A processar...",
+    "confirmPassword": "Confirmar Password",
+    "confirmPasswordPlaceholder": "Repita a password",
+    "passwordMismatch": "As passwords não coincidem"
   },
   "navbar": {
     "darkMode": "Modo escuro",
