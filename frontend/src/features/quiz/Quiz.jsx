@@ -305,20 +305,20 @@ function Quiz({ token }) {
   };
 
   const resetGame = () => {
-    usedPlayerIdsRef.current = [];
-    setQuestion(null);
-    setScore(0);
-    setLives(3);
-    setTimeLeft(10);
-    setTimerExpired(false);
-    setGameOver(false);
-    setGameStarted(false);
-    setCurrentCompetition(null);
-    setSelectedAnswer(null);
-    setHelpsLeft(2);
-    setUsedHelps({ nationality: false, team: false });
-    setActiveHelp(null);
-    setScoreSaved(null);
+      usedPlayerIdsRef.current = [];
+      setQuestion(null);
+      setScore(0);
+      setLives(3);
+      setTimeLeft(10);
+      setTimerExpired(false);
+      setGameOver(false);
+      setGameStarted(true);
+      setSelectedAnswer(null);
+      setHelpsLeft(2);
+      setUsedHelps({ nationality: false, team: false });
+      setActiveHelp(null);
+      setScoreSaved(null);
+      setTimeout(() => loadQuestion(), 0);
   };
 
   const getCountryCode = (countryName) => {

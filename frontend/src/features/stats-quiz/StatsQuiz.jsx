@@ -327,22 +327,18 @@ function StatsQuiz({ token }) {
   };
 
   const resetGame = () => {
-    usedPlayerIdsRef.current = [];
-    setQuestion(null);
-    setScore(0);
-    setLives(3);
-    setTimeLeft(10);
-    setTimerExpired(false);
-    setGameOver(false);
-    setGameStarted(false);
-    setCurrentCompetition(null);
-    setSelectedAnswer(null);
-    setRevealed(false);
-    setHelpsLeft(2);
-    setHelpUsed(false);
-    setRevealedPlayerId(null);
-    setActiveHint(null);
-    setScoreSaved(null);
+      usedPlayerIdsRef.current = [];
+      setQuestion(null);
+      setScore(0);
+      setLives(3);
+      setTimeLeft(10);
+      setTimerExpired(false);
+      setGameOver(false);
+      setGameStarted(true);
+      setSelectedAnswer(null);
+      setHelpsLeft(2);
+      setScoreSaved(null);
+      setTimeout(() => loadQuestion(), 0);
   };
 
   const getTimerColor = () => {
