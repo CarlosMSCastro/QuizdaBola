@@ -64,7 +64,6 @@ function AppContent({ token, user, darkMode, handleLogin, handleLogout, setDarkM
         <PageTransition>
           <Suspense fallback={<Loading />}>
             <Routes>
-              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
               <Route path="/quiz" element={<Quiz token={token} user={user} onLogin={handleLogin} />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
