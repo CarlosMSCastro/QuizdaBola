@@ -393,6 +393,7 @@ function StatsQuiz({ token }) {
         token={token}
         scoreSaved={scoreSaved}
         isMuted={isMuted}
+        selectedSeason={selectedSeason}
         onPlayAgain={resetGame}
         t={t}
       />

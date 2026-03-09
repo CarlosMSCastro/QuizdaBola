@@ -1,18 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getLeaderboard } from '../../shared/services/api';
 
 function EndGame({ 
     score, 
     mode,
     token, 
-    scoreSaved, 
+    scoreSaved,
     isMuted,
+    selectedSeason,
     onPlayAgain, 
     t 
 }) {
     const navigate = useNavigate();
     const gameoverSoundRef = useRef(null);
     const highscoreSoundRef = useRef(null);
+    const [topScores, setTopScores] = useState([]);
 
     // Initialize audio
     useEffect(() => {
@@ -37,7 +40,23 @@ function EndGame({
         }
     }, [scoreSaved, isMuted]);
 
+    // Fetch top 3
+    useEffect(() => {
+        const fetchTop3 = async () => {
+            try {
+                const competitionId = selectedSeason === 'global' ? null : selectedSeason;
+                const data = await getLeaderboard(mode, competitionId);
+                setTopScores(data.slice(0, 3));
+            } catch (error) {
+                console.error('Erro ao buscar leaderboard:', error);
+            }
+        };
+
+        fetchTop3();
+    }, [mode, selectedSeason]);
+
     const redirectPath = mode === 'classic' ? '/quiz' : '/stats-quiz';
+    const medals = ['🥇', '🥈', '🥉'];
 
     return (
         <div key="gameover" className="min-h-screen flex items-center justify-center p-4 page-transition bg-gradient-to-br from-background via-background to-muted/20 animate-in fade-in zoom-in duration-500">
@@ -83,6 +102,37 @@ function EndGame({
                         </div>
                     )}
                 </div>
+
+                {/* Top 3 */}
+                {topScores.length > 0 && (
+                    <div className="space-y-3 animate-in fade-in slide-in-from-bottom duration-500">
+                        <h2 className="text-sm font-black text-muted-foreground uppercase tracking-widest">
+                            🏆 Top 3
+                        </h2>
+                        <div className="space-y-2">
+                            {topScores.map((entry, index) => (
+                                <div
+                                    key={index}
+                                    className={`flex items-center justify-between px-5 py-3 rounded-2xl border-2 transition-all
+                                        ${index === 0
+                                            ? 'border-primary bg-primary/10'
+                                            : 'border-border bg-white/5 dark:bg-muted/10'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{medals[index]}</span>
+                                        <span className={`font-bold text-base ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
+                                            {entry.username}
+                                        </span>
+                                    </div>
+                                    <span className={`font-black text-xl ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
+                                        {entry.score}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                     <button
