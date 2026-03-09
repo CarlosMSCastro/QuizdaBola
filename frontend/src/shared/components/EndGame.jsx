@@ -125,9 +125,17 @@ function EndGame({
                                     {currentCompetition?.name || '—'}
                                 </span>
                             </div>
-                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-3 py-1 rounded-full bg-primary/10 text-primary">
-                                {modeLabel}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold px-3 py-1 rounded-full bg-primary/10 text-primary">
+                                    {modeLabel}
+                                </span>
+                                <button
+                                    onClick={() => navigate('/leaderboard')}
+                                    className="text-xs font-bold px-3 py-1 rounded-full border border-primary text-primary hover:bg-primary hover:text-background transition-all duration-200"
+                                >
+                                    {t('leaderboard.title') || 'Leaderboard'}
+                                </button>
+                            </div>
                         </div>
 
                         {/* Title */}
@@ -163,12 +171,6 @@ function EndGame({
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center pt-2">
-                    <button
-                        onClick={() => navigate('/leaderboard')}
-                        className="px-8 py-4 rounded-full border-2 border-primary text-primary font-bold text-base md:text-lg hover:bg-primary/10 hover:scale-105 active:scale-95 transition-all duration-200"
-                    >
-                        {t('leaderboard.title') || 'Leaderboard'}
-                    </button>
                     <button
                         onClick={onPlayAgain}
                         className="px-8 py-4 rounded-full bg-primary text-background font-bold text-base md:text-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
