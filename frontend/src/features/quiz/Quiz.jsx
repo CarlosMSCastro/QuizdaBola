@@ -83,7 +83,6 @@ function Quiz({ token }) {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [usedPlayerIds, setUsedPlayerIds] = useState([]);
   const [scoreSaved, setScoreSaved] = useState(null);
   const [isMuted, setIsMuted] = useState(() => {
     const saved = localStorage.getItem("quizMuted");
@@ -100,6 +99,7 @@ function Quiz({ token }) {
   const correctSoundRef = useRef(null);
   const wrongSoundRef = useRef(null);
   const urgentSoundRef = useRef(null);
+  const usedPlayerIdsRef = useRef([]);
 
   const stopUrgentSound = () => {
     if (urgentSoundRef.current) {
@@ -137,9 +137,9 @@ function Quiz({ token }) {
     setTimeLeft(10);
     setTimerExpired(false);
     try {
-      const data = await getQuestion(usedPlayerIds, selectedSeason);
+      const data = await getQuestion(usedPlayerIdsRef.current, selectedSeason);
       setQuestion(data);
-      setUsedPlayerIds([...usedPlayerIds, data.id]);
+      usedPlayerIdsRef.current = [...usedPlayerIdsRef.current, data.id];
     } catch (error) {
       console.error("Erro ao carregar pergunta:", error);
     }
@@ -209,19 +209,19 @@ function Quiz({ token }) {
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-      if (!gameOver && gameStarted) {
-          loadQuestion();
-      }
+    if (!gameOver && gameStarted) {
+      loadQuestion();
+    }
   }, [gameStarted]);
 
   useEffect(() => {
     const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
-    
+
     if (!hasNavigatedFromHome && gameStarted) {
       navigate('/');
       return;
     }
-    
+
     if (gameStarted) {
       sessionStorage.removeItem('quiz-navigation');
     }
@@ -304,6 +304,7 @@ function Quiz({ token }) {
   };
 
   const resetGame = () => {
+    usedPlayerIdsRef.current = [];
     setScore(0);
     setLives(3);
     setTimeLeft(10);
@@ -312,7 +313,6 @@ function Quiz({ token }) {
     setGameStarted(false);
     setCurrentCompetition(null);
     setSelectedAnswer(null);
-    setUsedPlayerIds([]);
     setHelpsLeft(2);
     setUsedHelps({ nationality: false, team: false });
     setActiveHelp(null);
