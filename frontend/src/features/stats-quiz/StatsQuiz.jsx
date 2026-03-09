@@ -218,10 +218,10 @@ function StatsQuiz({ token }) {
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    if (!gameOver && gameStarted) {
-      loadQuestion();
-    }
-  }, [gameStarted]);
+      if (!gameOver && gameStarted && usedPlayerIds.length === 0) {
+          loadQuestion();
+      }
+  }, [gameStarted, usedPlayerIds]);
 
   useEffect(() => {
     const hasNavigatedFromHome = sessionStorage.getItem('quiz-navigation');
